@@ -2,12 +2,12 @@
 internal static class Config
 {
     // Id number for the next new read 
-    internal const int startCallId = 1; 
+    internal const int startCallId = 1000; 
     private static int nextCallId = startCallId;
     internal static int NextCallId => nextCallId++;
 
     // Id number Assignment
-    internal const int startAssignmementId = 1;
+    internal const int startAssignmementId = 2000;
     private static int nextAssignmementId = startAssignmementId;
     internal static int NextAssignmementId => nextAssignmementId++;
 
