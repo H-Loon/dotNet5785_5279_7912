@@ -17,3 +17,11 @@ public enum CallType
 {
     //To be continued
 }
+
+public enum AssignmentEndReason
+{
+    Done,
+    CanceledByV,
+    CanceledByA,
+    OverDated
+}

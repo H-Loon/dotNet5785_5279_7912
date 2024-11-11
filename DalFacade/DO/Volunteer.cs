@@ -1,6 +1,21 @@
 ﻿namespace DO;
 
 public record Volunteer
+(
+    int Id,
+    string Name,
+    string Phone,
+    string Email,
+    /*string? Password = null, (bonus)*/
+    string? Address = null,
+    double? Latitude = null,
+    double? Longitude = null,
+    Role Role = Role.Volunteer,
+    bool IsActive = true,
+    double? MaxDistance = null,
+    DistanceType DistanceType = DistanceType.Area
+)
 {
+    public Volunteer() : this(0, "", "", "") { }
 }
 
