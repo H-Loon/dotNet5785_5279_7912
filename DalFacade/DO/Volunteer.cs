@@ -16,6 +16,6 @@ public record Volunteer
     DistanceType DistanceType = DistanceType.Area
 )
 {
-    public Volunteer() : this(0, "", "", "") { }
+    public Volunteer() : this(0, "", "", "") { } // for ch3
 }
 

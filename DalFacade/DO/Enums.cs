@@ -15,7 +15,10 @@ public enum DistanceType
 
 public enum CallType
 {
-    //To be continued
+    FoodDelivery,
+    FoodShopping,
+    FoodPreparation,
+    Other
 }
 
 public enum AssignmentEndReason
