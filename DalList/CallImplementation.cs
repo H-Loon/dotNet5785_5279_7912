@@ -7,8 +7,7 @@ public class CallImplementation : ICall
 {
     public void Create(Call item)
     {
-        Call copy = item with { Id = Config.NextCallId };
-        DataSource.Calls.Add(copy);
+        DataSource.Calls.Add(item with { Id = Config.NextCallId });
     }
 
     public void Delete(int id)
@@ -31,12 +30,7 @@ public class CallImplementation : ICall
 
     public List<Call> ReadAll()
     {
-        List<Call> NewCalls = new();
-        foreach (var call in DataSource.Calls)
-        {
-            NewCalls.Add(call with { });
-        }
-        return NewCalls;
+        return new List<Call>(DataSource.Calls);
     }
 
     public void Update(Call item)

@@ -33,12 +33,7 @@ public class VolunteerImplementation : IVolunteer
 
     public List<Volunteer> ReadAll()
     {
-        List<Volunteer> NewVolunteers = new();
-        foreach (var volunteer in DataSource.Volunteers)
-        {
-            NewVolunteers.Add(volunteer with { });
-        }
-        return NewVolunteers;
+        return new List<Volunteer>(DataSource.Volunteers);
     }
 
     public void Update(Volunteer item)

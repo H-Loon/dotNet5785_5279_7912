@@ -7,8 +7,7 @@ public class AssignmentImplementation : IAssignment
 {
     public void Create(Assignment item)
     {
-        Assignment copy = item with { Id = Config.NextAssignmementId };
-        DataSource.Assignments.Add(copy);
+        DataSource.Assignments.Add(item with { Id = Config.NextAssignmementId });
     }
 
     public void Delete(int id)
@@ -31,12 +30,7 @@ public class AssignmentImplementation : IAssignment
 
     public List<Assignment> ReadAll()
     {
-        List<Assignment> NewAssignments = new();
-        foreach (var assignment in DataSource.Assignments)
-        {
-            NewAssignments.Add(assignment with { });
-        }
-        return NewAssignments;
+        return new List<Assignment>(DataSource.Assignments);
     }
 
     public void Update(Assignment item)
