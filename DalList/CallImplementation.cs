@@ -26,7 +26,7 @@ public class CallImplementation : ICall
 
     public Call? Read(int id)
     {
-       return DataSource.Calls.Find(c => c.Id == id);
+        return DataSource.Calls.Find(c => c.Id == id);
     }
 
     public List<Call> ReadAll()

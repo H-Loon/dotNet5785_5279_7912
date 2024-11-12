@@ -7,7 +7,7 @@ public class AssignmentImplementation : IAssignment
 {
     public void Create(Assignment item)
     {
-        Assignment copy = item with { Id = Config.NextAssignmementId};
+        Assignment copy = item with { Id = Config.NextAssignmementId };
         DataSource.Assignments.Add(copy);
     }
 
