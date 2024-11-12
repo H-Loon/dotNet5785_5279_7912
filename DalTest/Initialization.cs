@@ -1,5 +1,7 @@
 ﻿using DalApi;
 using DO;
+using System.Net;
+using System.Numerics;
 
 namespace DalTest;
 public static class Initialization
@@ -112,13 +114,37 @@ public static class Initialization
     private static void _createAssignment()
     {
         foreach (var name in Names)
-            int id;
-        do
         {
-            id = s_rand().Next(200000000, 400000000)
-        } while (s_dalAssignment.Read(id) != null);
-    }
+            int id;
+            do
+            {
+                id = s_rand.Next(200000000, 400000000);
+            } while (s_dalAssignment.Read(id) != null);
+            int callId;
+            do
+            {
+                callId = s_rand.Next(100000, 999999);
+            } while (s_dalCall.Read(callId) == null);
+            int volunteerId;
+            do
+            {
+                volunteerId = s_rand.Next(1000, 9999);
+            } while (s_dalVolunteer.Read(volunteerId) != null);
 
+            DateTime startTime = new DateTime(1995, 1, 1);
+            DateTime endTime = startTime.AddDays(s_rand.Next((s_dalConfig.Clock - startTime).Days));//gnere nbrandom entre 0 et nb total de j calculé precedemmnt 
+
+            s_dalAssignment.Create(new Assignment
+            {
+                Id = id,
+                CallId = callId,
+                VolunteerId = volunteerId,
+                StartTime = startTime,
+                EndTime = endTime,
+            });
+
+        }
+    }
     private static void _createCall()
     {
         // Implementation for creating calls
