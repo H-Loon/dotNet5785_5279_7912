@@ -2,5 +2,6 @@
 
 public interface IConfig
 {
-    // To Do
+    DateTime Clock { get; set; }
+    void Reset();
 }
