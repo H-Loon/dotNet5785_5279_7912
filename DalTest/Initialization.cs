@@ -56,7 +56,12 @@ public static class Initialization
 
     private static void _createAssignment()
     {
-        // Implementation for creating assignments
+        foreach (var name in Names)
+            int id;
+        do
+        {
+            id = s_rand().Next(200000000, 400000000)
+        } while (s_dalAssignment.Read(id) != null);
     }
 
     private static void _createCall()
