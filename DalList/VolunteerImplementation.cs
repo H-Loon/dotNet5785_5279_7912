@@ -7,7 +7,7 @@ public class VolunteerImplementation : IVolunteer
 {
     public void Create(Volunteer item)
     {
-        if (DataSource.Volunteers.Find(v => v.Id == item.Id) is Volunteer)
+        if (Read(item.Id) is not null)
             throw new Exception($"Volunteer with Id={item.Id} already exist");
         else
             DataSource.Volunteers.Add(item);
@@ -15,7 +15,7 @@ public class VolunteerImplementation : IVolunteer
 
     public void Delete(int id)
     {
-        if (DataSource.Volunteers.Find(a => a.Id == id) is Volunteer volunteer)
+        if (Read(id) is Volunteer volunteer)
             DataSource.Volunteers.Remove(volunteer);
         else
             throw new Exception($"Volunteer with Id={id} does not exist");
@@ -28,7 +28,7 @@ public class VolunteerImplementation : IVolunteer
 
     public Volunteer? Read(int id)
     {
-        return DataSource.Volunteers.Find(a => a.Id == id);
+        return DataSource.Volunteers.Find(v => v.Id == id);
     }
 
     public List<Volunteer> ReadAll()
@@ -43,7 +43,7 @@ public class VolunteerImplementation : IVolunteer
 
     public void Update(Volunteer item)
     {
-        if (DataSource.Volunteers.Find(a => a.Id == item.Id) is Volunteer volunteer)
+        if (Read(item.Id) is Volunteer volunteer)
         {
             DataSource.Volunteers.Remove(volunteer);
             DataSource.Volunteers.Add(item);

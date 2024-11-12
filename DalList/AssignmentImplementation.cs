@@ -13,7 +13,7 @@ public class AssignmentImplementation : IAssignment
 
     public void Delete(int id)
     {
-        if (DataSource.Assignments.Find(a => a.Id == id) is Assignment assignment)
+        if (Read(id) is Assignment assignment)
             DataSource.Assignments.Remove(assignment);
         else
             throw new Exception($"Assignment with Id={id} does not exist");
@@ -41,7 +41,7 @@ public class AssignmentImplementation : IAssignment
 
     public void Update(Assignment item)
     {
-        if (DataSource.Assignments.Find(a => a.Id == item.Id) is Assignment assignment)
+        if (Read(item.Id) is Assignment assignment)
         {
             DataSource.Assignments.Remove(assignment);
             DataSource.Assignments.Add(item);

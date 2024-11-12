@@ -13,7 +13,7 @@ public class CallImplementation : ICall
 
     public void Delete(int id)
     {
-        if (DataSource.Calls.Find(a => a.Id == id) is Call call)
+        if (Read(id) is Call call)
             DataSource.Calls.Remove(call);
         else
             throw new Exception($"Call with Id={id} does not exist");
@@ -26,7 +26,7 @@ public class CallImplementation : ICall
 
     public Call? Read(int id)
     {
-       return DataSource.Calls.Find(a => a.Id == id);
+       return DataSource.Calls.Find(c => c.Id == id);
     }
 
     public List<Call> ReadAll()
@@ -41,7 +41,7 @@ public class CallImplementation : ICall
 
     public void Update(Call item)
     {
-        if (DataSource.Calls.Find(a => a.Id == item.Id) is Call call)
+        if (Read(item.Id) is Call call)
         {
             DataSource.Calls.Remove(call);
             DataSource.Calls.Add(item);
