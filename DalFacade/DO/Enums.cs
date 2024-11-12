@@ -15,9 +15,10 @@ public enum DistanceType
 
 public enum CallType
 {
-    FoodDelivery,
-    FoodShopping,
-    FoodPreparation,
+    HomeBotIssue,
+    TeleporterBlockedOnMachonLev,
+    MyDishwasherIsInDepression,
+    MyTimeTravelMachineIsLazy,
     Other
 }
 
