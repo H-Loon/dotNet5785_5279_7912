@@ -37,13 +37,20 @@ public static class Initialization
         foreach (var name in Names) 
         {
             int id;
-            bool? isActive = s_rand.Next(0, 2) == 1;
             do
             {
                 id = s_rand.Next(200000000, 400000000);
             } while (s_dalVolunteer!.Read(id) != null);
 
-
+            s_dalVolunteer.Create(new Volunteer
+            {
+                Id = id,
+                Name = Names[s_rand.Next(0, Names.Length)],
+                Phone = PhoneNumbers[s_rand.Next(0, PhoneNumbers.Length)],
+                Email = Emails[s_rand.Next(0, Emails.Length)],
+                IsActive = s_rand.Next(0, 1) == 1,
+                MaxDistance = s_rand.Next(0, 100),
+            });
         }
     }
 
