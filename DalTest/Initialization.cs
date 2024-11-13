@@ -116,7 +116,7 @@ public static class Initialization
     private static DateTime _randomDate()
     {
         DateTime startTime = new DateTime(s_dalConfig!.Clock.Year - s_rand.Next(-5, 0), 12, 24);
-        int range = (DateTime.Now - startTime).Days;
+        int range = (s_dalConfig!.Clock - startTime).Days;
         return startTime.AddDays(s_rand.Next(range));
     }
 
@@ -153,17 +153,20 @@ public static class Initialization
     }
     private static void _createCall()
     {
-        int index = s_rand.Next(0, s_addresses.Count);
-        s_dalCall!.Create(new Call
+        for (int i = 0; i < 5; i++)
         {
-            Type = (CallType)s_rand.Next(0, 3),
-            Address = s_addresses[index],
-            Latitude = s_latitudes[index],
-            Longitude = s_longitudes[index],
-            StartTime = _randomDate(),
-            Description = s_callDescriptions[s_rand.Next(0, s_callDescriptions.Length)],
-            MaxTime = s_dalConfig!.Clock.AddDays(s_rand.Next(364))
-        });
+            int index = s_rand.Next(0, s_addresses.Count);
+            s_dalCall!.Create(new Call
+            {
+                Type = (CallType)s_rand.Next(0, 5),
+                Address = s_addresses[index],
+                Latitude = s_latitudes[index],
+                Longitude = s_longitudes[index],
+                StartTime = _randomDate(),
+                Description = s_callDescriptions[s_rand.Next(0, s_callDescriptions.Length)],
+                MaxTime = s_dalConfig!.Clock.AddDays(s_rand.Next(364))
+            });
+        }
     }
 
     public static void Do(IAssignment? dalAssignment, ICall? dalCall, IVolunteer? dalVolunteer, IConfig? dalConfig)
