@@ -75,6 +75,9 @@ public static class Initialization
 
     private static void _createVolunteer()
     {
+        List<string> copyAddresses = new(s_addresses);
+        List<double> copyLatitudes = new(s_latitudes);
+        List<double> copyLongitudes = new(s_longitudes);
         for (int i = 0; i < s_names.Length; i++)
         {
             int id;
@@ -90,12 +93,12 @@ public static class Initialization
             s_phoneNumbers.Remove(phone);
 
             int r = s_rand.Next(0, s_addresses.Count);
-            address = s_addresses[r];
-            latitude = s_latitudes[r];
-            longitude = s_longitudes[r];
-            s_addresses.RemoveAt(r);
-            s_latitudes.RemoveAt(r);
-            s_longitudes.RemoveAt(r);
+            address = copyAddresses[r];
+            latitude = copyLatitudes[r];
+            longitude = copyLongitudes[r];
+            copyAddresses.RemoveAt(r);
+            copyLatitudes.RemoveAt(r);
+            copyLongitudes.RemoveAt(r);
 
             s_dalVolunteer.Create(new Volunteer
             {
@@ -120,37 +123,45 @@ public static class Initialization
         return startTime.AddDays(s_rand.Next(range));
     }
 
-
     private static void _createAssignment()
     {
+        List<Call> lc = s_dalCall!.ReadAll();
+
+        List<Volunteer> lv = s_dalVolunteer!.ReadAll();
+
+        int callId, volunteerId;
+
         for (int i = 0; i < 5; i++)
         {
-            int callId, volunteerId;
+            int index = s_rand.Next(0, lc.Count);
 
-            List<Call> lc = s_dalCall!.ReadAll();
-            List<Assignment> la = s_dalAssignment!.ReadAll();
-            List<Volunteer> lv = s_dalVolunteer!.ReadAll();
-
-            int index = s_rand.Next(0, la.Count);
             callId = lc[index].Id;
             lc.RemoveAt(index);
+
+            index = s_rand.Next(0, lv.Count);
+
+            volunteerId = lv[index].Id;
+            lv.RemoveAt(index);
+
+            /*
+            List<Assignment> la = s_dalAssignment!.ReadAll();
 
             do
             {
                 index = s_rand.Next(0, lv.Count);
                 volunteerId = lv[index].Id;
 
-            } while (la.Find(a => a.VolunteerId == volunteerId && a.EndReason == null) is not null);
+            } while (la.Any(a => a.VolunteerId == volunteerId && a.EndReason == null)); maybe we need to check if the volunteer is already assigned */
 
-            s_dalAssignment.Create(new Assignment
+            s_dalAssignment!.Create(new Assignment
             {
                 CallId = callId,
                 VolunteerId = volunteerId,
                 StartTime = _randomDate()
             });
-
         }
     }
+
     private static void _createCall()
     {
         for (int i = 0; i < 5; i++)
@@ -182,13 +193,13 @@ public static class Initialization
         s_dalAssignment.DeleteAll();
         s_dalCall.DeleteAll();
 
-        Console.WriteLine("Initializing Assignments list ...");
-        _createAssignment();
+        Console.WriteLine("Initializing Volunteers list ...");
+        _createVolunteer();
 
         Console.WriteLine("Initializing Calls list ...");
         _createCall();
 
-        Console.WriteLine("Initializing Volunteers list ...");
-        _createVolunteer();
+        Console.WriteLine("Initializing Assignments list ...");
+        _createAssignment();
     }
 }
