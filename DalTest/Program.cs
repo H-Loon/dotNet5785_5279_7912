@@ -3,7 +3,7 @@
 using Dal;
 using DalApi;
 using System.Diagnostics;
-
+using DO;
 internal class Program
 {
     private static IConfig? s_dalConfig = new ConfigImplementation();
@@ -112,6 +112,74 @@ internal class Program
         } while (choice != VolunteerMenu.Exit);
     }
 
+
+
+
+
+
+
+    private void CMenu()
+    {
+       CallMenu choice;
+        do
+        {
+          
+            DisplayEntityMenu("Call");
+            choice = (CallMenu)Console.Read();
+            switch (choice)
+            {
+                case CallMenu.AddCall:
+                    AddCall();
+                    break;
+                case CallMenu.DeleteVolunteer:
+                    DeleteVolunteer();
+                    break;
+                case CallMenu.DeleteCAll:
+                    DeleteAllVolunteers();
+                    break;
+                case CallMenu.ReadCall:
+                    ReadCall();
+                    break;
+                case CallMenu.ReadAllCall:
+                    ReadAllVolunteers();
+                    break;
+                case CallMenu.UpdateCall:
+                    UpdateCall();
+                    break;
+            }
+        } while (choice);
+    }
+
+    static private void AddCall()
+    {
+        Console.WriteLine(@"Enter the type of the Call:
+                            1:HomeBotIssue,
+                            2:TeleporterBlockedOnMachonLev,
+                            3:MyDishwasherIsInDepression,
+                            4:MyTimeTravelMachineIsLazy,
+                            5:Other");
+       
+        CallType callType = (CallType)int.Parse(Console.ReadLine()!);
+
+        Console.WriteLine("Enter the adress of the Call");
+        string callAdress = Console.ReadLine()!;
+
+        Console.WriteLine("Enter the lagitude");
+        double callLagitude = double.Parse(Console.ReadLine()!);
+
+        Console.WriteLine("Enter the longitude");
+        double callLongitude = double.Parse(Console.ReadLine()!);
+
+        Console.WriteLine("Enter the description");
+        string callDescription = Console.ReadLine()!;
+
+        /*Console.WriteLine("Enter the maximum time");
+        DateTime callMaxTime = (DateTime)string.Parse(Console.ReadLine());*/
+
+        Call caller = new Call(callType,callAdress,callLagitude,callLongitude,callDescription).s_dalCall.Create(Call);
+
+
+    }
 
 }
 
