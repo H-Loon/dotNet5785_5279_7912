@@ -1,6 +1,6 @@
 ﻿namespace DO;
 
-public enum Role
+public enum RoleType
 {
     Volunteer,
     Admin

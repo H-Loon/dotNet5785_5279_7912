@@ -10,7 +10,7 @@ public record Volunteer
     string? Address = null,
     double? Latitude = null,
     double? Longitude = null,
-    Role Role = Role.Volunteer,
+    RoleType Role = RoleType.Volunteer,
     bool IsActive = true,
     double? MaxDistance = null,
     DistanceType DistanceType = DistanceType.Area
