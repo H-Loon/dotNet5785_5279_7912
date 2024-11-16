@@ -12,19 +12,7 @@ namespace DalTest
         private static IVolunteer? s_dalVolunteer = new VolunteerImplementation();
 
 
-        static void Main(string[] args)
+    static void Main(string[] args)
         {
-            try
-            {
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+  
         }
-
-
-
-    }
-}
