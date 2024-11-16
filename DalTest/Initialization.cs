@@ -111,7 +111,7 @@ public static class Initialization
                 Longitude = longitude,
                 IsActive = s_rand.Next(0, 2) is 1,
                 MaxDistance = s_rand.Next(1, 100),
-                Role = (Role)s_rand.Next(0, 2)
+                Role = (RoleType)s_rand.Next(0, 2)
             });
         }
     }
