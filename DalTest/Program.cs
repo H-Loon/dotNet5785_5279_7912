@@ -172,46 +172,38 @@ internal class Program
         Volunteer volunteer = new Volunteer(id, name, phoneNumber, email, adresse, Role: role, IsActive: isActive, MaxDistance: maxDistance);
         s_dalVolunteer!.Create(volunteer);
     }
-
-
-
-
-
-
-
     private void CMenu()
     {
        CallMenu choice;
         do
         {
-          
             DisplayEntityMenu("Call");
-            choice = (CallMenu)Console.Read();
+            choice = (CallMenu)int.Parse(Console.ReadLine()!);
             switch (choice)
             {
                 case CallMenu.AddCall:
                     AddCall();
                     break;
-                case CallMenu.DeleteVolunteer:
-                    DeleteVolunteer();
-                    break;
-                case CallMenu.DeleteCAll:
-                    DeleteAllVolunteers();
-                    break;
-                case CallMenu.ReadCall:
-                    ReadCall();
-                    break;
-                case CallMenu.ReadAllCall:
-                    ReadAllVolunteers();
-                    break;
-                case CallMenu.UpdateCall:
-                    UpdateCall();
-                    break;
-            }
-        } while (choice);
-    }
+                    /*case CallMenu.DeleteVolunteer:
+                        DeleteVolunteer();
+                        break;
+                    case CallMenu.DeleteCAll:
+                        DeleteAllVolunteers();
+                        break;
+                    case CallMenu.ReadCall:
+                        ReadCall();
+                        break;
+                    case CallMenu.ReadAllCall:
+                        ReadAllVolunteers();
+                        break;
+                    case CallMenu.UpdateCall:
+                        UpdateCall();
+                        break;*/
+                }
+            } while (choice != CallMenu.Exit) ;
+        }
 
-    static private void AddCall()
+    private static void AddCall()
     {
         Console.WriteLine(@"Enter the type of the Call:
                             1:HomeBotIssue,
@@ -225,19 +217,20 @@ internal class Program
         Console.WriteLine("Enter the adress of the Call");
         string callAdress = Console.ReadLine()!;
 
-        Console.WriteLine("Enter the lagitude");
+        /*Console.WriteLine("Enter the lagitude");
         double callLagitude = double.Parse(Console.ReadLine()!);
 
         Console.WriteLine("Enter the longitude");
-        double callLongitude = double.Parse(Console.ReadLine()!);
+        double callLongitude = double.Parse(Console.ReadLine()!);*/
 
         Console.WriteLine("Enter the description");
         string callDescription = Console.ReadLine()!;
 
-        /*Console.WriteLine("Enter the maximum time");
-        DateTime callMaxTime = (DateTime)string.Parse(Console.ReadLine());*/
+            /*Console.WriteLine("Enter the maximum time");
+            DateTime callMaxTime = (DateTime)string.Parse(Console.ReadLine());*/
 
-        Call caller = new Call(callType,callAdress,callLagitude,callLongitude,callDescription).s_dalCall.Create(Call);
+            Call caller = new Call(callType, callAdress, callDescription);
+            s_dalCall!.Create(Call);
 
 
     }
