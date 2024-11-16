@@ -2,11 +2,6 @@
 using DO;
 public interface IVolunteer
 {
-    /// <summary>
-    /// blalba
-    /// </summary>
-    /// <param name="item"></param>
-    /// <exception cref="Exception">bla</exception>
     void Create(Volunteer item); //Creates new entity object in DAL
     Volunteer? Read(int id); //Reads entity object by its ID 
     List<Volunteer> ReadAll(); //stage 1 only, Reads all entity objects
