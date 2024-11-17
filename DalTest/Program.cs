@@ -3,8 +3,7 @@
 using Dal;
 using DalApi;
 using DO;
-using System.Diagnostics;
-using DO;
+
 internal class Program
 {
     private static IConfig? s_dalConfig = new ConfigImplementation();
@@ -70,6 +69,7 @@ internal class Program
         Console.WriteLine(" 1. Volunteer Menu");
         Console.WriteLine(" 2. Call Menu");
         Console.WriteLine(" 3. Assignment Menu");
+        Console.WriteLine(" 4. Initialize");
         Console.WriteLine(" 0. Exit\n");
     }
 
@@ -97,18 +97,193 @@ internal class Program
                 case Menu.VolunteerMenu:
                     VMenu();
                     break;
-                //case Menu.CallMenu:
-                //    CMenu();
-                //    break;
-                //case Menu.AssignmentMenu:
-                //    AMenu();
-                //    break;
+                case Menu.CallMenu:
+                    CMenu();
+                    break;
+                case Menu.AssignmentMenu:
+                    AMenu();
+                    break;
+                case Menu.Initialize:
+                    Initialization.Do(s_dalAssignment,s_dalCall,s_dalVolunteer,s_dalConfig);
+                    break;
             }
         } while (choice != Menu.Exit);
     }
-    private static void VMenu()
+
+    private static void AMenu()
     {
-        
+        AssignmentMenu choice;
+        do
+        {
+            DisplayEntityMenu("Volunteer");
+            choice = (AssignmentMenu)int.Parse(Console.ReadLine()!);
+            switch (choice)
+            {
+                case AssignmentMenu.AddAssignment:
+                    AddAssignment();
+                    break;
+                case AssignmentMenu.DeleteAssignment:
+                    DeleteAssignment();
+                    break;
+                case AssignmentMenu.DeleteAllAssignments:
+                    DeleteAllAssignments();
+                    break;
+                case AssignmentMenu.ReadAssignment:
+                    ReadAssignment();
+                    break;
+                case AssignmentMenu.ReadAllAssignments:
+                    ReadAllAssignments();
+                    break;
+                case AssignmentMenu.UpdateAssignment:
+                    UpdateAssignment();
+                    break;
+            }
+        } while (choice != AssignmentMenu.Exit);
+    }
+
+    private static void AddAssignment()
+    {
+        s_dalAssignment!.Create(AssignmentFields("Add"));
+    }
+
+    private static void DeleteAssignment()
+    {
+        try
+        {
+            Console.Write("Enter the assignment ID you want to delete or 0 to exit: ");
+            int id = int.Parse(Console.ReadLine()!);
+
+            if (id == 0)
+                return;
+
+            Console.Write($"Are you sur you want to delete the assignment ID={id}? (y/n): ");
+            if (Console.ReadLine() == "n")
+                return;
+
+            s_dalAssignment!.Delete(int.Parse(Console.ReadLine()!));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private static void DeleteAllAssignments()
+    {
+        Console.Write("Are you sur you want to delete All the assignment's ? (y/n): ");
+        if (Console.ReadLine() == "n")
+            return;
+        s_dalAssignment!.DeleteAll();
+    }
+
+    private static void ReadAssignment()
+    {
+        Console.Write("Enter the assignment ID you want to read or 0 to exit: ");
+        int id = int.Parse(Console.ReadLine()!);
+        if (id == 0)
+            return;
+        Console.WriteLine(s_dalAssignment!.Read(id));
+    }
+
+    private static void ReadAllAssignments()
+    {
+        Console.WriteLine(s_dalAssignment!.ReadAll());
+    }
+
+    private static void UpdateAssignment()
+    {
+        int id;
+        Console.Write("Enter the assignment ID you want to update or 0 to exit: ");
+        id = int.Parse(Console.ReadLine()!);
+
+        if (id == 0)
+            return;
+
+        try
+        {
+            s_dalAssignment!.Update(AssignmentFields("Update", id));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private static Assignment AssignmentFields(string mod, int id = -1)
+    {
+        int callId, volunteerId;
+        DateTime? endDate;
+        AssignmentEndReason? endReason;
+
+        if (mod == "Update") // Update
+        {
+            Assignment assignment = s_dalAssignment!.Read(id)!;
+            callId = assignment.CallId;
+            volunteerId = assignment.VolunteerId;
+            endDate = assignment.EndDate;
+            endReason = assignment.EndReason;
+
+            Console.Write("Do you want to change the call's ID of the assignment? (y/n): ");
+            if (Console.ReadLine() == "y")
+            {
+                Console.Write("Enter New call's ID: ");
+                callId = int.Parse(Console.ReadLine()!);
+            }
+
+            Console.Write("Do you want to change the volunteer's ID of the assignment? (y/n): ");
+            if (Console.ReadLine() == "y")
+            {
+                Console.Write("Enter New volunteer's ID: ");
+                volunteerId = int.Parse(Console.ReadLine()!);
+            }
+
+            Console.Write("Do you want to change the status of the assignment? (y/n): ");
+            if (Console.ReadLine() == "y")
+            {
+                Console.WriteLine("Enter the reason for ending the assignment:\n 1. Completed\n 2. Canceled by me\n 3. Canceled by admin\n 4. Over dated");
+                endReason = (AssignmentEndReason)int.Parse(Console.ReadLine()!);
+            }
+
+            Console.Write("Do you want to change the end date of the assignment? (y/n): ");
+            if (Console.ReadLine() == "y")
+            {
+                Console.WriteLine("Enter the New end date (DD/MM/YYYY): ");
+                endDate = DateTime.Parse(Console.ReadLine()!);
+            }
+
+            return new Assignment
+            {
+                Id = assignment.Id,
+                CallId = callId,
+                VolunteerId = volunteerId,
+                StartDate = assignment.StartDate,
+                EndDate = endDate,
+                EndReason = endReason
+            };
+        }
+        else // Add
+        {
+            Console.Write("Enter call's ID: ");
+            callId = int.Parse(Console.ReadLine()!);
+
+            Console.Write("Enter volunteer's ID: ");
+            volunteerId = int.Parse(Console.ReadLine()!);
+
+            Console.WriteLine("Enter the end date (DD/MM/YYYY): ");
+            endDate = DateTime.Parse(Console.ReadLine()!);
+
+            return new Assignment
+            {
+                CallId = callId,
+                VolunteerId = volunteerId,
+                StartDate = DateTime.Now,
+                EndDate = endDate
+            };
+        }
+    }
+
+    private static void VMenu()
+    {   
         VolunteerMenu choice;
         do
         {
@@ -119,58 +294,137 @@ internal class Program
                 case VolunteerMenu.AddVolunteer:
                     AddVolunteer();
                     break;
-                //case VolunteerMenu.DeleteVolunteer:
-                //    DeleteVolunteer();
-                //    break;
-                //case VolunteerMenu.DeleteAllVolunteers:
-                //    DeleteAllVolunteers();
-                //    break;
-                //case VolunteerMenu.ReadVolunteer:
-                //    ReadVolunteer();
-                //    break;
-                //case VolunteerMenu.ReadAllVolunteers:
-                //    ReadAllVolunteers();
-                //    break;
-                //case VolunteerMenu.UpdateVolunteer:
-                //    UpdateVolunteer();
-                //    break;
+                case VolunteerMenu.DeleteVolunteer:
+                    DeleteVolunteer();
+                    break;
+                case VolunteerMenu.DeleteAllVolunteers:
+                    DeleteAllVolunteers();
+                    break;
+                case VolunteerMenu.ReadVolunteer:
+                    ReadVolunteer();
+                    break;
+                case VolunteerMenu.ReadAllVolunteers:
+                    ReadAllVolunteers();
+                    break;
+                case VolunteerMenu.UpdateVolunteer:
+                    UpdateVolunteer();
+                    break;
             }
         } while (choice != VolunteerMenu.Exit);
     }
 
-    private static void AddVolunteer() {
-        int id;
+    private static void AddVolunteer()
+    {
+        try
+        {
+            s_dalVolunteer!.Create(VolunteerFields("Add"));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private static void DeleteVolunteer()
+    {
+        // AI for the condition in if statement
+        Console.Write("Enter volunteer's ID to delete: ");
+        if (int.TryParse(Console.ReadLine(), out int id))
+        {
+            try
+            {
+                Console.Write($"Are you sur you want to delete the volunteer ID={id}? (y/n): ");
+                if (Console.ReadLine() == "n")
+                    return;
+                s_dalVolunteer!.Delete(id);
+                Console.WriteLine("Volunteer deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid ID. Please enter a valid number.");
+        }
+    }
+
+    private static void DeleteAllVolunteers()
+    {
+        Console.Write("Are you sur you want to delete all the volunteers? (y/n): ");
+        if (Console.ReadLine() == "n")
+            return;
+        s_dalVolunteer!.DeleteAll();
+        Console.WriteLine("All volunteers deleted successfully.");
+    }
+
+    private static void ReadVolunteer()
+    {
+        Console.Write("Enter the volunteer ID you want to read or 0 to exit: ");
+        int id = int.Parse(Console.ReadLine()!);
+        if (id == 0)
+            return;
+        Console.WriteLine(s_dalVolunteer!.Read(id));
+    }
+
+    private static void ReadAllVolunteers()
+    {
+        Console.WriteLine(s_dalVolunteer!.ReadAll());
+    }
+
+    private static void UpdateVolunteer()
+    {
+        Console.Write("Enter the volunteer ID you want to update or 0 to exit: ");
+        int id = int.Parse(Console.ReadLine()!);
+        if (id == 0)
+            return;
+        try
+        {
+            Console.WriteLine("Enter the new values for the volunteer:");
+            s_dalVolunteer!.Update(VolunteerFields("Update", id));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private static Volunteer VolunteerFields(string mod, int id = -1)
+    {
         string name, phoneNumber, email, adresse;
         RoleType role;
         bool isActive;
         double? maxDistance;
 
-        Console.WriteLine("Enter volunteer's ID: ");
-        id = int.Parse(Console.ReadLine()!);
+        if(mod == "Add")
+        {
+            Console.Write("Enter volunteer's ID: ");
+            id = int.Parse(Console.ReadLine()!);
+        }
 
-        Console.WriteLine("Enter volunteer's name: ");
+        Console.Write("Enter volunteer's name: ");
         name = Console.ReadLine()!;
 
-        Console.WriteLine("Enter volunteer's phone number: ");
+        Console.Write("Enter volunteer's phone number: ");
         phoneNumber = Console.ReadLine()!;
 
-        Console.WriteLine("Enter volunteer's email: ");
+        Console.Write("Enter volunteer's email: ");
         email = Console.ReadLine()!;
 
-        Console.WriteLine("Enter volunteer's adresse: ");
+        Console.Write("Enter volunteer's adresse: ");
         adresse = Console.ReadLine()!;
 
         Console.WriteLine("Enter volunteer's role:\n 1. Volunteer\n 2. Admin");
         role = (RoleType)int.Parse(Console.ReadLine()!);
 
-        Console.WriteLine("Is the volunteer active? y/n: ");
+        Console.Write("Is the volunteer active? y/n: ");
         isActive = (bool)(Console.ReadLine() == "n" ? false : true);
 
-        Console.WriteLine("Enter volunteer's max range: ");
+        Console.Write("Enter volunteer's max range: ");
         maxDistance = double.Parse(Console.ReadLine()!);
 
-        Volunteer volunteer = new Volunteer(id, name, phoneNumber, email, adresse, Role: role, IsActive: isActive, MaxDistance: maxDistance);
-        s_dalVolunteer!.Create(volunteer);
+        return new Volunteer(id, name, phoneNumber, email, adresse, Role: role, IsActive: isActive, MaxDistance: maxDistance);
     }
     private void CMenu()
     {

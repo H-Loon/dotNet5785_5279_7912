@@ -157,7 +157,7 @@ public static class Initialization
             {
                 CallId = callId,
                 VolunteerId = volunteerId,
-                StartTime = _randomDate()
+                StartDate = _randomDate()
             });
         }
     }
