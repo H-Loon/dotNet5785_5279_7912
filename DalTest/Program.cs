@@ -426,20 +426,20 @@ internal class Program
 
         return new Volunteer(id, name, phoneNumber, email, adresse, Role: role, IsActive: isActive, MaxDistance: maxDistance);
     }
-    private void CMenu()
+    private static void CMenu()
     {
        CallMenu choice;
-        try 
-        { 
-        do
+        try
         {
-            DisplayEntityMenu("Call");
-            choice = (CallMenu)int.Parse(Console.ReadLine()!);
-            switch (choice)
+            do
             {
-                case CallMenu.AddCall:
-                    AddCall();
-                    break;
+                DisplayEntityMenu("Call");
+                choice = (CallMenu)int.Parse(Console.ReadLine()!);
+                switch (choice)
+                {
+                    case CallMenu.AddCall:
+                        AddCall();
+                        break;
                     case CallMenu.DeleteCall:
                         DeleteCall();
                         break;
@@ -456,11 +456,13 @@ internal class Program
                         UpdateCall();
                         break;
                 }
-            } while (choice != CallMenu.Exit) ;
+            } while (choice != CallMenu.Exit);
         }
-        catch (Exception ex) {
-            Console.WriteLine(blabla);
-        
+        catch (Exception ex) 
+        {
+            Console.WriteLine(ex);
+        }
+    }
 
     private static void AddCall()
     {
@@ -470,8 +472,10 @@ internal class Program
         Console.WriteLine("3. My Dishwasher Is In Depression,");
         Console.WriteLine("4. My Time Travel Machine Is Lazy,");
         Console.WriteLine("5. Other");
-       
-        CallType callType = (CallType)int.Parse(Console.ReadLine()!);
+
+        s_dalAssignment!.Create(AssignmentFields("Add"));
+
+        /*CallType callType = (CallType)int.Parse(Console.ReadLine()!);
 
         Console.WriteLine("Enter the adress of the Call");
         string callAdress = Console.ReadLine()!;
@@ -480,17 +484,17 @@ internal class Program
         double callLagitude = double.Parse(Console.ReadLine()!);
 
         Console.WriteLine("Enter the longitude");
-        double callLongitude = double.Parse(Console.ReadLine()!);*/
+        double callLongitude = double.Parse(Console.ReadLine()!);
 
         Console.WriteLine("Enter the description");
         string callDescription = Console.ReadLine()!;
 
         Console.WriteLine("Enter the end date");
-        DateTime? callMaxTime = DateTime.Parse(Console.ReadLine());
+        DateTime? callMaxTime = DateTime.Parse(Console.ReadLine()!);
 
         Call caller = new Call(0,callType, callAdress,0,0,DateTime.Now,callDescription,callMaxTime);
         s_dalCall!.Create(caller);
-        
+        */
     }
     private static void DeleteCall()
     {
@@ -514,11 +518,112 @@ internal class Program
     }
     private static void UpdateCall()
     {
-        Console.WriteLine("Enter the Id to update");
-        int id = int.Parse(Console.ReadLine()!);
-        Update(s_dalCall);
+        int id;
+        Console.Write("Enter the assignment ID you want to update or 0 to exit: ");
+        id = int.Parse(Console.ReadLine()!);
+
+        if (id == 0)
+            return;
+
+        try
+        {
+            s_dalAssignment!.Update(CallFields("Update", id));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
+private static Call CallFields(string mod, int id = -1)
+{
+    CallType callType;
+    string callAddress;
+    double callLatitude, callLongitude;
+    string? callDescription;
+    DateTime? callMaxTime;
 
+    if (mod == "Update") // Update
+    {
+        Call call = s_dalCall!.Read(id)!;
+        callType = call.Type;
+        callAddress = call.Address;
+        callLatitude = call.Latitude;
+        callLongitude = call.Longitude;
+        callDescription = call.Description; 
+        callMaxTime = call.MaxTime;
+
+
+        Console.Write("Do you want to change the type of the call? (y/n): ");
+        if (Console.ReadLine() == "y")
+        {
+            callType = (CallType)int.Parse(Console.ReadLine()!);
+        }
+        Console.Write("Do you want to change the adress of the call? (y/n): ");
+        if (Console.ReadLine() == "y")
+        {
+            Console.Write("Enter New call's Iadress: ");
+            callAddress = Console.ReadLine()!;
+        }
+        Console.Write("Do you want to change the call's latitude ? (y/n): ");
+        if (Console.ReadLine() == "y")
+        {
+            Console.Write("Enter New call's latitude: ");
+            callLatitude = int.Parse(Console.ReadLine()!);
+        }
+        Console.Write("Do you want to change the call's longitude ? (y/n): ");
+        if (Console.ReadLine() == "y")
+        {
+            Console.Write("Enter New call's longitude: ");
+            callLongitude = int.Parse(Console.ReadLine()!);
+        }
+        Console.Write("Do you want to change the end date of the assignment? (y/n): ");
+        if (Console.ReadLine() == "y")
+        {
+            Console.WriteLine("Enter the New end date (DD/MM/YYYY): ");
+            callMaxTime = DateTime.Parse(Console.ReadLine()!);
+        }
+        return new Call
+        {
+            Id = call.Id,
+            Type = callType,
+            Address = callAddress,
+            Latitude = call.Latitude,
+            Longitude = call.Longitude,
+            StartTime = call.StartTime,
+            MaxTime = callMaxTime,
+        };
+
+    }
+    else // Add
+    {
+        Console.WriteLine("Enter the type of the Call:");
+        Console.WriteLine("1. Home Bot Issue,");
+        Console.WriteLine("2. Teleporter Blocked On MachonLev,");
+        Console.WriteLine("3. My Dishwasher Is In Depression,");
+        Console.WriteLine("4. My Time Travel Machine Is Lazy,");
+        Console.WriteLine("5. Other");
+        CallType callType = (CallType)int.Parse(Console.ReadLine()!);
+
+        Console.WriteLine("Enter the adress of the Call");
+        string callAdress = Console.ReadLine()!;
+
+        Console.WriteLine("Enter the description");
+        string callDescription = Console.ReadLine()!;
+
+        Console.WriteLine("Enter the end date");
+        DateTime? callMaxTime = DateTime.Parse(Console.ReadLine()!);
+
+        Call caller = new Call(0, callType, callAdress, 0, 0, DateTime.Now, callDescription, callMaxTime);
+        s_dalCall!.Create(caller);
+        return caller;
+        /*return new Call
+        {
+            Type = callType,
+            Address = callAdress,
+            Description = callDescription,
+            MaxTime = callMaxTime,
+        };*/
+    }
 }
-
+    }
