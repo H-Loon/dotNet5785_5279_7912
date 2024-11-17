@@ -4,6 +4,7 @@ using Dal;
 using DalApi;
 using DO;
 using System.Diagnostics;
+using System.Transactions;
 
 internal class Program
 {
@@ -107,8 +108,7 @@ internal class Program
         } while (choice != Menu.Exit);
     }
     private static void VMenu()
-    {
-        
+    {   
         VolunteerMenu choice;
         do
         {
@@ -119,60 +119,137 @@ internal class Program
                 case VolunteerMenu.AddVolunteer:
                     AddVolunteer();
                     break;
-                //case VolunteerMenu.DeleteVolunteer:
-                //    DeleteVolunteer();
-                //    break;
-                //case VolunteerMenu.DeleteAllVolunteers:
-                //    DeleteAllVolunteers();
-                //    break;
-                //case VolunteerMenu.ReadVolunteer:
-                //    ReadVolunteer();
-                //    break;
-                //case VolunteerMenu.ReadAllVolunteers:
-                //    ReadAllVolunteers();
-                //    break;
-                //case VolunteerMenu.UpdateVolunteer:
-                //    UpdateVolunteer();
-                //    break;
+                case VolunteerMenu.DeleteVolunteer:
+                    DeleteVolunteer();
+                    break;
+                case VolunteerMenu.DeleteAllVolunteers:
+                    DeleteAllVolunteers();
+                    break;
+                case VolunteerMenu.ReadVolunteer:
+                    ReadVolunteer();
+                    break;
+                case VolunteerMenu.ReadAllVolunteers:
+                    ReadAllVolunteers();
+                    break;
+                case VolunteerMenu.UpdateVolunteer:
+                    UpdateVolunteer();
+                    break;
             }
         } while (choice != VolunteerMenu.Exit);
     }
 
-    private static void AddVolunteer() {
-        int id;
+    private static void AddVolunteer()
+    {
+        try
+        {
+            s_dalVolunteer!.Create(VolunteerField("Add"));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private static void DeleteVolunteer()
+    {
+        // AI for the condition in if statement
+        Console.Write("Enter volunteer's ID to delete: ");
+        if (int.TryParse(Console.ReadLine(), out int id))
+        {
+            try
+            {
+                Console.Write($"Are you sur you want to delete the volunteer ID={id}? (y/n): ");
+                if (Console.ReadLine() == "n")
+                    return;
+                s_dalVolunteer!.Delete(id);
+                Console.WriteLine("Volunteer deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid ID. Please enter a valid number.");
+        }
+    }
+
+    private static void DeleteAllVolunteers()
+    {
+        Console.Write("Are you sur you want to delete all the volunteers? (y/n): ");
+        if (Console.ReadLine() == "n")
+            return;
+        s_dalVolunteer!.DeleteAll();
+        Console.WriteLine("All volunteers deleted successfully.");
+    }
+
+    private static void ReadVolunteer()
+    {
+        Console.Write("Enter the volunteer ID you want to read or 0 to exit: ");
+        int id = int.Parse(Console.ReadLine()!);
+        if (id == 0)
+            return;
+        Console.WriteLine(s_dalVolunteer!.Read(id));
+    }
+
+    private static void ReadAllVolunteers()
+    {
+        Console.WriteLine(s_dalVolunteer!.ReadAll());
+    }
+
+    private static void UpdateVolunteer()
+    {
+        Console.Write("Enter the volunteer ID you want to update or 0 to exit: ");
+        int id = int.Parse(Console.ReadLine()!);
+        if (id == 0)
+            return;
+        try
+        {
+            Console.WriteLine("Enter the new values for the volunteer:");
+            s_dalVolunteer!.Update(VolunteerField("Update", id));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private static Volunteer VolunteerField(string mod, int id = -1)
+    {
         string name, phoneNumber, email, adresse;
         RoleType role;
         bool isActive;
         double? maxDistance;
 
-        Console.WriteLine("Enter volunteer's ID: ");
-        id = int.Parse(Console.ReadLine()!);
+        if(mod == "Add")
+        {
+            Console.Write("Enter volunteer's ID: ");
+            id = int.Parse(Console.ReadLine()!);
+        }
 
-        Console.WriteLine("Enter volunteer's name: ");
+        Console.Write("Enter volunteer's name: ");
         name = Console.ReadLine()!;
 
-        Console.WriteLine("Enter volunteer's phone number: ");
+        Console.Write("Enter volunteer's phone number: ");
         phoneNumber = Console.ReadLine()!;
 
-        Console.WriteLine("Enter volunteer's email: ");
+        Console.Write("Enter volunteer's email: ");
         email = Console.ReadLine()!;
 
-        Console.WriteLine("Enter volunteer's adresse: ");
+        Console.Write("Enter volunteer's adresse: ");
         adresse = Console.ReadLine()!;
 
         Console.WriteLine("Enter volunteer's role:\n 1. Volunteer\n 2. Admin");
         role = (RoleType)int.Parse(Console.ReadLine()!);
 
-        Console.WriteLine("Is the volunteer active? y/n: ");
+        Console.Write("Is the volunteer active? y/n: ");
         isActive = (bool)(Console.ReadLine() == "n" ? false : true);
 
-        Console.WriteLine("Enter volunteer's max range: ");
+        Console.Write("Enter volunteer's max range: ");
         maxDistance = double.Parse(Console.ReadLine()!);
 
-        Volunteer volunteer = new Volunteer(id, name, phoneNumber, email, adresse, Role: role, IsActive: isActive, MaxDistance: maxDistance);
-        s_dalVolunteer!.Create(volunteer);
+        return new Volunteer(id, name, phoneNumber, email, adresse, Role: role, IsActive: isActive, MaxDistance: maxDistance);
     }
-
-
 }
 
