@@ -175,6 +175,8 @@ internal class Program
     private void CMenu()
     {
        CallMenu choice;
+        try 
+        { 
         do
         {
             DisplayEntityMenu("Call");
@@ -184,33 +186,36 @@ internal class Program
                 case CallMenu.AddCall:
                     AddCall();
                     break;
-                    /*case CallMenu.DeleteVolunteer:
-                        DeleteVolunteer();
+                    case CallMenu.DeleteCall:
+                        DeleteCall();
                         break;
-                    case CallMenu.DeleteCAll:
-                        DeleteAllVolunteers();
+                    case CallMenu.DeleteAllCalls:
+                        DeleteAllCall();
                         break;
                     case CallMenu.ReadCall:
                         ReadCall();
                         break;
-                    case CallMenu.ReadAllCall:
-                        ReadAllVolunteers();
+                    case CallMenu.ReadAllCalls:
+                        ReadAllCall();
                         break;
                     case CallMenu.UpdateCall:
                         UpdateCall();
-                        break;*/
+                        break;
                 }
             } while (choice != CallMenu.Exit) ;
         }
+        catch (Exception ex) {
+            Console.WriteLine(blabla);
+        
 
     private static void AddCall()
     {
-        Console.WriteLine(@"Enter the type of the Call:
-                            1:HomeBotIssue,
-                            2:TeleporterBlockedOnMachonLev,
-                            3:MyDishwasherIsInDepression,
-                            4:MyTimeTravelMachineIsLazy,
-                            5:Other");
+        Console.WriteLine("Enter the type of the Call:");
+        Console.WriteLine("1. Home Bot Issue,");
+        Console.WriteLine("2. Teleporter Blocked On MachonLev,");
+        Console.WriteLine("3. My Dishwasher Is In Depression,");
+        Console.WriteLine("4. My Time Travel Machine Is Lazy,");
+        Console.WriteLine("5. Other");
        
         CallType callType = (CallType)int.Parse(Console.ReadLine()!);
 
@@ -226,14 +231,40 @@ internal class Program
         Console.WriteLine("Enter the description");
         string callDescription = Console.ReadLine()!;
 
-            /*Console.WriteLine("Enter the maximum time");
-            DateTime callMaxTime = (DateTime)string.Parse(Console.ReadLine());*/
+        Console.WriteLine("Enter the end date");
+        DateTime? callMaxTime = DateTime.Parse(Console.ReadLine());
 
-            Call caller = new Call(callType, callAdress, callDescription);
-            s_dalCall!.Create(Call);
-
-
+        Call caller = new Call(0,callType, callAdress,0,0,DateTime.Now,callDescription,callMaxTime);
+        s_dalCall!.Create(caller);
+        
     }
+    private static void DeleteCall()
+    {
+        Console.WriteLine("Enter the Id of the Call to delete ");
+        int id = int.Parse(Console.ReadLine()!) ;
+        s_dalCall!.Delete(id);
+    }
+    private static void DeleteAllCall()
+    {
+        s_dalCall!.DeleteAll();
+    }
+    private static void ReadCall()
+    {
+        Console.WriteLine("Enter the id of the Call");
+        int id = int.Parse(Console.ReadLine()!);
+        Console.WriteLine(s_dalCall!.Read(id));
+    }
+    private static void ReadAllCall()
+    {
+        Console.WriteLine(s_dalCall!.ReadAll());
+    }
+    private static void UpdateCall()
+    {
+        Console.WriteLine("Enter the Id to update");
+        int id = int.Parse(Console.ReadLine()!);
+        Update(s_dalCall);
+    }
+
 
 }
 
