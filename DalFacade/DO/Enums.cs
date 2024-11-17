@@ -24,8 +24,8 @@ public enum CallType
 
 public enum AssignmentEndReason
 {
-    Done,
-    CanceledByV,
-    CanceledByA,
+    Completed,
+    CanceledByVolunteer,
+    CanceledByAdmin,
     OverDated
 }
