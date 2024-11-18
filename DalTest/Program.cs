@@ -603,16 +603,16 @@ private static Call CallFields(string mod, int id = -1)
         Console.WriteLine("3. My Dishwasher Is In Depression,");
         Console.WriteLine("4. My Time Travel Machine Is Lazy,");
         Console.WriteLine("5. Other");
-        CallType callType = (CallType)int.Parse(Console.ReadLine()!);
+        callType = (CallType)int.Parse(Console.ReadLine()!);
 
         Console.WriteLine("Enter the adress of the Call");
         string callAdress = Console.ReadLine()!;
 
         Console.WriteLine("Enter the description");
-        string callDescription = Console.ReadLine()!;
+        callDescription = Console.ReadLine()!;
 
         Console.WriteLine("Enter the end date");
-        DateTime? callMaxTime = DateTime.Parse(Console.ReadLine()!);
+        callMaxTime = DateTime.Parse(Console.ReadLine()!);
 
         Call caller = new Call(0, callType, callAdress, 0, 0, DateTime.Now, callDescription, callMaxTime);
         s_dalCall!.Create(caller);
