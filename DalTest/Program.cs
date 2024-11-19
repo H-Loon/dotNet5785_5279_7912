@@ -527,7 +527,7 @@ internal class Program
 
         try
         {
-            s_dalAssignment!.Update(CallFields("Update", id));
+            s_dalCall!.Update(CallFields("Update", id));
         }
         catch (Exception ex)
         {
