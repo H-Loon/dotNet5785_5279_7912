@@ -4,10 +4,12 @@ using DO;
 
 public static class Initialization
 {
-    private static IAssignment? s_dalAssignment;
-    private static ICall? s_dalCall;
-    private static IVolunteer? s_dalVolunteer;
-    private static IConfig? s_dalConfig;
+    //private static IAssignment? s_dalAssignment;
+    //private static ICall? s_dalCall;
+    //private static IVolunteer? s_dalVolunteer;
+    //private static IConfig? s_dalConfig;
+
+    private static IDal? s_dal;
 
     private static readonly Random s_rand = new();
 
@@ -86,7 +88,7 @@ public static class Initialization
             do
             {
                 id = s_rand.Next(200000000, 400000000);
-            } while (s_dalVolunteer!.Read(id) != null);
+            } while (s_dal!.Volunteer.Read(id) != null);
 
 
             phone = s_phoneNumbers[s_rand.Next(0, s_phoneNumbers.Count)];
@@ -100,7 +102,7 @@ public static class Initialization
             copyLatitudes.RemoveAt(r);
             copyLongitudes.RemoveAt(r);
 
-            s_dalVolunteer.Create(new Volunteer
+            s_dal!.Volunteer.Create(new Volunteer
             {
                 Id = id,
                 Name = s_names[i],
@@ -118,16 +120,16 @@ public static class Initialization
 
     private static DateTime _randomDate()
     {
-        DateTime startTime = new DateTime(s_dalConfig!.Clock.Year - s_rand.Next(-5, 0), 12, 24);
-        int range = (s_dalConfig!.Clock - startTime).Days;
+        DateTime startTime = new DateTime(s_dal!.Config.Clock.Year - s_rand.Next(-5, 0), 12, 24);
+        int range = (s_dal!.Config.Clock - startTime).Days;
         return startTime.AddDays(s_rand.Next(range));
     }
 
     private static void _createAssignment()
     {
-        List<Call> lc = s_dalCall!.ReadAll();
+        List<Call> lc = s_dal!.Call.ReadAll();
 
-        List<Volunteer> lv = s_dalVolunteer!.ReadAll();
+        List<Volunteer> lv = s_dal!.Volunteer.ReadAll();
 
         int callId, volunteerId;
 
@@ -153,7 +155,7 @@ public static class Initialization
 
             } while (la.Any(a => a.VolunteerId == volunteerId && a.EndReason == null)); maybe we need to check if the volunteer is already assigned */
 
-            s_dalAssignment!.Create(new Assignment
+            s_dal!.Assignment.Create(new Assignment
             {
                 CallId = callId,
                 VolunteerId = volunteerId,
@@ -167,7 +169,7 @@ public static class Initialization
         for (int i = 0; i < 5; i++)
         {
             int index = s_rand.Next(0, s_addresses.Count);
-            s_dalCall!.Create(new Call
+            s_dal!.Call.Create(new Call
             {
                 Type = (CallType)s_rand.Next(0, 5),
                 Address = s_addresses[index],
@@ -175,23 +177,27 @@ public static class Initialization
                 Longitude = s_longitudes[index],
                 StartTime = _randomDate(),
                 Description = s_callDescriptions[s_rand.Next(0, s_callDescriptions.Length)],
-                MaxTime = s_dalConfig!.Clock.AddDays(s_rand.Next(364))
+                MaxTime = s_dal!.Config.Clock.AddDays(s_rand.Next(364))
             });
         }
     }
 
-    public static void Do(IAssignment? dalAssignment, ICall? dalCall, IVolunteer? dalVolunteer, IConfig? dalConfig)
+    public static void Do( IDal dal /*IAssignment? dalAssignment, ICall? dalCall, IVolunteer? dalVolunteer, IConfig? dalConfig*/)
     {
-        s_dalAssignment = dalAssignment ?? throw new NullReferenceException("DAL object can not be null!");
-        s_dalCall = dalCall ?? throw new NullReferenceException("DAL object can not be null!");
-        s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("DAL object can not be null!");
-        s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL object can not be null!");
+        //s_dalAssignment = dalAssignment ?? throw new NullReferenceException("DAL object can not be null!");
+        //s_dalCall = dalCall ?? throw new NullReferenceException("DAL object can not be null!");
+        //s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("DAL object can not be null!");
+        //s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL object can not be null!");
+
+        s_dal= dal ?? throw new NullReferenceException("DAL object can  be null!");
 
         Console.WriteLine("Reset Configuration values and List values...");
-        s_dalConfig.Reset();
-        s_dalVolunteer.DeleteAll();
-        s_dalAssignment.DeleteAll();
-        s_dalCall.DeleteAll();
+        //s_dalConfig.Reset();
+        //s_dalVolunteer.DeleteAll();
+        //s_dalAssignment.DeleteAll();
+        //s_dalCall.DeleteAll();
+
+        s_dal.ResetDB();
 
         Console.WriteLine("Initializing Volunteers list ...");
         _createVolunteer();

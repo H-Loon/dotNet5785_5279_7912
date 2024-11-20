@@ -3,7 +3,7 @@ using DalApi;
 using DO;
 using System.Collections.Generic;
 
-public class VolunteerImplementation : IVolunteer
+internal class VolunteerImplementation : IVolunteer
 {
   
     public void Create(Volunteer item)
@@ -29,15 +29,22 @@ public class VolunteerImplementation : IVolunteer
 
     public Volunteer? Read(int id)
     {
-        return DataSource.Volunteers.Find(v => v.Id == id);
+        return DataSource.Volunteers.FirstOrDefault(v => v.Id == id);
     }
 
-    public List<Volunteer> ReadAll()
+    //public List<Volunteer> ReadAll()
+    //{
+    //    return new List<Volunteer>(DataSource.Volunteers);
+    //}
+
+    public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
     {
-        return new List<Volunteer>(DataSource.Volunteers);
+        return filter == null ? DataSource.Volunteers : DataSource.Volunteers.Where(filter);
     }
 
-    public void Update(Volunteer item)
+
+
+        public void Update(Volunteer item)
     {
         if (Read(item.Id) is Volunteer volunteer)
         {
@@ -46,5 +53,10 @@ public class VolunteerImplementation : IVolunteer
         }
         else
             throw new Exception($"Volunteer with Id={item.Id} does not exist");
+    }
+
+    public Volunteer? Read (Func<Volunteer,bool>filter)
+    {
+        return DataSource.Volunteers.FirstOrDefault(filter);
     }
 }
