@@ -1,21 +1,24 @@
 ﻿namespace Dal;
 using DalApi;
 using DO;
+using System;
 using System.Collections.Generic;
 
 internal class CallImplementation : ICall
 {
     public void Create(Call item)
     {
+        if(Read(item.Id) is not null)
+            throw new DalAlreadyExistsException($"Call with Id ={item.Id} already exists ");
         DataSource.Calls.Add(item with { Id = Config.NextCallId });
     }
 
     public void Delete(int id)
     {
-        if (Read(id) is Call call)
-            DataSource.Calls.Remove(call);
-        else
-            throw new Exception($"Call with Id={id} does not exist");
+        var call = Read(id);
+        if (call is null)
+            throw new DalNotExistException($"Call with Id ={id} doesn t exists");
+        DataSource.Calls.Remove(call);
     }
 
     public void DeleteAll()
@@ -32,18 +35,17 @@ internal class CallImplementation : ICall
     { 
         return filter == null ?DataSource.Calls:DataSource.Calls.Where(filter);
 
-        //return new List<Call>(DataSource.Calls);
+    
     }
 
     public void Update(Call item)
     {
-        if (Read(item.Id) is Call call)
-        {
-            DataSource.Calls.Remove(call);
-            DataSource.Calls.Add(item);
-        }
-        else
-            throw new Exception($"Call with Id={item.Id} does not exist");
+        var existingCall = Read(item.Id);
+        if (existingCall is null)
+            throw new DalNotExistException($"Call with Id ={item.Id} doesn t exists");
+        DataSource.Calls.Remove(existingCall);
+        DataSource.Calls.Add(item);
+        
     }
     public Call? Read(Func<Call, bool> filter)
     {
