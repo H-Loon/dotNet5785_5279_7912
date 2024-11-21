@@ -127,9 +127,9 @@ public static class Initialization
 
     private static void _createAssignment()
     {
-        List<Call> lc = s_dal!.Call.ReadAll();
+        List<Call> lc = s_dal!.Call.ReadAll().ToList();
 
-        List<Volunteer> lv = s_dal!.Volunteer.ReadAll();
+        List<Volunteer> lv = s_dal!.Volunteer.ReadAll().ToList();
 
         int callId, volunteerId;
 
