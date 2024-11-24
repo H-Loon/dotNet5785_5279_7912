@@ -1,8 +1,6 @@
 ﻿namespace Dal;
 using DalApi;
 using DO;
-using System;
-using System.Collections.Generic;
 
 internal class VolunteerImplementation : IVolunteer
 {
@@ -19,9 +17,7 @@ internal class VolunteerImplementation : IVolunteer
     
     public void Delete(int id)
     {
-        Volunteer volunteer = Read(id);
-        if (volunteer is null)
-            throw new DalNotExistException($"Assignment with Id ={id} doesn t exists");
+        Volunteer volunteer = Read(id) ?? throw new DalNotExistException($"Assignment with Id ={id} doesn t exists");
         DataSource.Volunteers.Remove(volunteer);
     }
 
@@ -45,9 +41,7 @@ internal class VolunteerImplementation : IVolunteer
 
     public void Update(Volunteer item)
     {
-        var existingVolunteer = Read(item.Id);
-        if (existingVolunteer is null)
-            throw new DalNotExistException($"Volunteer with Id ={item.Id} doesn t exists");
+        var existingVolunteer = Read(item.Id) ?? throw new DalNotExistException($"Volunteer with Id ={item.Id} doesn t exists");
         DataSource.Volunteers.Remove(existingVolunteer);
         DataSource.Volunteers.Add(item);
     }

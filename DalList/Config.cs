@@ -15,7 +15,7 @@ internal static class Config
     internal static DateTime Clock { get; set; } = DateTime.Now;
 
     // Period risk
-    internal static TimeSpan RiskRange = TimeSpan.FromHours(1);// previent du danger 1h avant 
+    internal static TimeSpan RiskRange { get; set; } = TimeSpan.FromDays(1);// previent du danger 1j avant 
 
     // Reset all entity
     internal static void Reset()
@@ -24,8 +24,7 @@ internal static class Config
         nextAssignmementId = startAssignmementId;
 
         Clock = DateTime.Now;
-        RiskRange = TimeSpan.FromHours(1);
-
+        RiskRange = TimeSpan.FromDays(1);
     }
 }
 
