@@ -1,9 +1,7 @@
-﻿namespace DalTest;
-using DalApi;
+﻿using DalApi;
 using DO;
-using System.Net;
-using System.Numerics;
 
+namespace DalTest;
 public static class Initialization
 {
     // The DAL instance
@@ -53,7 +51,13 @@ public static class Initialization
         "31 Arlozorov St, Tel Aviv", "32 Ibn Gabirol St, Tel Aviv", "33 Kaplan St, Tel Aviv",
         "34 Namir Rd, Tel Aviv", "35 Hahashmonaim St, Tel Aviv", "36 Yehuda Halevi St, Tel Aviv",
         "37 Frishman St, Tel Aviv", "38 Dizengoff Square, Tel Aviv", "39 Sheinkin St, Tel Aviv",
-        "40 Florentin St, Tel Aviv"
+        "40 Florentin St, Tel Aviv", "41 Allenby St, Haifa", "42 Ben Gurion Blvd, Haifa",
+        "43 HaNassi Blvd, Haifa", "44 Haifa Port, Haifa", "45 Carmel Beach, Haifa",
+        "46 Technion City, Haifa", "47 University of Haifa, Haifa", "48 Haifa Bay, Haifa",
+        "49 Haifa Mall, Haifa", "50 Haifa Zoo, Haifa", "51 Haifa Museum, Haifa",
+        "52 Haifa Theater, Haifa", "53 Haifa Cinematheque, Haifa", "54 Haifa Auditorium, Haifa",
+        "55 Haifa Stadium, Haifa", "56 Haifa Airport, Haifa", "57 Haifa Train Station, Haifa",
+        "58 Haifa Bus Station, Haifa", "59 Haifa Central Station, Haifa", "60 Haifa South Station, Haifa"
     ];
 
     private static readonly List<double> s_latitudes =
@@ -61,7 +65,9 @@ public static class Initialization
         32.065, 32.818, 32.083, 31.776, 32.075, 31.894, 31.252, 32.067, 31.780, 32.082,
         32.070, 32.073, 32.074, 32.075, 32.076, 32.077, 32.078, 32.079, 32.080, 32.081,
         32.065, 32.818, 32.083, 31.776, 32.075, 31.894, 31.252, 32.067, 31.780, 32.082,
-        32.070, 32.073, 32.074, 32.075, 32.076, 32.077, 32.078, 32.079, 32.080, 32.081
+        32.070, 32.073, 32.074, 32.075, 32.076, 32.077, 32.078, 32.079, 32.080, 32.081,
+        32.818, 32.819, 32.820, 32.821, 32.822, 32.823, 32.824, 32.825, 32.826, 32.827,
+        32.828, 32.829, 32.830, 32.831, 32.832, 32.833, 32.834, 32.835, 32.836, 32.837
     ];
 
     private static readonly List<double> s_longitudes =
@@ -69,7 +75,9 @@ public static class Initialization
         34.774, 34.988, 34.814, 35.213, 34.774, 34.811, 34.791, 34.770, 35.220, 34.814,
         34.780, 34.781, 34.782, 34.783, 34.784, 34.785, 34.786, 34.787, 34.788, 34.789,
         34.774, 34.988, 34.814, 35.213, 34.774, 34.811, 34.791, 34.770, 35.220, 34.814,
-        34.780, 34.781, 34.782, 34.783, 34.784, 34.785, 34.786, 34.787, 34.788, 34.789
+        34.780, 34.781, 34.782, 34.783, 34.784, 34.785, 34.786, 34.787, 34.788, 34.789,
+        34.988, 34.989, 34.990, 34.991, 34.992, 34.993, 34.994, 34.995, 34.996, 34.997,
+        34.998, 34.999, 35.000, 35.001, 35.002, 35.003, 35.004, 35.005, 35.006, 35.007
     ];
 
     private static readonly string[] s_callDescriptions =
@@ -84,7 +92,7 @@ public static class Initialization
     /// <summary>
     /// Creates sample volunteers and adds them to the DAL.
     /// </summary>
-    private static void CreateVolunteer()
+    private static void CreateVolunteers()
     {
         List<string> copyAddresses = new(s_addresses);
         List<double> copyLatitudes = new(s_latitudes);
@@ -121,7 +129,7 @@ public static class Initialization
             phone = s_phoneNumbers[s_rand.Next(0, s_phoneNumbers.Count)];
             s_phoneNumbers.Remove(phone);
 
-            int r = s_rand.Next(0, s_addresses.Count);
+            int r = s_rand.Next(0, copyAddresses.Count);
             address = copyAddresses[r];
             latitude = copyLatitudes[r];
             longitude = copyLongitudes[r];
@@ -153,15 +161,15 @@ public static class Initialization
     {
         DateTime startTime = new(s_dal!.Config.Clock.Year - s_rand.Next(-5, 0), 12, 24);
         int range = (s_dal!.Config.Clock - startTime).Days;
-        return startTime.AddDays(s_rand.Next(range));
+        return startTime.AddDays(s_rand.Next(range,0));
     }
 
     /// <summary>
     /// Creates sample assignments and adds them to the DAL.
     /// </summary>
-    private static void CreateAssignment()
+    private static void CreateAssignments()
     {
-        List<Call> lc = s_dal!.Call.ReadAll(c => c.MaxTime>s_dal!.Config.Clock).ToList();
+        List<Call> lc = s_dal!.Call.ReadAll(c => c.MaxTime > s_dal!.Config.Clock).ToList();
         List<Volunteer> lv = s_dal!.Volunteer.ReadAll().ToList();
 
         int callId, volunteerId;
@@ -205,7 +213,7 @@ public static class Initialization
 
             volunteerId = lv[index].Id;
 
-            DateTime? endDate =startDate.AddDays(s_rand.Next(0, maxDays));
+            DateTime? endDate = startDate.AddDays(s_rand.Next(0, maxDays));
             s_dal!.Assignment.Create(new Assignment
             {
                 CallId = callId,
@@ -220,7 +228,7 @@ public static class Initialization
     /// <summary>
     /// Creates sample calls and adds them to the DAL.
     /// </summary>
-    private static void CreateCall()
+    private static void CreateCalls()
     {
         for (int i = 0; i < 5; i++)
         {
@@ -234,7 +242,7 @@ public static class Initialization
                 Longitude = s_longitudes[index],
                 StartTime = startDate,
                 Description = s_callDescriptions[s_rand.Next(0, s_callDescriptions.Length)], // Random description
-                MaxTime = s_dal!.Config.Clock.AddDays(s_rand.Next(-((s_dal!.Config.Clock - startDate).Days),0)) // Random date between start date and today
+                MaxTime = s_dal!.Config.Clock.AddDays(s_rand.Next(-((startDate - s_dal!.Config.Clock).Days), 0)) // Random date between start date and today
             });
         }
         for (int i = 0; i < 60; i++)
@@ -265,12 +273,12 @@ public static class Initialization
         s_dal.ResetDB();
 
         Console.WriteLine("Initializing Volunteers list ...");
-        CreateVolunteer();
+        CreateVolunteers();
 
         Console.WriteLine("Initializing Calls list ...");
-        CreateCall();
+        CreateCalls();
 
         Console.WriteLine("Initializing Assignments list ...");
-        CreateAssignment();
+        CreateAssignments();
     }
 }

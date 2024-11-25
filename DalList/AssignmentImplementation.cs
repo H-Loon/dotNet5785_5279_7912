@@ -3,6 +3,7 @@ using DalApi;
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 internal class AssignmentImplementation : IAssignment
 {
@@ -15,7 +16,7 @@ internal class AssignmentImplementation : IAssignment
     {
         if (Read(item.Id) is not null)
             throw new DalAlreadyExistsException($"Assignment with Id ={item.Id} already exists ");
-        DataSource.Assignments.Add(item);
+        DataSource.Assignments.Add(item with { Id = Config.NextAssignmentId });
     }
 
     /// <summary>
@@ -27,7 +28,7 @@ internal class AssignmentImplementation : IAssignment
     {
         var assignment = Read(id);
         if (assignment is null)
-            throw new DalNotExistException($"Assignment with Id ={id} doesn t exists");
+            throw new DalNotExistException($"Assignment with Id ={id} doesn't exist");
         DataSource.Assignments.Remove(assignment);
     }
 
@@ -68,19 +69,9 @@ internal class AssignmentImplementation : IAssignment
     {
         var existingAssignment = Read(item.Id);
         if (existingAssignment is null)
-            throw new DalNotExistException($"Assignment with Id ={item.Id} doesn t exists");
+            throw new DalNotExistException($"Assignment with Id ={item.Id} doesn't exist");
         DataSource.Assignments.Remove(existingAssignment);
         DataSource.Assignments.Add(item);
-    }
-
-    /// <summary>
-    /// Reads a volunteer by a filter predicate.
-    /// </summary>
-    /// <param name="filter">The filter predicate to apply.</param>
-    /// <returns>The volunteer that matches the filter, or null if not found.</returns>
-    public Volunteer? Read(Func<Volunteer, bool> filter)
-    {
-        return DataSource.Volunteers.FirstOrDefault(filter);
     }
 
     /// <summary>
@@ -88,9 +79,8 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="filter">The filter predicate to apply.</param>
     /// <returns>The assignment that matches the filter, or null if not found.</returns>
-    /// <exception cref="NotImplementedException">Thrown when the method is not implemented.</exception>
     public Assignment? Read(Func<Assignment, bool> filter)
     {
-        throw new NotImplementedException();
+        return DataSource.Assignments.FirstOrDefault(filter);
     }
 }
