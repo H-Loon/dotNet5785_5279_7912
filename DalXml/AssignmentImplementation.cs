@@ -12,11 +12,9 @@ internal class AssignmentImplementation : IAssignment
     /// <exception cref="DalAlreadyExistsException">Thrown when an assignment with the same ID already exists.</exception>
     public void Create(Assignment item)
     {
-        if (Read(item.Id) is not null)
-            throw new DalAlreadyExistsException($"Assignment with Id ={item.Id} already exists ");
-
         var assignmentsXml = XMLTools.LoadListFromXMLElement(Config.Assignments_Xml);
-        assignmentsXml.Add(AssignmentToXElement(item));
+        assignmentsXml.Add(AssignmentToXElement(item with { Id = Config.NextAssignmentId }));
+        XMLTools.SaveListToXMLElement(assignmentsXml, Config.Assignments_Xml);
     }
 
     /// <summary>
@@ -75,9 +73,8 @@ internal class AssignmentImplementation : IAssignment
     /// <returns>An enumerable of assignments.</returns>
     public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null)
     {
-        var assignments = XMLTools.LoadListFromXMLElement(Config.Assignments_Xml)
-                                .Elements()
-                                .Select(getAssignmentFromXElement);
+        var assignments = from aElem in XMLTools.LoadListFromXMLElement(Config.Assignments_Xml).Elements()
+                         select getAssignmentFromXElement(aElem);
 
         return filter is null ? assignments : assignments.Where(filter);
     }
@@ -89,12 +86,12 @@ internal class AssignmentImplementation : IAssignment
     /// <exception cref="DalNotExistException">Thrown when an assignment with the specified ID does not exist.</exception>
     public void Update(Assignment item)
     {
-        var assignmentXml = getAssignmentXElementFromId(item.Id) ?? throw new DalNotExistException($"Assignment with Id ={item.Id} doesn't exist");
+        Delete(item.Id);
+
         var assignmentsXml = XMLTools.LoadListFromXMLElement(Config.Assignments_Xml);
-
-        assignmentXml.Remove();
-
         assignmentsXml.Add(AssignmentToXElement(item));
+
+        XMLTools.SaveListToXMLElement(assignmentsXml, Config.Assignments_Xml);
     }
 
     /// <summary>
@@ -104,14 +101,26 @@ internal class AssignmentImplementation : IAssignment
     /// <returns>The Assignment object.</returns>
     private Assignment getAssignmentFromXElement(XElement assignmentElem)
     {
+        DateTime? endDate = null;
+        if (!string.IsNullOrEmpty(assignmentElem.Element("EndDate")?.Value))
+        {
+            endDate = (DateTime?)assignmentElem.Element("EndDate");
+        }
+
+        AssignmentEndReason? endReason = null;
+        if (!string.IsNullOrEmpty(assignmentElem.Element("AssignmentEndReason")?.Value))
+        {
+            endReason = (AssignmentEndReason?)Enum.Parse(typeof(AssignmentEndReason), assignmentElem.Element("AssignmentEndReason")?.Value!);
+        }
+
         return new Assignment
         {
             Id = (int)assignmentElem.Element("Id")!,
             VolunteerId = (int)assignmentElem.Element("VolunteerId")!,
             CallId = (int)assignmentElem.Element("CallId")!,
             StartDate = (DateTime)assignmentElem.Element("StartDate")!,
-            EndDate = (DateTime?)assignmentElem.Element("EndDate"),
-            EndReason = (AssignmentEndReason)Enum.Parse(typeof(AssignmentEndReason), assignmentElem.Element("AssignmentEndReason")!.Value)
+            EndDate = endDate,
+            EndReason = endReason
         };
     }
 
@@ -133,14 +142,13 @@ internal class AssignmentImplementation : IAssignment
     /// <returns>The XElement representing the assignment.</returns>
     private XElement AssignmentToXElement(Assignment item)
     {
-        XElement assignmentElem = new XElement("Assignment",
-                                    new XElement("Id", item.Id),
-                                    new XElement("VolunteerId", item.VolunteerId),
-                                    new XElement("CallId", item.CallId),
-                                    new XElement("StartDate", item.StartDate),
-                                    new XElement("EndDate", item.EndDate),
-                                    new XElement("AssignmentEndReason", item.EndReason)
-                                    );
-        return assignmentElem;
+        return new XElement("Assignment",
+                        new XElement("Id", item.Id),
+                        new XElement("VolunteerId", item.VolunteerId),
+                        new XElement("CallId", item.CallId),
+                        new XElement("StartDate", item.StartDate),
+                        new XElement("EndDate", item.EndDate),
+                        new XElement("AssignmentEndReason", item.EndReason)
+                        );
     }
 }

@@ -19,6 +19,7 @@ internal class Program
         CallMenu,
         AssignmentMenu,
         Initialize,
+        ResetAllData
     }
     private enum VolunteerMenu
     {
@@ -71,11 +72,12 @@ internal class Program
     /// </summary>
     private static void DisplayMenu()
     {
-        Console.WriteLine("Choose an option:");
+        Console.WriteLine("\nChoose an option:");
         Console.WriteLine(" 1. Volunteer Menu");
         Console.WriteLine(" 2. Call Menu");
         Console.WriteLine(" 3. Assignment Menu");
         Console.WriteLine(" 4. Initialize");
+        Console.WriteLine(" 5. Reset all data");
         Console.WriteLine(" 0. Exit\n");
     }
 
@@ -121,6 +123,10 @@ internal class Program
                     break;
                 case Menu.Initialize:
                     Initialization.Do(s_dal);
+                    break;
+                case Menu.ResetAllData:
+                    s_dal!.ResetDB();
+                    Console.WriteLine("\nData has successfully been reseted");
                     break;
             }
         } while (choice != Menu.Exit);
@@ -212,11 +218,17 @@ internal class Program
     /// </summary>
     private static void DeleteAllVolunteers()
     {
-        Console.Write("Are you sure you want to delete all the volunteers? (y/n): ");
-        if (Console.ReadLine() == "n")
-            return;
-        s_dal!.Volunteer.DeleteAll();
-        Console.WriteLine("All volunteers deleted successfully.");
+        try {
+            Console.Write("Are you sure you want to delete all the volunteers? (y/n): ");
+            if (Console.ReadLine() == "n")
+                return;
+            s_dal!.Volunteer.DeleteAll();
+            Console.WriteLine("All volunteers deleted successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
@@ -224,11 +236,19 @@ internal class Program
     /// </summary>
     private static void ReadVolunteer()
     {
-        Console.Write("Enter the volunteer ID you want to read or 0 to exit: ");
-        int id = int.Parse(Console.ReadLine()!);
-        if (id == 0)
-            return;
-        Console.WriteLine(s_dal!.Volunteer.Read(id));
+        try
+        {
+            Console.Write("Enter the volunteer ID you want to read or 0 to exit: ");
+            int id = int.Parse(Console.ReadLine()!);
+            if (id == 0)
+                return;
+            Volunteer? volunteer = s_dal!.Volunteer.Read(id) ?? throw new DalNotExistException($"Volunteer with Id = {id} does'nt exist");
+            Console.WriteLine(volunteer);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
@@ -236,7 +256,24 @@ internal class Program
     /// </summary>
     private static void ReadAllVolunteers()
     {
-        Console.WriteLine(s_dal!.Volunteer.ReadAll());
+        try {
+            var volunteers = s_dal!.Volunteer.ReadAll();
+
+            if (volunteers.Count() is 0)
+            {
+                Console.WriteLine("No volunteers found.");
+                return;
+            }
+
+            foreach (var volunteer in volunteers)
+            {
+                Console.WriteLine(volunteer);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
@@ -351,14 +388,7 @@ internal class Program
     /// </summary>
     private static void AddCall()
     {
-        Console.WriteLine("Enter the type of the Call:");
-        Console.WriteLine("1. Home Bot Issue,");
-        Console.WriteLine("2. Teleporter Blocked On MachonLev,");
-        Console.WriteLine("3. My Dishwasher Is In Depression,");
-        Console.WriteLine("4. My Time Travel Machine Is Lazy,");
-        Console.WriteLine("5. Other");
-
-        s_dal!.Assignment.Create(AssignmentFields("Add"));
+        s_dal!.Call.Create(CallFields("Add"));
     }
 
     /// <summary>
@@ -366,9 +396,16 @@ internal class Program
     /// </summary>
     private static void DeleteCall()
     {
-        Console.WriteLine("Enter the Id of the Call to delete ");
-        int id = int.Parse(Console.ReadLine()!);
-        s_dal!.Call.Delete(id);
+        try
+        {
+            Console.WriteLine("Enter the Id of the Call to delete ");
+            int id = int.Parse(Console.ReadLine()!);
+            s_dal!.Call.Delete(id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
@@ -376,17 +413,31 @@ internal class Program
     /// </summary>
     private static void DeleteAllCall()
     {
-        s_dal!.Call.DeleteAll();
+        try
+        {
+            s_dal!.Call.DeleteAll();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
     /// Reads a call by ID.
     /// </summary>
     private static void ReadCall()
-    {
-        Console.WriteLine("Enter the id of the Call");
-        int id = int.Parse(Console.ReadLine()!);
-        Console.WriteLine(s_dal!.Call.Read(id));
+    {    
+        try
+        {
+            Console.WriteLine("Enter the id of the Call");
+            int id = int.Parse(Console.ReadLine()!);
+            Console.WriteLine(s_dal!.Call.Read(id));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
@@ -394,7 +445,25 @@ internal class Program
     /// </summary>
     private static void ReadAllCall()
     {
-        Console.WriteLine(s_dal!.Call.ReadAll());
+        try
+        {
+            var calls = s_dal!.Call.ReadAll();
+
+            if (calls.Count() is 0)
+            {
+                Console.WriteLine("No calls found.");
+                return;
+            }
+
+            foreach (var call in calls)
+            {
+                Console.WriteLine(call);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
@@ -494,21 +563,21 @@ internal class Program
         else // Add
         {
             Console.WriteLine("Enter the type of the Call:");
-            Console.WriteLine("1. Home Bot Issue,");
-            Console.WriteLine("2. Teleporter Blocked On MachonLev,");
-            Console.WriteLine("3. My Dishwasher Is In Depression,");
-            Console.WriteLine("4. My Time Travel Machine Is Lazy,");
-            Console.WriteLine("5. Other");
+            Console.WriteLine("0. Home Bot Issue,");
+            Console.WriteLine("1. Teleporter Blocked On MachonLev,");
+            Console.WriteLine("2. My Dishwasher Is In Depression,");
+            Console.WriteLine("3. My Time Travel Machine Is Lazy,");
+            Console.WriteLine("4. Other");
             callType = (CallType)int.Parse(Console.ReadLine()!);
 
             Console.Write("Enter the address of the Call: ");
             callAddress = Console.ReadLine()!;
 
-            Console.Write("Enter the latitude of the Call: ");
-            callLatitude = double.Parse(Console.ReadLine()!);
+            //Console.Write("Enter the latitude of the Call: ");
+            //callLatitude = double.Parse(Console.ReadLine()!);
 
-            Console.Write("Enter the longitude of the Call: ");
-            callLongitude = double.Parse(Console.ReadLine()!);
+            //Console.Write("Enter the longitude of the Call: ");
+            //callLongitude = double.Parse(Console.ReadLine()!);
 
             Console.Write("Enter the description of the Call: ");
             callDescription = Console.ReadLine();
@@ -517,7 +586,6 @@ internal class Program
             callMaxTime = DateTime.Parse(Console.ReadLine()!);
 
             Call caller = new Call(0, callType, callAddress, 0, 0, DateTime.Now, callDescription, callMaxTime);
-            s_dal!.Call.Create(caller);
             return caller;
         }
     }
@@ -597,10 +665,18 @@ internal class Program
     /// </summary>
     private static void DeleteAllAssignments()
     {
-        Console.Write("Are you sure you want to delete all the assignments? (y/n): ");
-        if (Console.ReadLine() == "n")
-            return;
-        s_dal!.Assignment.DeleteAll();
+        try
+        {
+            Console.Write("Are you sure you want to delete all the assignments? (y/n): ");
+            if (Console.ReadLine() == "n")
+                return;
+            s_dal!.Assignment.DeleteAll();
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
@@ -608,11 +684,18 @@ internal class Program
     /// </summary>
     private static void ReadAssignment()
     {
-        Console.Write("Enter the assignment ID you want to read or 0 to exit: ");
-        int id = int.Parse(Console.ReadLine()!);
-        if (id == 0)
-            return;
-        Console.WriteLine(s_dal!.Assignment.Read(id));
+        try
+        {
+            Console.Write("Enter the assignment ID you want to read or 0 to exit: ");
+            int id = int.Parse(Console.ReadLine()!);
+            if (id == 0)
+                return;
+            Console.WriteLine(s_dal!.Assignment.Read(id));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
@@ -620,7 +703,25 @@ internal class Program
     /// </summary>
     private static void ReadAllAssignments()
     {
-        Console.WriteLine(s_dal!.Assignment.ReadAll());
+        try
+        {
+            var assignments = s_dal!.Assignment.ReadAll();
+
+            if (assignments.Count() is 0)
+            {
+                Console.WriteLine("No assignments found.");
+                return;
+            }
+
+            foreach (var assignment in assignments)
+            {
+                Console.WriteLine(assignment);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
@@ -628,15 +729,14 @@ internal class Program
     /// </summary>
     private static void UpdateAssignment()
     {
-        int id;
-        Console.Write("Enter the assignment ID you want to update or 0 to exit: ");
-        id = int.Parse(Console.ReadLine()!);
-
-        if (id == 0)
-            return;
-
         try
         {
+            int id;
+            Console.Write("Enter the assignment ID you want to update or 0 to exit: ");
+            id = int.Parse(Console.ReadLine()!);
+
+            if (id == 0)
+                return;
             s_dal!.Assignment.Update(AssignmentFields("Update", id));
         }
         catch (Exception ex)
@@ -711,15 +811,15 @@ internal class Program
             Console.Write("Enter volunteer's ID: ");
             volunteerId = int.Parse(Console.ReadLine()!);
 
-            Console.WriteLine("Enter the end date (DD/MM/YYYY): ");
-            endDate = DateTime.Parse(Console.ReadLine()!);
+            //Console.WriteLine("Enter the end date (DD/MM/YYYY): ");
+            //endDate = DateTime.Parse(Console.ReadLine()!);
 
             return new Assignment
             {
                 CallId = callId,
                 VolunteerId = volunteerId,
                 StartDate = DateTime.Now,
-                EndDate = endDate
+                //EndDate = endDate
             };
         }
     }

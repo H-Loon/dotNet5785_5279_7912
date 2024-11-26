@@ -12,11 +12,9 @@ internal class CallImplementation : ICall
     /// <exception cref="DalAlreadyExistsException">Thrown when a call with the same ID already exists.</exception>
     public void Create(Call item)
     {
-        if (Read(item.Id) is not null)
-            throw new DalAlreadyExistsException($"Call with Id ={item.Id} already exists ");
-
         var callsXml = XMLTools.LoadListFromXMLElement(Config.Calls_Xml);
-        callsXml.Add(CallToXElement(item));
+        callsXml.Add(CallToXElement(item with { Id = Config.NextCallId }));
+        XMLTools.SaveListToXMLElement(callsXml, Config.Calls_Xml);
     }
 
     /// <summary>
@@ -79,9 +77,8 @@ internal class CallImplementation : ICall
     /// <returns>An enumerable of calls.</returns>
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
     {
-        var calls = XMLTools.LoadListFromXMLElement(Config.Calls_Xml)
-                                .Elements()
-                                .Select(getCallFromXElement);
+        var calls = from cElem in XMLTools.LoadListFromXMLElement(Config.Calls_Xml).Elements()
+                    select getCallFromXElement(cElem);
 
         return filter is null ? calls : calls.Where(filter);
     }
@@ -93,12 +90,13 @@ internal class CallImplementation : ICall
     /// <exception cref="DalNotExistException">Thrown when a call with the specified ID does not exist.</exception>
     public void Update(Call item)
     {
-        var callXml = getCallXElementFromId(item.Id) ?? throw new DalNotExistException($"Call with Id ={item.Id} doesn't exist");
+        Delete(item.Id);
+
         var callsXml = XMLTools.LoadListFromXMLElement(Config.Calls_Xml);
 
-        callXml.Remove();
-
         callsXml.Add(CallToXElement(item));
+
+        XMLTools.SaveListToXMLElement(callsXml, Config.Calls_Xml);
     }
 
     /// <summary>
@@ -129,7 +127,7 @@ internal class CallImplementation : ICall
     private XElement? getCallXElementFromId(int id)
     {
         return XMLTools.LoadListFromXMLElement(Config.Calls_Xml)
-                       .Elements().FirstOrDefault(a => (int?)a.Element("Id") == id);
+                       .Elements().FirstOrDefault(c => (int?)c.Element("Id") == id);
     }
 
     /// <summary>
@@ -139,16 +137,15 @@ internal class CallImplementation : ICall
     /// <returns>The XElement representing the call.</returns>
     private XElement CallToXElement(Call item)
     {
-        XElement callElem = new XElement("Call",
-                                    new XElement("Id", item.Id),
-                                    new XElement("Type", item.Type),
-                                    new XElement("Address", item.Address),
-                                    new XElement("Latitude", item.Latitude),
-                                    new XElement("Longitude", item.Longitude),
-                                    new XElement("StartTime", item.StartTime),
-                                    new XElement("Description", item.Description),
-                                    new XElement("MaxTime", item.MaxTime)
-                                    );
-        return callElem;
+        return new XElement("Call",
+                    new XElement("Id", item.Id),
+                    new XElement("Type", item.Type),
+                    new XElement("Address", item.Address),
+                    new XElement("Latitude", item.Latitude),
+                    new XElement("Longitude", item.Longitude),
+                    new XElement("StartTime", item.StartTime),
+                    new XElement("Description", item.Description),
+                    new XElement("MaxTime", item.MaxTime)
+                    );
     }
 }

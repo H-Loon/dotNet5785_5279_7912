@@ -12,16 +12,13 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="DalAlreadyExistsException">Thrown when a volunteer with the same ID already exists.</exception>
     public void Create(Volunteer item)
     {
-        var volunteersXml = XMLTools.LoadListFromXMLElement(Config.Volunteers_Xml);
-        if (Read(item.Id) is null)
-        {
-            volunteersXml.Add(VolunteerToXElement(item));
-            XMLTools.SaveListToXMLElement(volunteersXml, Config.Volunteers_Xml);
-        }
-        else
-        {
+        if (Read(item.Id) is not null)
             throw new DalAlreadyExistsException($"Volunteer with Id ={item.Id} already exists ");
-        }
+
+        var volunteersXml = XMLTools.LoadListFromXMLElement(Config.Volunteers_Xml);
+        volunteersXml.Add(VolunteerToXElement(item));
+        XMLTools.SaveListToXMLElement(volunteersXml, Config.Volunteers_Xml);
+        
     }
 
     /// <summary>
@@ -69,9 +66,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <returns>The volunteer that matches the filter, or null if not found.</returns>
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
-        var volunteers = XMLTools.LoadListFromXMLElement(Config.Volunteers_Xml)  // AI helped me here
-                                 .Elements()
-                                 .Select(getVolunteerFromXElement);
+        var volunteers = ReadAll();
 
         return volunteers.FirstOrDefault(filter);
     }
@@ -83,9 +78,8 @@ internal class VolunteerImplementation : IVolunteer
     /// <returns>An enumerable of volunteers.</returns>
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
     {
-        var volunteers = XMLTools.LoadListFromXMLElement(Config.Volunteers_Xml)  // AI helped me here
-                                .Elements()
-                                .Select(getVolunteerFromXElement);
+        var volunteers = from vElem in XMLTools.LoadListFromXMLElement(Config.Volunteers_Xml).Elements()
+                         select getVolunteerFromXElement(vElem);
 
         return filter is null ? volunteers : volunteers.Where(filter);
     }
@@ -97,12 +91,12 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="DalNotExistException">Thrown when the volunteer does not exist.</exception>
     public void Update(Volunteer item)
     {
-        var volunteerXml = getVolunteerXElementFromId(item.Id) ?? throw new DalNotExistException($"Volunteer with Id ={item.Id} doesn't exist");
+        Delete(item.Id);
         var volunteersXml = XMLTools.LoadListFromXMLElement(Config.Volunteers_Xml);
 
-        volunteerXml.Remove();
-
         volunteersXml.Add(VolunteerToXElement(item));
+
+        XMLTools.SaveListToXMLElement(volunteersXml, Config.Volunteers_Xml);
     }
 
     /// <summary>
@@ -114,16 +108,17 @@ internal class VolunteerImplementation : IVolunteer
     {
         return new Volunteer
         {
-            Id = (int)volunteerElem.Element("Id")!,
-            Name = volunteerElem.Element("Name")!.Value,
-            Phone = volunteerElem.Element("Phone")!.Value,
-            Address = volunteerElem.Element("Address")?.Value,
-            Latitude = (double?)volunteerElem.Element("Latitude"),
-            Longitude = (double?)volunteerElem.Element("Longitude"),
-            Role = (RoleType)Enum.Parse(typeof(RoleType), (string)volunteerElem.Element("Role")!),  // AI helped me here
-            IsActive = bool.Parse(volunteerElem.Element("IsActive")!.Value),
-            MaxDistance = (double?)volunteerElem.Element("MaxDistance"),
-            DistanceType = (DistanceType)Enum.Parse(typeof(DistanceType), volunteerElem.Element("DistanceType")!.Value)
+            Id = (int?)volunteerElem.Element("Id")! ?? throw new InvalidOperationException("Id element is missing"),
+            Name = volunteerElem.Element("Name")!.Value ?? throw new InvalidOperationException("Name element is missing"),
+            Phone = volunteerElem.Element("Phone")!.Value ?? throw new InvalidOperationException("Phone element is missing"),
+            Email = volunteerElem.Element("Email")!.Value ?? throw new InvalidOperationException("Email element is missing"),
+            Address = volunteerElem.Element("Address")?.Value ?? "",
+            Latitude = double.TryParse(volunteerElem.Element("Latitude")?.Value, out double lat) ? lat : (double?)null,
+            Longitude = double.TryParse(volunteerElem.Element("Longitude")?.Value, out double lon) ? lon : (double?)null,
+            Role = (RoleType)Enum.Parse(typeof(RoleType), volunteerElem.Element("Role")?.Value ?? throw new InvalidOperationException("Role element is missing")),
+            IsActive = bool.Parse(volunteerElem.Element("IsActive")?.Value ?? throw new InvalidOperationException("IsActive element is missing")),
+            MaxDistance = double.TryParse(volunteerElem.Element("MaxDistance")?.Value, out double maxDist) ? maxDist : (double?)null,
+            DistanceType = (DistanceType)Enum.Parse(typeof(DistanceType), volunteerElem.Element("DistanceType")?.Value ?? throw new InvalidOperationException("DistanceType element is missing"))
         };
     }
 
@@ -145,18 +140,18 @@ internal class VolunteerImplementation : IVolunteer
     /// <returns>The XElement representing the volunteer.</returns>
     private XElement VolunteerToXElement(Volunteer item)
     {
-        XElement volunteerElem = new XElement("Volunteer",
-                                    new XElement("Id", item.Id),
-                                    new XElement("Name", item.Name),
-                                    new XElement("Phone", item.Phone),
-                                    new XElement("Email", item.Email),
-                                    new XElement("Adress", item.Address),
-                                    new XElement("Latitude", item.Latitude),
-                                    new XElement("Longitude", item.Longitude),
-                                    new XElement("Role", item.Role),
-                                    new XElement("MaxDistance", item.MaxDistance),
-                                    new XElement("DistanceType", item.DistanceType)
-                                    );
-        return volunteerElem;
+        return new XElement("Volunteer",
+                        new XElement("Id", item.Id),
+                        new XElement("Name", item.Name),
+                        new XElement("Phone", item.Phone),
+                        new XElement("Email", item.Email),
+                        new XElement("Address", item.Address),
+                        new XElement("Latitude", item.Latitude),
+                        new XElement("Longitude", item.Longitude),
+                        new XElement("IsActive", item.IsActive),
+                        new XElement("Role", item.Role),
+                        new XElement("MaxDistance", item.MaxDistance),
+                        new XElement("DistanceType", item.DistanceType)
+                        );
     }
 }

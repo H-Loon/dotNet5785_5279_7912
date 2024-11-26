@@ -1,2 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ArrayOfCall></ArrayOfCall>
+<ArrayOfCall>
+  <Call>
+    <Id>1006</Id>
+    <Type>TeleporterBlockedOnMachonLev</Type>
+    <Address>1</Address>
+    <Latitude>0</Latitude>
+    <Longitude>0</Longitude>
+    <StartTime>2024-11-26T20:53:22.9677882+02:00</StartTime>
+    <Description>1</Description>
+    <MaxTime>2027-11-11T00:00:00</MaxTime>
+  </Call>
+</ArrayOfCall>

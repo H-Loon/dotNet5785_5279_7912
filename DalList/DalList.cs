@@ -11,15 +11,9 @@ using DO;
 sealed public class DalList : IDal
 {
     public ICall Call { get; } = new CallImplementation();
-
-    public IAssignment Assignment = new AssignmentImplementation();
+    public IAssignment Assignment { get; } = new AssignmentImplementation();
     public IConfig Config { get; }= new ConfigImplementation();
-
-    IVolunteer IDal.Volunteer => throw new NotImplementedException();//ca la mm automatic qd erreur corrigé
-
-    IAssignment IDal.Assignment => throw new NotImplementedException();//ca la mm automatic qd erreur corrigé
-
-    public IVolunteer Volunteer = new VolunteerImplementation();
+    public IVolunteer Volunteer { get; } = new VolunteerImplementation();
 
     public void ResetDB()
     {

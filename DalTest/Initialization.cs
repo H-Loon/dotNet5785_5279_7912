@@ -159,9 +159,9 @@ public static class Initialization
     /// <returns>A random DateTime value.</returns>
     private static DateTime RandomDate()
     {
-        DateTime startTime = new(s_dal!.Config.Clock.Year - s_rand.Next(-5, 0), 12, 24);
+        DateTime startTime = new(s_dal!.Config.Clock.Year - s_rand.Next(5), 1, 1);
         int range = (s_dal!.Config.Clock - startTime).Days;
-        return startTime.AddDays(s_rand.Next(range,0));
+        return startTime.AddDays(s_rand.Next(range));
     }
 
     /// <summary>
@@ -169,8 +169,8 @@ public static class Initialization
     /// </summary>
     private static void CreateAssignments()
     {
-        List<Call> lc = s_dal!.Call.ReadAll(c => c.MaxTime > s_dal!.Config.Clock).ToList();
         List<Volunteer> lv = s_dal!.Volunteer.ReadAll().ToList();
+        List<Call> lc = s_dal!.Call.ReadAll(c => c.MaxTime > s_dal!.Config.Clock).ToList();
 
         int callId, volunteerId;
 
@@ -178,7 +178,7 @@ public static class Initialization
         {
             DateTime startDate = RandomDate();
 
-            int maxDays = (s_dal!.Config.Clock - startDate).Days;
+            int daysBetween = (startDate - s_dal!.Config.Clock).Days;
 
             int index = s_rand.Next(0, lc.Count);
 
@@ -202,7 +202,7 @@ public static class Initialization
         {
             DateTime startDate = RandomDate();
 
-            int maxDays = (s_dal!.Config.Clock - startDate).Days;
+            int daysBetween = (startDate - s_dal!.Config.Clock).Days;
 
             int index = s_rand.Next(0, lc.Count);
 
@@ -213,7 +213,7 @@ public static class Initialization
 
             volunteerId = lv[index].Id;
 
-            DateTime? endDate = startDate.AddDays(s_rand.Next(0, maxDays));
+            DateTime? endDate = startDate.AddDays(s_rand.Next(daysBetween,0));
             s_dal!.Assignment.Create(new Assignment
             {
                 CallId = callId,
@@ -242,7 +242,7 @@ public static class Initialization
                 Longitude = s_longitudes[index],
                 StartTime = startDate,
                 Description = s_callDescriptions[s_rand.Next(0, s_callDescriptions.Length)], // Random description
-                MaxTime = s_dal!.Config.Clock.AddDays(s_rand.Next(-((startDate - s_dal!.Config.Clock).Days), 0)) // Random date between start date and today
+                MaxTime = s_dal!.Config.Clock.AddDays(s_rand.Next((startDate - s_dal!.Config.Clock).Days, 0)) // Random date between start date and today
             });
         }
         for (int i = 0; i < 60; i++)

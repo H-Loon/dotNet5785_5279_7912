@@ -1,2 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ArrayOfAssignment></ArrayOfAssignment>
+<ArrayOfAssignment>
+  <Assignment>
+    <Id>2001</Id>
+    <VolunteerId>1</VolunteerId>
+    <CallId>1006</CallId>
+    <StartDate>2024-11-26T21:13:58.3633644+02:00</StartDate>
+    <EndDate />
+    <AssignmentEndReason />
+  </Assignment>
+  <Assignment>
+    <Id>2001</Id>
+    <VolunteerId>1</VolunteerId>
+    <CallId>1006</CallId>
+    <StartDate>2024-11-26T21:13:58.3633644+02:00</StartDate>
+    <EndDate>2026-11-11T00:00:00</EndDate>
+    <AssignmentEndReason>CanceledByVolunteer</AssignmentEndReason>
+  </Assignment>
+</ArrayOfAssignment>
