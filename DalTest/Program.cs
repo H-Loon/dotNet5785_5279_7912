@@ -19,7 +19,8 @@ internal class Program
         CallMenu,
         AssignmentMenu,
         Initialize,
-        ResetAllData
+        ResetAllData,
+        ReadAllData
     }
     private enum VolunteerMenu
     {
@@ -78,6 +79,7 @@ internal class Program
         Console.WriteLine(" 3. Assignment Menu");
         Console.WriteLine(" 4. Initialize");
         Console.WriteLine(" 5. Reset all data");
+        Console.WriteLine(" 6. Read all data");
         Console.WriteLine(" 0. Exit\n");
     }
 
@@ -99,7 +101,7 @@ internal class Program
 
     #endregion
 
-    #region Main menu
+    #region Main menu and ReadAllData
     /// <summary>
     /// Main menu loop.
     /// </summary>
@@ -128,8 +130,24 @@ internal class Program
                     s_dal!.ResetDB();
                     Console.WriteLine("\nData has successfully been reseted");
                     break;
+                case Menu.ReadAllData:
+                    ReadAllData();
+                    break;
             }
         } while (choice != Menu.Exit);
+    }
+
+    /// <summary>
+    /// Reads all data from the database.
+    /// </summary>
+    private static void ReadAllData()
+    {
+        ReadAllVolunteers();
+        Console.WriteLine();
+        ReadAllCall();
+        Console.WriteLine();
+        ReadAllAssignments();
+        Console.WriteLine();
     }
 
     #endregion
