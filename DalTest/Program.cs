@@ -9,7 +9,10 @@ using DO;
 /// </summary>
 internal class Program
 {
-    static readonly IDal s_dal = new DalXml();
+    //static readonly IDal s_dal = new DalList(); //stage 2
+    //static readonly IDal s_dal = new DalXml(); //stage 3
+    static readonly IDal s_dal = Factory.Get; //stage 4
+
 
     #region Enum's
     private enum Menu
@@ -124,7 +127,8 @@ internal class Program
                     AMenu();
                     break;
                 case Menu.Initialize:
-                    Initialization.Do(s_dal);
+                    //Initialization.Do(s_dal); //stage 2
+                    Initialization.Do(); //stage 4
                     break;
                 case Menu.ResetAllData:
                     s_dal!.ResetDB();
