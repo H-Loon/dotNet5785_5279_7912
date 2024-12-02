@@ -13,8 +13,8 @@ public record Assignment
     int Id,
     int CallId,
     int VolunteerId,
-    DateTime StartDate,
-    DateTime? EndDate = null,
+    DateTime StartTime,
+    DateTime? EndTime = null,
     AssignmentEndReason? EndReason = null
 )
 {

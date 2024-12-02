@@ -193,8 +193,8 @@ public static class Initialization
             {
                 CallId = callId,
                 VolunteerId = volunteerId,
-                StartDate = startDate,
-                EndDate = null,
+                StartTime = startDate,
+                EndTime = null,
                 EndReason = null
             });
         }
@@ -218,8 +218,8 @@ public static class Initialization
             {
                 CallId = callId,
                 VolunteerId = volunteerId,
-                StartDate = startDate,
-                EndDate = endDate,
+                StartTime = startDate,
+                EndTime = endDate,
                 EndReason = (AssignmentEndReason)s_rand.Next(0, 4)
             });
         }

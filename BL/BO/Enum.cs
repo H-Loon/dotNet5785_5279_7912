@@ -3,8 +3,8 @@
 
 public enum BoRoleType
 {
-    Admin,
-    Volunteer
+    Volunteer,
+    Admin
 }
 
 public enum BoDistanceType
@@ -12,4 +12,28 @@ public enum BoDistanceType
     Area,
     Walking,
     Car
+}
+public enum BoCallType
+{
+    HomeBotIssue,
+    TeleporterBlockedOnMachonLev,
+    MyDishwasherIsInDepression,
+    MyTimeTravelMachineIsLazy,
+    Other
+}
+public enum BoCallStatus
+{
+    Open,
+    OpenAndDanger,
+    InTreatment,
+    InTreatmentAndDanger,
+    Closed,
+    OverDated
+}
+public enum BoAssignmentEndReason
+{
+    Completed,
+    CanceledByVolunteer,
+    CanceledByAdmin,
+    OverDated
 }

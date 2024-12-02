@@ -28,7 +28,7 @@ internal static class Tools
 
         foreach (var property in properties)
         {
-            object value = property.GetValue(obj);
+            object value = property.GetValue(obj)!;
             result += $"{property.Name}: {value}\n";
         }
 

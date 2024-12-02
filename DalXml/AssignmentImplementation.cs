@@ -102,9 +102,9 @@ internal class AssignmentImplementation : IAssignment
     private Assignment getAssignmentFromXElement(XElement assignmentElem)
     {
         DateTime? endDate = null;
-        if (!string.IsNullOrEmpty(assignmentElem.Element("EndDate")?.Value))
+        if (!string.IsNullOrEmpty(assignmentElem.Element("EndTime")?.Value))
         {
-            endDate = (DateTime?)assignmentElem.Element("EndDate");
+            endDate = (DateTime?)assignmentElem.Element("EndTime");
         }
 
         AssignmentEndReason? endReason = null;
@@ -118,8 +118,8 @@ internal class AssignmentImplementation : IAssignment
             Id = (int)assignmentElem.Element("Id")!,
             VolunteerId = (int)assignmentElem.Element("VolunteerId")!,
             CallId = (int)assignmentElem.Element("CallId")!,
-            StartDate = (DateTime)assignmentElem.Element("StartDate")!,
-            EndDate = endDate,
+            StartTime = (DateTime)assignmentElem.Element("StartTime")!,
+            EndTime = endDate,
             EndReason = endReason
         };
     }
@@ -146,8 +146,8 @@ internal class AssignmentImplementation : IAssignment
                         new XElement("Id", item.Id),
                         new XElement("VolunteerId", item.VolunteerId),
                         new XElement("CallId", item.CallId),
-                        new XElement("StartDate", item.StartDate),
-                        new XElement("EndDate", item.EndDate),
+                        new XElement("StartTime", item.StartTime),
+                        new XElement("EndTime", item.EndTime),
                         new XElement("AssignmentEndReason", item.EndReason)
                         );
     }

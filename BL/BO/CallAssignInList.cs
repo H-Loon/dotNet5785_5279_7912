@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace BO;
 
-namespace BO
+public class CallAssignInList
 {
-    internal class CallAssignInList
-    {
-    }
+    public int? VolunteerId { get; init; }
+    public string? VolunteerName { get; init; }
+    public DateTime AssignTime { get; init; }
+    public DateTime? EndedTime { get; init; }
+    public BoAssignmentEndReason? EndType { get; init; }
 }

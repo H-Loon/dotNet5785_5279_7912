@@ -108,10 +108,10 @@ internal class VolunteerImplementation : IVolunteer
     {
         return new Volunteer
         {
-            Id = (int?)volunteerElem.Element("Id")! ?? throw new InvalidOperationException("Id element is missing"),
-            Name = volunteerElem.Element("Name")!.Value ?? throw new InvalidOperationException("Name element is missing"),
-            Phone = volunteerElem.Element("Phone")!.Value ?? throw new InvalidOperationException("Phone element is missing"),
-            Email = volunteerElem.Element("Email")!.Value ?? throw new InvalidOperationException("Email element is missing"),
+            Id = (int)volunteerElem.Element("Id")!,
+            Name = volunteerElem.Element("Name")!.Value,
+            Phone = volunteerElem.Element("Phone")!.Value,
+            Email = volunteerElem.Element("Email")!.Value,
             Password = volunteerElem.Element("Password")?.Value ?? "",
             Address = volunteerElem.Element("Address")?.Value ?? "",
             Latitude = double.TryParse(volunteerElem.Element("Latitude")?.Value, out double lat) ? lat : (double?)null,
@@ -119,7 +119,7 @@ internal class VolunteerImplementation : IVolunteer
             Role = (RoleType)Enum.Parse(typeof(RoleType), volunteerElem.Element("Role")?.Value ?? throw new InvalidOperationException("Role element is missing")),
             IsActive = bool.Parse(volunteerElem.Element("IsActive")?.Value ?? throw new InvalidOperationException("IsActive element is missing")),
             MaxDistance = double.TryParse(volunteerElem.Element("MaxDistance")?.Value, out double maxDist) ? maxDist : (double?)null,
-            DistanceType = (DistanceType)Enum.Parse(typeof(DistanceType), volunteerElem.Element("DistanceType")?.Value ?? throw new InvalidOperationException("DistanceType element is missing"))
+            DistanceType = (DistanceType)Enum.Parse(typeof(DistanceType), volunteerElem.Element("DistanceType")!.Value)
         };
     }
 

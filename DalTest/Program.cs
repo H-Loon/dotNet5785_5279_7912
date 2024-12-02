@@ -792,7 +792,7 @@ internal class Program
             Assignment assignment = s_dal!.Assignment.Read(id)!;
             callId = assignment.CallId;
             volunteerId = assignment.VolunteerId;
-            endDate = assignment.EndDate;
+            endDate = assignment.EndTime;
             endReason = assignment.EndReason;
 
             Console.Write("Do you want to change the call's ID of the assignment? (y/n): ");
@@ -828,8 +828,8 @@ internal class Program
                 Id = assignment.Id,
                 CallId = callId,
                 VolunteerId = volunteerId,
-                StartDate = assignment.StartDate,
-                EndDate = endDate,
+                StartTime = assignment.StartTime,
+                EndTime = endDate,
                 EndReason = endReason
             };
         }
@@ -848,8 +848,8 @@ internal class Program
             {
                 CallId = callId,
                 VolunteerId = volunteerId,
-                StartDate = DateTime.Now,
-                //EndDate = endDate
+                StartTime = DateTime.Now,
+                //EndTime = endDate
             };
         }
     }
