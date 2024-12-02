@@ -11,5 +11,5 @@ public class Call
     public DateTime StartTime { get; set; }
     public DateTime? MaxTime { get; set; }
     public BoCallStatus Status { get; set; }
-    public List<BO.CallAssignInList>? AssignInList { get; set; }
+    public List<CallAssignInList>? AssignInList { get; set; }
 }
