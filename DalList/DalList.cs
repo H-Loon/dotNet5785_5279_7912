@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace Dal;
 using DalApi;
-using DO;
 
+// Lazy singelton and Thread Safe
 sealed internal class DalList : IDal
 {
-    public static IDal Instance { get; } = new DalList();
     private DalList() { }
+    public static IDal Instance => Nested.Instance;
+    private static class Nested
+    {
+        internal static readonly DalList Instance = new DalList();
+    }
     public ICall Call { get; } = new CallImplementation();
     public IAssignment Assignment { get; } = new AssignmentImplementation();
     public IConfig Config { get; }= new ConfigImplementation();

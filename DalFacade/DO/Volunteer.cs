@@ -6,7 +6,7 @@ public record Volunteer
     string Name,
     string Phone,
     string Email,
-    /*string? Password = null, (bonus)*/
+    string? Password = null,
     string? Address = null,
     double? Latitude = null,
     double? Longitude = null,

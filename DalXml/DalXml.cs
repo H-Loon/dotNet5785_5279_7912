@@ -2,10 +2,15 @@
 using System.Diagnostics;
 namespace Dal;
 
+// Lazy Singleton and Thread Safe
 sealed internal class DalXml : IDal
 {
-    public static IDal Instance { get; } = new DalXml();
     private DalXml() { }
+    public static IDal Instance => Nested.Instance;
+    private static class Nested
+    { 
+        internal static readonly IDal Instance = new DalXml();
+    }
     public ICall Call { get; } = new CallImplementation();
 
     public IVolunteer Volunteer { get; } = new VolunteerImplementation();

@@ -326,7 +326,8 @@ internal class Program
     /// <returns>A Volunteer object with the collected fields.</returns>
     private static Volunteer VolunteerFields(string mod, int id = -1)
     {
-        string name, phoneNumber, email, adresse;
+        string name, phoneNumber, email;
+        string? update = null, password, adresse;
         RoleType role;
         bool isActive;
         double? maxDistance;
@@ -336,29 +337,36 @@ internal class Program
             Console.Write("Enter volunteer's ID: ");
             id = int.Parse(Console.ReadLine()!);
         }
+        else if (mod == "Update")
+        {
+            update = "Updated";
+        }
 
-        Console.Write("Enter volunteer's name: ");
+        Console.Write($"Enter {update} volunteer's name: ");
         name = Console.ReadLine()!;
 
-        Console.Write("Enter volunteer's phone number: ");
+        Console.Write($"Enter {update} volunteer's phone number: ");
         phoneNumber = Console.ReadLine()!;
 
-        Console.Write("Enter volunteer's email: ");
+        Console.Write($"Enter {update} volunteer's email: ");
         email = Console.ReadLine()!;
 
-        Console.Write("Enter volunteer's address: ");
-        adresse = Console.ReadLine()!;
+        Console.WriteLine($"Enter {update} volunteer's password: ");
+        password = Console.ReadLine() ?? null;
 
-        Console.WriteLine("Enter volunteer's role:\n 1. Volunteer\n 2. Admin");
+        Console.Write($"Enter {update} volunteer's address: ");
+        adresse = Console.ReadLine() ?? null;
+
+        Console.WriteLine($"Enter {update} volunteer's role:\n 1. Volunteer\n 2. Admin");
         role = (RoleType)int.Parse(Console.ReadLine()!);
 
-        Console.Write("Is the volunteer active? y/n: ");
+        Console.Write($"Is the {update} volunteer active? y/n: ");
         isActive = (bool)(Console.ReadLine() == "n" ? false : true);
 
-        Console.Write("Enter volunteer's max range: ");
+        Console.Write($"Enter {update} volunteer's max range: ");
         maxDistance = double.Parse(Console.ReadLine()!);
 
-        return new Volunteer(id, name, phoneNumber, email, adresse, Role: role, IsActive: isActive, MaxDistance: maxDistance);
+        return new Volunteer(id, name, phoneNumber, email, password, adresse, Role: role, IsActive: isActive, MaxDistance: maxDistance);
     }
 
     #endregion
