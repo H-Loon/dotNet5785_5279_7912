@@ -10,7 +10,7 @@ internal static class Tools
     /// <typeparam name="T"></typeparam>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public static string ToStringProperty<T>(this T obj) // Ai helped
+    internal static string ToStringProperty<T>(this T obj) // Ai helped
     {
         // Check if the object is null
         if (obj == null)
@@ -32,6 +32,6 @@ internal static class Tools
             result += $"{property.Name}: {value}\n";
         }
 
-        return result.TrimEnd('\n');
+        return result;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace BO;
+﻿using Helpers;
+
+namespace BO;
 
 public class VolunteerInList
 {
@@ -9,4 +11,5 @@ public class VolunteerInList
     public int CanceledCalls { get; set; }
     public int? CallInTreatment { get; set; }
     public BoCallType? CurrentCallType { get; set; }
+    public override string ToString() => this.ToStringProperty();
 }

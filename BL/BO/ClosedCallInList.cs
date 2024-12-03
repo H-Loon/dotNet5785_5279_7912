@@ -1,4 +1,6 @@
-﻿namespace BO;
+﻿using Helpers;
+
+namespace BO;
 
 public class ClosedCallInList
 {
@@ -9,4 +11,5 @@ public class ClosedCallInList
     public DateTime AssignTime { get; set; }
     public DateTime EndedTime { get; set; }
     public BoAssignmentEndReason EndType { get; set; }
+    public override string ToString() => this.ToStringProperty();
 }

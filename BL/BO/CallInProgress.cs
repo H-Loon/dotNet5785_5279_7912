@@ -1,4 +1,6 @@
-﻿namespace BO;
+﻿using Helpers;
+
+namespace BO;
 
 public class CallInProgress
 {
@@ -13,4 +15,5 @@ public class CallInProgress
     public DateTime AssignTime { get; set; }
     public double CallDistance { get; set; }
     public BoCallStatus Status { get; set; }
+    public override string ToString() => this.ToStringProperty();
 }
