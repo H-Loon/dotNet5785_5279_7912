@@ -19,7 +19,8 @@ public enum BoCallType
     TeleporterBlockedOnMachonLev,
     MyDishwasherIsInDepression,
     MyTimeTravelMachineIsLazy,
-    Other
+    Other,
+    None
 }
 
 public enum BoCallStatus
