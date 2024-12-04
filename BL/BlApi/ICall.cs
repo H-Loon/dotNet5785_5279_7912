@@ -10,7 +10,7 @@ public interface ICall
     void AddCall(BO.Call call);
     IEnumerable<BO.ClosedCallInList> GetClosedCallByVolunteer(int id, BO.BoCallType? boCallType, BO.ClosedCallInListField? field);
     IEnumerable<BO.OpenCallInList> GetOpenCallForVolunteer(int id, BO.BoCallType? boCallType, BO.OpenCallInListField? field);
-    void CompleteCall(int volunteerId, int callId);
-    void CancelCall(int cancelerId, int callId);
+    void CompleteCall(int volunteerId, int assignmentId);
+    void CancelCall(int cancelerId, int assignmentId);
     void AssignCall(int volunteerId, int callId);
 }
