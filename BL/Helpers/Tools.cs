@@ -180,4 +180,14 @@ internal static class Tools
 
         return result;
     }
+
+    internal static object GetLocation(string address)
+    {
+        // Dummy implementation for demonstration purposes
+        double latitude = 0.0;
+        double longitude = 0.0;
+
+        // Return an anonymous object with Latitude and Longitude properties
+        return new { Latitude = latitude, Longitude = longitude };
+    }
 }

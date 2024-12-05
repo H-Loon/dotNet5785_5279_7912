@@ -29,10 +29,17 @@ internal static class VolunteerManager
     }
     internal static void CreateDOVolunteer(BO.Volunteer volunteer)
     {
-        if (volunteer.Password != null)
-            volunteer.Password = VolunteerManager.CryptPW(volunteer.Password);
+        if (volunteer.Address is not null)
+        {
+            var location = Tools.GetLocation(volunteer.Address);
+            volunteer.Latitude = (double)location.GetType().GetProperty("Latitude")!.GetValue(location)!;
+            volunteer.Longitude = (double)location.GetType().GetProperty("Longitude")!.GetValue(location)!;
+        }
 
-        s_dal.Volunteer.Create(VolunteerManager.ConvertToDO(volunteer));
+        if (volunteer.Password != null)
+            volunteer.Password = CryptPW(volunteer.Password);
+
+        s_dal.Volunteer.Create(ConvertToDO(volunteer));
     }
     internal static BO.Volunteer ConvertToBO(int id)
     {
