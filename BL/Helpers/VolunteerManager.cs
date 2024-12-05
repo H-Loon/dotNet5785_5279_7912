@@ -29,7 +29,7 @@ internal static class VolunteerManager
     }
     internal static void CreateDOVolunteer(BO.Volunteer volunteer)
     {
-        if (volunteer.Address is not null)
+        if (volunteer.Address is not null) // Ai helped
         {
             var location = Tools.GetLocation(volunteer.Address);
             volunteer.Latitude = (double)location.GetType().GetProperty("Latitude")!.GetValue(location)!;
