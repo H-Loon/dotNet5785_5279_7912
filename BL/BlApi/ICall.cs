@@ -4,7 +4,7 @@ public interface ICall
 {
     int[] GetCallsQuantities();
     IEnumerable<BO.CallInList> GetCallsInList(BO.CallInListField? field1, object? obj, BO.CallInListField? field2);
-    BO.Call GetCall(int id);
+    BO.Call GetCall(int callid);
     void UpdateCall(BO.Call call);
     void DeleteCall(int id);
     void AddCall(BO.Call call);
