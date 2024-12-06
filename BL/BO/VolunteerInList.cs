@@ -10,6 +10,6 @@ public class VolunteerInList
     public int CompletedCalls { get; set; }
     public int CanceledCalls { get; set; }
     public int? CallInTreatment { get; set; }
-    public BoCallType? CurrentCallType { get; set; }
+    public BoCallType CurrentCallType { get; set; }
     public override string ToString() => this.ToStringProperty();
 }

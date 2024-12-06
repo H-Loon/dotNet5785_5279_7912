@@ -7,7 +7,7 @@ public class CallInList
     public int AssignmentId { get; set; }
     public int CallId { get; init; }
     public BoCallType CallType { get; set; }
-    public DateTime StartTime { get; set; }
+    public DateTime StartTime { get; init; }
     public TimeSpan? TimeLeft { get; set; }
     public string? LastVolunteerName { get; set; }
     public TimeSpan? TimeOpen { get; set; }
