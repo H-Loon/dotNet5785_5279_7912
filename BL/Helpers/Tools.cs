@@ -19,21 +19,38 @@ internal static class Tools
     internal static BO.BoCallStatus GetCallStatus(int callId)
     {
         DO.Call call = s_dal.Call.Read(callId) ?? throw new ArgumentException("Call not found");
+        DO.Assignment? assignment = s_dal.Assignment.Read(a => a.CallId == callId);
 
         DateTime now = ClockManager.Now;
         DateTime? maxTime = s_dal.Call.Read(callId)!.MaxTime;
 
-
-        if (call.MaxTime is null)
-            return BO.BoCallStatus.InTreatment;
-
-        else if (now > maxTime)
+        if (maxTime is not null && now > maxTime)
             return BO.BoCallStatus.OverDated;
 
-        else if (now < maxTime - s_dal.Config.RiskRange)
-                return BO.BoCallStatus.InTreatmentAndDanger;
 
-        return BO.BoCallStatus.InTreatment;
+        else if (assignment is not null)
+        {
+            if (assignment.EndReason is not null)
+                return BO.BoCallStatus.Closed;
+
+            else if (call.MaxTime is null)
+                return BO.BoCallStatus.InTreatment;
+
+            else if (now < maxTime - s_dal.Config.RiskRange)
+                return BO.BoCallStatus.InTreatmentAndDanger;
+                
+            else
+                return BO.BoCallStatus.InTreatment;
+        }
+       
+        if (call.MaxTime is null)
+            return BO.BoCallStatus.Open;
+
+        else if (now < maxTime - s_dal.Config.RiskRange)
+            return BO.BoCallStatus.OpenAndDanger;
+
+        else
+            return BO.BoCallStatus.Open;
     }
 
     internal static bool IdCheck(int id) // AI helped

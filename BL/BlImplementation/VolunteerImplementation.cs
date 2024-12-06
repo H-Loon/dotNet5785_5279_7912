@@ -83,7 +83,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
     }
 
-    public BO.BoRoleType LogIn(string name, string password)
+    public BO.BoRoleType LogIn(string name, string password) // to do: add password encryption
     {
         try
         {

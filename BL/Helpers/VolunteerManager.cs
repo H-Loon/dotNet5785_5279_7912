@@ -29,6 +29,16 @@ internal static class VolunteerManager
     }
     internal static void CreateDOVolunteer(BO.Volunteer volunteer)
     {
+        DOVolunteerFiller(volunteer);
+        s_dal.Volunteer.Create(ConvertToDO(volunteer));
+    }
+    internal static void UpdateDOVolunteer(BO.Volunteer volunteer)
+    {
+        DOVolunteerFiller(volunteer);
+        s_dal.Volunteer.Update(ConvertToDO(volunteer));
+    }
+    private static void DOVolunteerFiller (BO.Volunteer volunteer)
+    {
         if (volunteer.Address is not null) // Ai helped
         {
             var location = Tools.GetLocation(volunteer.Address);
@@ -38,8 +48,6 @@ internal static class VolunteerManager
 
         if (volunteer.Password != null)
             volunteer.Password = CryptPW(volunteer.Password);
-
-        s_dal.Volunteer.Create(ConvertToDO(volunteer));
     }
     internal static BO.Volunteer ConvertToBO(int id)
     {
@@ -89,6 +97,10 @@ internal static class VolunteerManager
             OverDatedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.OverDated),
             CurrentCall = callInProgress
         };
+    }
+    internal static BO.Volunteer ConvertToBo(BO.Volunteer v)
+    {
+        return ConvertToBO(v.Id);
     }
     internal static DO.Volunteer ConvertToDO(BO.Volunteer volunteer)
     {

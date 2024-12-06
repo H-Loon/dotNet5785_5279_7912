@@ -62,8 +62,8 @@ internal static class CallManager
 
             Type = (DO.CallType)call.CallType,
             Address = call.Address,
-            Latitude = call.Latitude,
-            Longitude = call.Longitude,
+            Latitude = call.Latitude.Value,
+            Longitude = call.Longitude.Value,
             StartTime = call.StartTime,
             Description = call.Description,
             MaxTime = call.MaxTime,
