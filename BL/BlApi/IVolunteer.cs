@@ -3,7 +3,7 @@
 public interface IVolunteer
 {
     BO.BoRoleType LogIn(string name, string password);
-    IEnumerable<BO.VolunteerInList> GetVolunteerInList(bool? active, BO.VolunteerInListField field); // not sure
+    IEnumerable<BO.VolunteerInList> GetVolunteerInList(bool? active, BO.VolunteerInListField? field);
     BO.Volunteer GetVolunteer(int id);
     void UpdateVolunteer(int id, BO.Volunteer volunteer);
     void DeleteVolunteer(int id);

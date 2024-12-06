@@ -93,3 +93,10 @@ public enum ClosedCallInListField
     EndedTime,
     EndType
 }
+
+public enum DoType
+{
+    Volunteer,
+    Call,
+    Assignment
+}
