@@ -3,7 +3,7 @@
 public interface IAdmin
 {
     DateTime GetConfigClock();
-    void AddToConfigClock(int value, BO.TimeType type);
+    void ForwardClock(int value, BO.TimeUnit type);
     TimeSpan GetRiskRange();
     void UpdateRiskRange(TimeSpan riskRange);
     void ResetDB();

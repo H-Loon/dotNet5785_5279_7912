@@ -41,14 +41,15 @@ public enum BoAssignmentEndReason
     OverDated
 }
 
-public enum TimeType
+public enum TimeUnit
 {
-    Minute,
-    Hour,
-    Day,
-    Week,
-    Month,
-    Year
+    Seconds,
+    Minutes,
+    Hours,
+    Days,
+    Weeks,
+    Months,
+    Years
 }
 
 public enum VolunteerInListField
