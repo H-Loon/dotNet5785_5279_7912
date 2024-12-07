@@ -1,6 +1,6 @@
 ﻿using DalApi;
 using System.Text.RegularExpressions;
-using System.ComponentModel;
+using System.Xml.Linq;
 using System.Reflection;
 
 namespace Helpers;
@@ -13,7 +13,7 @@ internal static class Tools
         if (v.Address is not null)
             return Haversine(s_dal.Call.Read(callId)!.Latitude, s_dal.Call.Read(callId)!.Longitude, v.Latitude!.Value, v.Longitude!.Value);
         else
-            throw new ArgumentException("Volunteer address or coordinates are not valid.");    
+            throw new ArgumentException("Volunteer address or coordinates are not valid.");
     }
 
     internal static BO.BoCallStatus GetCallStatus(int callId)
@@ -38,11 +38,11 @@ internal static class Tools
 
             else if (now < maxTime - s_dal.Config.RiskRange)
                 return BO.BoCallStatus.InTreatmentAndDanger;
-                
+
             else
                 return BO.BoCallStatus.InTreatment;
         }
-       
+
         if (call.MaxTime is null)
             return BO.BoCallStatus.Open;
 
@@ -86,30 +86,38 @@ internal static class Tools
         return true;
     }
 
-    internal static bool AddressCheck(string? address) // To be implemented
+    internal static bool AddressCheck(string? address)
     {
         if (address is null)
             return true;
-        return true;
+        try
+        {
+            AddressToCoordinates(address);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     internal static bool PasswordCheck(string? password)
     {
         char[] specialCharacters = { '@', '!', '?', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', '|', '\\', ':', ';', '"', '\'', '<', '>', ',', '.', '/', '~', '`' };
-        
+
         if (password is null)
             return true;
         if (password.Length < 6)
             return false;
-        if( password.IndexOfAny(specialCharacters) >= 0)
+        if (password.IndexOfAny(specialCharacters) >= 0)
             return false;
-        if(password.Any(char.IsUpper) is false)
+        if (password.Any(char.IsUpper) is false)
             return false;
         if (password.Any(char.IsLower) is false)
             return false;
         if (password.Any(char.IsDigit) is false)
             return false;
-        
+
         return true;
     }
 
@@ -198,13 +206,45 @@ internal static class Tools
         return result;
     }
 
-    internal static object GetLocation(string address)
+    public static (double Latitude, double Longitude) AddressToCoordinates(string address) // Ai helped
     {
-        // Dummy implementation for demonstration purposes
-        double latitude = 0.0;
-        double longitude = 0.0;
+        // Geocoding API key
+        string apiKey = "6754830d05d34753981159dre426e6e";
+        string format = "xml";
 
-        // Return an anonymous object with Latitude and Longitude properties
-        return new { Latitude = latitude, Longitude = longitude };
+        // Encode the address to make it URL-safe
+        string encodedAddress = Uri.EscapeDataString(address);
+
+        // Geocoding API URL for XML format
+        string url = $"https://geocode.maps.co/search?q={encodedAddress}&api_key={apiKey}&format={format}";
+
+        using HttpClient client = new HttpClient();
+
+        try
+        {
+            // Synchronously send the HTTP GET request and get the response
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            response.EnsureSuccessStatusCode();
+
+            // Read the response content synchronously
+            string xmlResponse = response.Content.ReadAsStringAsync().Result;
+
+            // Parse the XML response
+            XDocument doc = XDocument.Parse(xmlResponse);
+
+            // Extract latitude and longitude from the XML
+            var placeElement = doc.Root?.Element("place");
+            if (placeElement == null)
+                throw new Exception("Could not find coordinates for the given address.");
+
+            double latitude = double.Parse(placeElement.Attribute("lat")!.Value);
+            double longitude = double.Parse(placeElement.Attribute("lon")!.Value);
+
+            return (latitude, longitude);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Failed to get coordinates from the address.", ex);
+        }
     }
 }

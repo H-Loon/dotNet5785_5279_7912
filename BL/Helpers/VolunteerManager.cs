@@ -27,23 +27,11 @@ internal static class VolunteerManager
                    CurrentCallType = callInTreatmentType.HasValue ? (BO.BoCallType)callInTreatmentType : BO.BoCallType.None
                };
     }
-    internal static void CreateDOVolunteer(BO.Volunteer volunteer)
-    {
-        DOVolunteerFiller(volunteer);
-        s_dal.Volunteer.Create(ConvertToDO(volunteer));
-    }
-    internal static void UpdateDOVolunteer(BO.Volunteer volunteer)
-    {
-        DOVolunteerFiller(volunteer);
-        s_dal.Volunteer.Update(ConvertToDO(volunteer));
-    }
-    private static void DOVolunteerFiller (BO.Volunteer volunteer)
+    internal static void DOVolunteerFiller(BO.Volunteer volunteer)
     {
         if (volunteer.Address is not null) // Ai helped
         {
-            var location = Tools.GetLocation(volunteer.Address);
-            volunteer.Latitude = (double)location.GetType().GetProperty("Latitude")!.GetValue(location)!;
-            volunteer.Longitude = (double)location.GetType().GetProperty("Longitude")!.GetValue(location)!;
+            (volunteer.Latitude, volunteer.Longitude) = Tools.AddressToCoordinates(volunteer.Address);
         }
 
         if (volunteer.Password != null)

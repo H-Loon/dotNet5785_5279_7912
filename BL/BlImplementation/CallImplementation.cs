@@ -2,9 +2,6 @@
 using BlApi;
 using System.Collections.Generic;
 using Helpers;
-using System.Threading.Tasks.Dataflow;
-
-using System.Collections.Generic;
 
 internal class CallImplementation : ICall
 {
@@ -14,7 +11,7 @@ internal class CallImplementation : ICall
     public int[] GetCallsQuantities()//retourne un tableau dans lequel chaque index représente le nombre d'appels ayant un certain statut
     {
         var calls = _dal.Call.ReadAll();
-        var quantities =calls.GroupBy(c=> c..BoCallType).OrderBy(g => (int)g.Key).Select(g => g.Count()).ToArray();
+        var quantities =calls.GroupBy(c=> c.CallType).OrderBy(g => (int)g.Key).Select(g => g.Count()).ToArray();
         return quantities;
 
         //throw new NotImplementedException();

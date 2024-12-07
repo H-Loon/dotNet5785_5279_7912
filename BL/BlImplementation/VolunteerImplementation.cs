@@ -18,7 +18,8 @@ internal class VolunteerImplementation : BlApi.IVolunteer
             if (_dal.Volunteer.Read(volunteer.Id) is not null)
                 throw new ArgumentException("Volunteer already exists");
 
-            VolunteerManager.CreateDOVolunteer(volunteer);
+            VolunteerManager.DOVolunteerFiller(volunteer);
+            _dal.Volunteer.Create(VolunteerManager.ConvertToDO(volunteer));
         }
         catch (Exception e)
         {
@@ -83,13 +84,13 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
     }
 
-    public BO.BoRoleType LogIn(string name, string password) // to do: add password encryption
+    public BO.BoRoleType LogIn(string name, string password)
     {
         try
         {
-            DO.Volunteer? volunteer = _dal.Volunteer.Read(v => v.Name == name) ?? throw new ArgumentException("Volunteer not found");
+            DO.Volunteer? volunteer = _dal.Volunteer.Read(v => v.Name == name) ?? throw new ArgumentException("Volunteer name not found");
 
-            if (volunteer.Password != password)
+            if (VolunteerManager.CryptPW(password) != volunteer.Password)
                 throw new ArgumentException("Password is incorrect");
             
             else
@@ -116,8 +117,8 @@ internal class VolunteerImplementation : BlApi.IVolunteer
                     throw new ArgumentException("You are not allowed to update this volunteer");
             }
 
-            VolunteerManager.CreateDOVolunteer(volunteer);
-
+            VolunteerManager.DOVolunteerFiller(volunteer);
+            _dal.Volunteer.Update(VolunteerManager.ConvertToDO(volunteer));
         }
         catch (Exception e)
         {

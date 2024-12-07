@@ -71,17 +71,17 @@ internal static class CallManager
 
         return doCall;
     }
-    private static void CheckStatus(BO.Call call) 
+    internal static void CheckStatus(BO.Call call) 
     {
-    if (call == null)
-            {
-                throw new KeyNotFoundException("Call not found.");
-}
-            if (call.Status != BoCallStatus.Open || (call.AssignInList != null && call.AssignInList.Any()))
-            {
-                throw new InvalidOperationException("Cannot delete call. The call is either not open or has been assigned to a volunteer.");
-            }
-}
+        if (call == null)
+        {
+            throw new KeyNotFoundException("Call not found.");
+        }
+        if (call.Status != BoCallStatus.Open || (call.AssignInList != null && call.AssignInList.Any()))
+        {
+            throw new InvalidOperationException("Cannot delete call. The call is either not open or has been assigned to a volunteer.");
+        }
+    }
 
 
 
