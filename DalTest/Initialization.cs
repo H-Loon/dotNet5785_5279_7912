@@ -28,6 +28,14 @@ public static class Initialization
         "hila.shalev@example.com"
     ];
 
+    private static readonly string[] s_passwords = new string[]
+    {
+        "Password1!", "Secure2Pass@", "Strong3Pwd#", "Valid4Pass$", "Check5Pass%",
+        "Safe6Passw^", "Good7Passw&", "Right8Pass*", "Valid9Pass(", "Strong0Pwd)",
+        "Check1Pass-", "Safe2Passw_", "Good3Passw=", "Right4Pass+", "Valid5Pass[",
+        "Strong6Pwd]"  
+    };
+
     private static readonly List<string> s_phoneNumbers =
     [
         "+972-50-1234567", "+972-52-2345678", "+972-54-3456789", "+972-55-4567890",
@@ -104,6 +112,7 @@ public static class Initialization
             Name = s_names[0],
             Phone = s_phoneNumbers[0],
             Email = s_emails[0],
+            Password = s_passwords[0],
             Address = s_addresses[0],
             Latitude = s_latitudes[0],
             Longitude = s_longitudes[0],
@@ -143,6 +152,7 @@ public static class Initialization
                 Name = s_names[i],
                 Phone = phone,
                 Email = s_emails[i],
+                Password = s_passwords[i],
                 Address = address,
                 Latitude = latitude,
                 Longitude = longitude,

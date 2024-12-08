@@ -101,7 +101,7 @@ internal static class Tools
         }
     }
 
-    internal static bool PasswordCheck(string? password)
+    internal static bool PasswordCheck(string password)
     {
         char[] specialCharacters = { '@', '!', '?', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', '|', '\\', ':', ';', '"', '\'', '<', '>', ',', '.', '/', '~', '`' };
 

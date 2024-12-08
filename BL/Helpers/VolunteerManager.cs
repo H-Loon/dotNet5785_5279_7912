@@ -37,6 +37,29 @@ internal static class VolunteerManager
         if (volunteer.Password != null)
             volunteer.Password = CryptPW(volunteer.Password);
     }
+    internal static void PasswordFillerForInit()
+    {
+        var volunteers = s_dal.Volunteer.ReadAll();
+        foreach (var v in volunteers)
+        {
+            var password = CryptPW(v.Password);
+            s_dal.Volunteer.Update(new DO.Volunteer
+            {
+                Id = v.Id,
+                Name = v.Name,
+                Phone = v.Phone,
+                Email = v.Email,
+                Password = password,
+                Address = v.Address,
+                Latitude = v.Latitude,
+                Longitude = v.Longitude,
+                Role = v.Role,
+                IsActive = v.IsActive,
+                MaxDistance = v.MaxDistance,
+                DistanceType = v.DistanceType
+            });
+        }
+    }
     internal static BO.Volunteer ConvertToBO(int id)
     {
         IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll();
@@ -118,7 +141,7 @@ internal static class VolunteerManager
             return false;
         if (Tools.EmailCheck(volunteer.Email) is false)
             return false;
-        if (Tools.PasswordCheck(volunteer.Password) is false)
+        if (Tools.PasswordCheck(volunteer.Password!) is false)
             return false;
         if (Tools.AddressCheck(volunteer.Address) is false)
             return false;
