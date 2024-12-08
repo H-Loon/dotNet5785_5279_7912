@@ -1,22 +1,24 @@
 ﻿namespace BlImplementation;
-using BlApi;
-using DalApi;
 using Helpers;
-using System.Reflection;
 
 internal class VolunteerImplementation : BlApi.IVolunteer
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
 
+    /// <summary>  
+    /// Adds a new volunteer to the system.  
+    /// </summary>  
+    /// <param name="volunteer">The volunteer to be added.</param>  
+    /// <exception cref="ArgumentException">Thrown when the volunteer is not valid or already exists.</exception>  
     public void AddVolunteer(BO.Volunteer volunteer)
     {
-        try 
+        try
         {
             if (VolunteerManager.BOVolunteerCheck(volunteer) is false)
-                throw new ArgumentException("Volunteer is not valid");
+                throw new BO.BlNotValidEntityException("Volunteer is not valid");
 
             if (_dal.Volunteer.Read(volunteer.Id) is not null)
-                throw new ArgumentException("Volunteer already exists");
+                throw new BO.BlAlreadyExistsException("Volunteer already exists");
 
             VolunteerManager.DOVolunteerFiller(volunteer);
             _dal.Volunteer.Create(VolunteerManager.ConvertToDO(volunteer));
@@ -27,6 +29,11 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
     }
 
+    /// <summary>  
+    /// Deletes a volunteer from the system.  
+    /// </summary>  
+    /// <param name="id">The ID of the volunteer to be deleted.</param>  
+    /// <exception cref="ArgumentException">Thrown when the volunteer is in treatment or has no completed calls.</exception>  
     public void DeleteVolunteer(int id)
     {
         try
@@ -34,10 +41,10 @@ internal class VolunteerImplementation : BlApi.IVolunteer
             var boVolunteer = VolunteerManager.ConvertToBO(id);
 
             if (boVolunteer.CurrentCall is not null)
-                throw new ArgumentException("Volunteer is in treatment");
-          
+                throw new BO.BlDeletionImpossibleException("Volunteer is in treatment");
+
             if (boVolunteer.CompletedCalls is 0)
-                throw new ArgumentException("Volunteer has no completed calls");
+                throw new BO.BlDeletionImpossibleException("Volunteer has no completed calls");
 
             _dal.Volunteer.Delete(id);
         }
@@ -47,6 +54,11 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
     }
 
+    /// <summary>  
+    /// Retrieves a volunteer by ID.  
+    /// </summary>  
+    /// <param name="id">The ID of the volunteer to be retrieved.</param>  
+    /// <returns>The volunteer with the specified ID.</returns>  
     public BO.Volunteer GetVolunteer(int id)
     {
         try
@@ -59,10 +71,16 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
     }
 
+    /// <summary>  
+    /// Retrieves a list of volunteers based on their active status and sorts them by the specified field.  
+    /// </summary>  
+    /// <param name="active">The active status to filter volunteers by. If null, all volunteers are returned.</param>  
+    /// <param name="field">The field to sort the volunteers by.</param>  
+    /// <returns>A list of volunteers matching the specified active status and sorted by the specified field.</returns>  
     public IEnumerable<BO.VolunteerInList> GetVolunteerInList(bool? active, BO.VolunteerInListField? field)
     {
-        try 
-        { 
+        try
+        {
             IEnumerable<DO.Assignment> assignments = _dal.Assignment.ReadAll();
             IEnumerable<DO.Call> calls = _dal.Call.ReadAll();
             IEnumerable<BO.VolunteerInList> volunteers = VolunteerManager.GetVolunteerInLists(active);
@@ -84,6 +102,14 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
     }
 
+    /// <summary>  
+    /// Logs in a volunteer using their name and password.  
+    /// </summary>  
+    /// <param name="name">The name of the volunteer.</param>  
+    /// <param name="password">The password of the volunteer.</param>  
+    /// <returns>The role of the volunteer if the login is successful.</returns>  
+    /// <exception cref="ArgumentException">Thrown when the volunteer name is not found.</exception>  
+    /// <exception cref="BO.BlIncorrectPasswordException">Thrown when the password is incorrect.</exception>  
     public BO.BoRoleType LogIn(string name, string password)
     {
         try
@@ -92,7 +118,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
 
             if (VolunteerManager.CryptPW(password) != volunteer.Password)
                 throw new BO.BlIncorrectPasswordException("Password is incorrect");
-            
+
             else
                 return (BO.BoRoleType)volunteer.Role;
         }
@@ -102,6 +128,12 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
     }
 
+    /// <summary>  
+    /// Updates a volunteer's information.  
+    /// </summary>  
+    /// <param name="id">The ID of the volunteer to be updated.</param>  
+    /// <param name="volunteer">The updated volunteer information.</param>  
+    /// <exception cref="ArgumentException">Thrown when the volunteer is not valid, not found, or the user is not allowed to update the volunteer.</exception>  
     public void UpdateVolunteer(int id, BO.Volunteer volunteer)
     {
         try
@@ -109,12 +141,12 @@ internal class VolunteerImplementation : BlApi.IVolunteer
             var asker = _dal.Volunteer.Read(id) ?? throw new ArgumentException("Volunteer not found");
 
             if (VolunteerManager.BOVolunteerCheck(volunteer) is false)
-                throw new ArgumentException("Volunteer is not valid");
+                throw new BO.BlNotValidEntityException("Volunteer is not valid");
 
             if (asker.Role is not DO.RoleType.Admin)
             {
                 if (asker.Id != volunteer.Id || volunteer.Role == BO.BoRoleType.Admin)
-                    throw new ArgumentException("You are not allowed to update this volunteer");
+                    throw new BO.BlNotAllowedException("You are not allowed to update this volunteer");
             }
 
             VolunteerManager.DOVolunteerFiller(volunteer);

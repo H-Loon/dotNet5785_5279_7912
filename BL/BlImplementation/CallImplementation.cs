@@ -29,7 +29,7 @@ internal class CallImplementation : ICall
         // Création de l'objet DO.Call à partir de l'objet BO.Call
         CallManager.ValidateCall(call);
 
-        DO.Call dataCall = CallManager.converttoCall(call);
+        DO.Call dataCall = CallManager.ConvertToDoCall(call);
 
         try
         {

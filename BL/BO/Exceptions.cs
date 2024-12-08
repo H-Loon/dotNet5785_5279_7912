@@ -45,3 +45,22 @@ public class BlIncorrectPasswordException : Exception
 {
     public BlIncorrectPasswordException(string? message) : base(message) { }
 }
+
+[Serializable]
+public class BlNotValidEntityException : Exception
+{
+    public BlNotValidEntityException(string? message) : base(message) { }
+}
+
+[Serializable]
+public class BlNotAllowedException : Exception
+{
+    public BlNotAllowedException(string? message) : base(message) { }
+}
+
+[Serializable]
+public class BlEmailNotSendException : Exception
+{
+    public BlEmailNotSendException(string? message) : base(message) { }
+    public BlEmailNotSendException(string? message, Exception innerException) : base(message, innerException) { }
+}

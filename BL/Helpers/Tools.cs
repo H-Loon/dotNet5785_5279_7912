@@ -1,6 +1,7 @@
 ﻿using DalApi;
 using System.Xml.Linq;
 using System.Reflection;
+using System.Net.Mail;
 using BO;
 
 namespace Helpers;
@@ -14,43 +15,6 @@ internal static class Tools
             return Haversine(s_dal.Call.Read(callId)!.Latitude, s_dal.Call.Read(callId)!.Longitude, v.Latitude!.Value, v.Longitude!.Value);
         else
             throw new BO.BlAddressNotValidException("Volunteer address is not valid.");
-    }
-
-    internal static BO.BoCallStatus GetCallStatus(int callId)
-    {
-        DO.Call call = s_dal.Call.Read(callId) ?? throw new BO.BlNotExistException("Call not found");
-        DO.Assignment? assignment = s_dal.Assignment.Read(a => a.CallId == callId);
-
-        DateTime now = ClockManager.Now;
-        DateTime? maxTime = s_dal.Call.Read(callId)!.MaxTime;
-
-        if (maxTime is not null && now > maxTime)
-            return BO.BoCallStatus.OverDated;
-
-
-        else if (assignment is not null)
-        {
-            if (assignment.EndReason is not null)
-                return BO.BoCallStatus.Closed;
-
-            else if (call.MaxTime is null)
-                return BO.BoCallStatus.InTreatment;
-
-            else if (now < maxTime - s_dal.Config.RiskRange)
-                return BO.BoCallStatus.InTreatmentAndDanger;
-
-            else
-                return BO.BoCallStatus.InTreatment;
-        }
-
-        if (call.MaxTime is null)
-            return BO.BoCallStatus.Open;
-
-        else if (now < maxTime - s_dal.Config.RiskRange)
-            return BO.BoCallStatus.OpenAndDanger;
-
-        else
-            return BO.BoCallStatus.Open;
     }
 
     internal static bool AddressCheck(string? address)
@@ -129,7 +93,7 @@ internal static class Tools
         return result;
     }
 
-    public static (double Latitude, double Longitude) AddressToCoordinates(string address) // Ai helped
+    internal static (double Latitude, double Longitude) AddressToCoordinates(string address) // Ai helped
     {
         // Geocoding API key
         string apiKey = "6754830d05d34753981159dre426e6e";
@@ -168,6 +132,39 @@ internal static class Tools
         catch (Exception ex)
         {
             throw new Exception("Failed to get coordinates from the address.", ex);
+        }
+    }
+
+    internal static void SendEmail(string sender, string receiver, string subject, string msg) // Ai helped
+    {
+        // Local SMTP server settings (Papercut)
+        string smtpServer = "127.0.0.1"; // Localhost
+        int smtpPort = 25;               // Default Papercut port
+
+        try
+        {
+            // Create a MailMessage object
+            MailMessage mail = new MailMessage();
+            mail.From = new MailAddress(sender); // Fake sender address for testing
+            mail.To.Add(receiver);                       // Recipient email address
+            mail.Subject = subject;                      // Email subject
+            mail.Body = msg;                             // Email content
+
+            // Configure the SmtpClient
+            SmtpClient smtpClient = new SmtpClient(smtpServer, smtpPort)
+            {
+                DeliveryMethod = SmtpDeliveryMethod.Network,  // Send via network
+                UseDefaultCredentials = false,                // No authentication needed for Papercut
+                EnableSsl = false                             // No encryption required
+            };
+
+            // Send the email
+            smtpClient.Send(mail);
+
+        }
+        catch (Exception ex)
+        {
+            throw new BlEmailNotSendException("Error sending email: " + ex.Message);
         }
     }
 }
