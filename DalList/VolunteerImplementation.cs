@@ -26,7 +26,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="DalNotExistException">Thrown if the volunteer with the specified ID does not exist.</exception>
     public void Delete(int id)
     {
-        Volunteer volunteer = Read(id) ?? throw new DalNotExistException($"Assignment with Id ={id} doesn t exists");
+        Volunteer volunteer = Read(id) ?? throw new DalDeletionImpossibleException($"Assignment with Id ={id} doesn t exists");
         DataSource.Volunteers.Remove(volunteer);
     }
 

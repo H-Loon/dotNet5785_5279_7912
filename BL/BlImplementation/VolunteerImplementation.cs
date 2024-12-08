@@ -91,7 +91,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
             DO.Volunteer? volunteer = _dal.Volunteer.Read(v => v.Name == name) ?? throw new ArgumentException("Volunteer name not found");
 
             if (VolunteerManager.CryptPW(password) != volunteer.Password)
-                throw new ArgumentException("Password is incorrect");
+                throw new BO.BlIncorrectPasswordException("Password is incorrect");
             
             else
                 return (BO.BoRoleType)volunteer.Role;

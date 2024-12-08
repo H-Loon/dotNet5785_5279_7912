@@ -1,6 +1,7 @@
 ﻿using DalApi;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 namespace Helpers;
 
 internal static class VolunteerManager
@@ -9,23 +10,30 @@ internal static class VolunteerManager
 
     internal static IEnumerable<BO.VolunteerInList> GetVolunteerInLists(bool? active)
     {
-        IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll();
-        IEnumerable<DO.Call> calls = s_dal.Call.ReadAll();
-        return from v in s_dal.Volunteer.ReadAll()
-               where active == null || v.IsActive == active
-               let complCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed)
-               let canceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer)
-               let callInTreatmentId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId
-               let callInTreatmentType = calls.FirstOrDefault(c => c.Id == callInTreatmentId)?.Type
-               select new BO.VolunteerInList
-               {
-                   Id = v.Id,
-                   Name = v.Name,
-                   IsActive = v.IsActive,
-                   CompletedCalls = complCalls,
-                   CanceledCalls = canceledCalls,
-                   CurrentCallType = callInTreatmentType.HasValue ? (BO.BoCallType)callInTreatmentType : BO.BoCallType.None
-               };
+        try
+        {
+            IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll();
+            IEnumerable<DO.Call> calls = s_dal.Call.ReadAll();
+            return from v in s_dal.Volunteer.ReadAll()
+                   where active == null || v.IsActive == active
+                   let complCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed)
+                   let canceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer)
+                   let callInTreatmentId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId
+                   let callInTreatmentType = calls.FirstOrDefault(c => c.Id == callInTreatmentId)?.Type
+                   select new BO.VolunteerInList
+                   {
+                       Id = v.Id,
+                       Name = v.Name,
+                       IsActive = v.IsActive,
+                       CompletedCalls = complCalls,
+                       CanceledCalls = canceledCalls,
+                       CurrentCallType = callInTreatmentType.HasValue ? (BO.BoCallType)callInTreatmentType : BO.BoCallType.None
+                   };
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
     internal static void DOVolunteerFiller(BO.Volunteer volunteer)
     {
@@ -133,19 +141,95 @@ internal static class VolunteerManager
     }
     internal static bool BOVolunteerCheck(BO.Volunteer volunteer)
     {
-        if (Tools.IdCheck(volunteer.Id) is false)
+        if (IdCheck(volunteer.Id) is false)
             return false;
-        if (Tools.NameCheck(volunteer.Name) is false)
+        if (NameCheck(volunteer.Name) is false)
             return false;
-        if (Tools.PhoneCheck(volunteer.Phone) is false)
+        if (PhoneCheck(volunteer.Phone) is false)
             return false;
-        if (Tools.EmailCheck(volunteer.Email) is false)
+        if (EmailCheck(volunteer.Email) is false)
             return false;
-        if (Tools.PasswordCheck(volunteer.Password!) is false)
+        if (PasswordCheck(volunteer.Password!) is false)
             return false;
         if (Tools.AddressCheck(volunteer.Address) is false)
             return false;
-        if (Tools.MaxDistanceCheck(volunteer.MaxDistance) is false)
+        if (MaxDistanceCheck(volunteer.MaxDistance) is false)
+            return false;
+        return true;
+    }
+    internal static bool IdCheck(int id) // AI helped
+    {
+        {
+            string idString = id.ToString();
+
+            // Ensure the ID has 9 digits
+            idString = idString.PadLeft(9, '0');
+
+            if (idString.Length != 9 || !int.TryParse(idString, out _))
+                return false;
+
+            int sum = 0;
+
+            for (int i = 0; i < 9; i++)
+            {
+                int digit = int.Parse(idString[i].ToString());
+                int product = digit * (i % 2 == 0 ? 1 : 2);
+                sum += product > 9 ? product - 9 : product;
+            }
+
+            return sum % 10 == 0;
+        }
+    }
+
+    internal static bool PasswordCheck(string password)
+    {
+        char[] specialCharacters = { '@', '!', '?', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', '|', '\\', ':', ';', '"', '\'', '<', '>', ',', '.', '/', '~', '`' };
+
+        if (password is null)
+            return true;
+        if (password.Length < 6)
+            return false;
+        if (password.IndexOfAny(specialCharacters) >= 0)
+            return false;
+        if (password.Any(char.IsUpper) is false)
+            return false;
+        if (password.Any(char.IsLower) is false)
+            return false;
+        if (password.Any(char.IsDigit) is false)
+            return false;
+
+        return true;
+    }
+
+    internal static bool EmailCheck(string email) // Ai helped
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+
+        // Pattern to match email addresses
+        string pattern = @"^[^@\s]+@[a-z]+\.[a-z]+$";
+        return Regex.IsMatch(email, pattern);
+    }
+
+    internal static bool PhoneCheck(string pn)
+    {
+        string pattern = @"^\+972-[0-9]{2}-[0-9]{7}$";
+        return Regex.IsMatch(pn, pattern);
+    }
+
+    internal static bool NameCheck(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return false;
+        string pattern = @"^[A-Z][a-z]+(\s[A-Z][a-z]+)*$"; // Each word starts with an uppercase letter followed by one or more lowercase letters, separated by spaces
+        return Regex.IsMatch(name, pattern);
+    }
+
+    internal static bool MaxDistanceCheck(double? maxDistance)
+    {
+        if (maxDistance is null)
+            return true;
+        if (maxDistance < 0 || maxDistance > 500)
             return false;
         return true;
     }

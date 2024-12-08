@@ -28,7 +28,7 @@ internal class AssignmentImplementation : IAssignment
     {
         var assignment = Read(id);
         if (assignment is null)
-            throw new DalNotExistException($"Assignment with Id ={id} doesn't exist");
+            throw new DalDeletionImpossibleException($"Assignment with Id ={id} doesn't exist");
         DataSource.Assignments.Remove(assignment);
     }
 

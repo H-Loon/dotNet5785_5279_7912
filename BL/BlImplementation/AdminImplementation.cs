@@ -31,8 +31,6 @@ internal class AdminImplementation : IAdmin
             case BO.TimeUnit.Years:
                 ClockManager.UpdateClock(ClockManager.Now.AddYears(value));
                 break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(type), type, null);
         }
     }
 
@@ -43,7 +41,14 @@ internal class AdminImplementation : IAdmin
 
     public TimeSpan GetRiskRange()
     {
-        return _dal.Config.RiskRange;
+        try 
+        { 
+            return _dal.Config.RiskRange;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
     public void InitDB()

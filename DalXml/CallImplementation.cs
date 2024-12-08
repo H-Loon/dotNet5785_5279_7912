@@ -28,7 +28,7 @@ internal class CallImplementation : ICall
         XElement? callElem = callsXml.Elements().FirstOrDefault(c => (int?)c.Element("Id") == id);
 
         if (callElem is null)
-            throw new DalNotExistException($"Call with Id ={id} doesn't exist");
+            throw new DalDeletionImpossibleException($"Call with Id ={id} doesn't exist");
 
         callElem.Remove();
         XMLTools.SaveListToXMLElement(callsXml, Config.Calls_Xml);

@@ -25,7 +25,7 @@ internal class AssignmentImplementation : IAssignment
     public void Delete(int id)
     {
         var assignmentsXml = XMLTools.LoadListFromXMLElement(Config.Assignments_Xml);
-        XElement? assignmentElem = assignmentsXml.Elements().FirstOrDefault(a => (int?)a.Element("Id") == id) ?? throw new DalNotExistException($"Assignment with Id ={id} doesn't exist");
+        XElement? assignmentElem = assignmentsXml.Elements().FirstOrDefault(a => (int?)a.Element("Id") == id) ?? throw new DalDeletionImpossibleException($"Assignment with Id ={id} doesn't exist");
         assignmentElem.Remove();
         XMLTools.SaveListToXMLElement(assignmentsXml, Config.Assignments_Xml);
     }

@@ -25,7 +25,7 @@ internal class CallImplementation : ICall
     {
         var call = Read(id);
         if (call is null)
-            throw new DalNotExistException($"Call with Id ={id} doesn't exist");
+            throw new DalDeletionImpossibleException($"Call with Id ={id} doesn't exist");
         DataSource.Calls.Remove(call);
     }
 

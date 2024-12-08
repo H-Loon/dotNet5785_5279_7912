@@ -31,7 +31,7 @@ internal class VolunteerImplementation : IVolunteer
         XElement? volunteerElem = volunteersXml.Elements().FirstOrDefault(v => (int?)v.Element("Id") == id);
 
         if (volunteerElem is null)
-            throw new DalNotExistException($"Volunteer with Id ={id} doesn't exist");
+            throw new DalDeletionImpossibleException($"Volunteer with Id ={id} doesn't exist");
 
         volunteerElem.Remove();
         XMLTools.SaveListToXMLElement(volunteersXml, Config.Volunteers_Xml);
