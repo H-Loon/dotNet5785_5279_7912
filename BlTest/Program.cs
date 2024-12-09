@@ -26,7 +26,18 @@ internal class Program
     }
     private enum CallDisplayEnum
     {
-
+        Back,
+        GetCallsQuantities,
+        GetCallsInList,
+        GetCall,
+        UpdateCall,
+        DeleteCall,
+        AddCall,
+        GetClosedCallByVolunteer,
+        GetOpenCallForVolunteer,
+        CompleteCall,
+        CancelCall,
+        AssignCall
     }
     private enum AdminDisplayEnum
     {
@@ -571,7 +582,218 @@ internal class Program
     #endregion
     private static void CallDisplay()
     {
-        throw new NotImplementedException();
+        CallDisplayEnum choice;
+        do
+        {
+            Console.WriteLine("Call Menu:");
+            Console.WriteLine("0. Back");
+            Console.WriteLine("1. Get Calls Quantities");
+            Console.WriteLine("2. Get Calls In List");
+            Console.WriteLine("3. Get Call");
+            Console.WriteLine("4. Update Call");
+            Console.WriteLine("5. Delete Call");
+            Console.WriteLine("6. Add Call");
+            Console.WriteLine("7. Get Closed Call By Volunteer");
+            Console.WriteLine("8. Get Open Call For Volunteer");
+            Console.WriteLine("9. Complete Call");
+            Console.WriteLine("10. Cancel Call");
+            Console.WriteLine("11. Assign Call");
+            Console.Write("Please select an option: ");
+
+            while (!Enum.TryParse(Console.ReadLine(), out choice) || !Enum.IsDefined(typeof(CallDisplayEnum), choice))
+            {
+                Console.WriteLine("Invalid choice. Please enter a number between 0 and 11.");
+                Console.Write("Please select an option: ");
+            }
+
+            switch (choice)
+            {
+                case CallDisplayEnum.GetCallsQuantities:
+                    GetCallsQuantities();
+                    break;
+                case CallDisplayEnum.GetCallsInList:
+                    GetCallsInList();
+                    break;
+                case CallDisplayEnum.GetCall:
+                    GetCall();
+                    break;
+                case CallDisplayEnum.UpdateCall:
+                    UpdateCall();
+                    break;
+                case CallDisplayEnum.DeleteCall:
+                    DeleteCall();
+                    break;
+                case CallDisplayEnum.AddCall:
+                    AddCall();
+                    break;
+                case CallDisplayEnum.GetClosedCallByVolunteer:
+                    GetClosedCallByVolunteer();
+                    break;
+                case CallDisplayEnum.GetOpenCallForVolunteer:
+                    GetOpenCallForVolunteer();
+                    break;
+                case CallDisplayEnum.CompleteCall:
+                    CompleteCall();
+                    break;
+                case CallDisplayEnum.CancelCall:
+                    CancelCall();
+                    break;
+                case CallDisplayEnum.AssignCall:
+                    AssignCall();
+                    break;
+            }
+        } while (choice != CallDisplayEnum.Back);
+    }
+
+    private static void GetCallsQuantities()
+    {
+        try
+        {
+            var quantities = s_bl.Call.GetCallsQuantities();
+            Console.WriteLine("Calls Quantities: " + string.Join(", ", quantities));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void GetCallsInList()
+    {
+        try
+        {
+            // Implement logic to get calls in list
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void GetCall()
+    {
+        try
+        {
+            Console.Write("Enter the call ID: ");
+            if (int.TryParse(Console.ReadLine(), out int callId))
+            {
+                var call = s_bl.Call.GetCall(callId);
+                Console.WriteLine(call);
+            }
+            else
+            {
+                Console.WriteLine("Invalid call ID.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void UpdateCall()
+    {
+        try
+        {
+            // Implement logic to update call
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void DeleteCall()
+    {
+        try
+        {
+            Console.Write("Enter the call ID: ");
+            if (int.TryParse(Console.ReadLine(), out int callId))
+            {
+                s_bl.Call.DeleteCall(callId);
+                Console.WriteLine("Call deleted successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Invalid call ID.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void AddCall()
+    {
+        try
+        {
+            // Implement logic to add call
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void GetClosedCallByVolunteer()
+    {
+        try
+        {
+            // Implement logic to get closed call by volunteer
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void GetOpenCallForVolunteer()
+    {
+        try
+        {
+            // Implement logic to get open call for volunteer
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void CompleteCall()
+    {
+        try
+        {
+            // Implement logic to complete call
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void CancelCall()
+    {
+        try
+        {
+            // Implement logic to cancel call
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private static void AssignCall()
+    {
+        try
+        {
+            // Implement logic to assign call
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 
 }
