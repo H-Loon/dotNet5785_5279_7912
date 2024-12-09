@@ -33,6 +33,7 @@ internal static class VolunteerManager
                        IsActive = v.IsActive,
                        CompletedCalls = complCalls,
                        CanceledCalls = canceledCalls,
+                       CallInTreatment = callInTreatmentId,
                        CurrentCallType = callInTreatmentType.HasValue ? (BO.BoCallType)callInTreatmentType : BO.BoCallType.None
                    };
         }
@@ -106,7 +107,7 @@ internal static class VolunteerManager
             var call = s_dal.Call.Read(c => c.Id == openCallId);
             callInProgress = new BO.CallInProgress
             {
-                Id = assignment!.Id,
+                AssignmentId = assignment!.Id,
                 CallId = openCallId,
                 CallType = (BO.BoCallType)call!.Type,
                 Description = call.Description,
@@ -231,7 +232,12 @@ internal static class VolunteerManager
     /// <returns>True if the password is valid, otherwise false.</returns>
     internal static bool PasswordCheck(string password) // A Good Password is at least 6 characters long, contains at least one uppercase letter, one lowercase letter, one digit, and one special character
     {
-        char[] specialCharacters = { '@', '!', '?', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', '|', '\\', ':', ';', '"', '\'', '<', '>', ',', '.', '/', '~', '`' };
+        char[] specialCharacters = 
+            { '@', '!', '?', '#', '$', '%',
+            '^', '&', '*', '(', ')', '-', '_',
+            '=', '+', '[', ']','{', '}', '|',
+            '\\', ':', ';', '"', '\'', '<', '>',
+             ',','.', '/', '~', '`' };
 
         if (password is null)
             return true;

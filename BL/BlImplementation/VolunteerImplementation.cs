@@ -1,4 +1,5 @@
 ﻿namespace BlImplementation;
+
 using Helpers;
 
 internal class VolunteerImplementation : BlApi.IVolunteer
@@ -110,11 +111,14 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     /// <returns>The role of the volunteer if the login is successful.</returns>  
     /// <exception cref="ArgumentException">Thrown when the volunteer name is not found.</exception>  
     /// <exception cref="BO.BlIncorrectPasswordException">Thrown when the password is incorrect.</exception>  
-    public BO.BoRoleType LogIn(string name, string password)
+    public BO.BoRoleType Login(string name, string? password)
     {
         try
         {
-            DO.Volunteer? volunteer = _dal.Volunteer.Read(v => v.Name == name) ?? throw new ArgumentException("Volunteer name not found");
+            DO.Volunteer? volunteer = _dal.Volunteer.Read(v => v.Name == name) ?? throw new BO.BlNotExistException("Volunteer name not found");
+
+            if (volunteer.Password is null)
+                return (BO.BoRoleType)volunteer.Role;
 
             if (VolunteerManager.CryptPW(password) != volunteer.Password)
                 throw new BO.BlIncorrectPasswordException("Password is incorrect");

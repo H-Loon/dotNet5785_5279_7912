@@ -23,12 +23,12 @@ internal static class Tools
             return true;
         try
         {
-            AddressToCoordinates(address);
+            AddressToCoordinates(address); // if the address is not valid, an exception will be thrown otherwise it will return true
             return true;
         }
         catch
         {
-            return false;
+            return false; // if an exception is thrown, the address is not valid
         }
     }
 
@@ -87,7 +87,14 @@ internal static class Tools
         foreach (var property in properties)
         {
             object? value = property.GetValue(obj);
-            result += $"{property.Name}: {value}\n";
+            if (value is double doubleValue)
+            {
+                result += $"{property.Name}: {doubleValue.ToString("G", System.Globalization.CultureInfo.InvariantCulture)}\n"; // Format double to general format
+            }
+            else
+            {
+                result += $"{property.Name}: {value}\n";
+            }
         }
 
         return result;
@@ -124,8 +131,8 @@ internal static class Tools
             if (placeElement == null)
                 throw new BO.BlCoordinatesNotFoundException("Could not find coordinates for the given address.");
 
-            double latitude = double.Parse(placeElement.Attribute("lat")!.Value);
-            double longitude = double.Parse(placeElement.Attribute("lon")!.Value);
+            double latitude = double.Parse(placeElement.Attribute("lat")!.Value.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+            double longitude = double.Parse(placeElement.Attribute("lon")!.Value.ToString(), System.Globalization.CultureInfo.InvariantCulture);
 
             return (latitude, longitude);
         }

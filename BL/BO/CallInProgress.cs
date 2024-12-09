@@ -4,7 +4,7 @@ namespace BO;
 
 public class CallInProgress
 {
-    public int Id { get; init; }
+    public int AssignmentId { get; init; }
     public int CallId { get; set; }
     public int VolunteerId { get; set; }
     public BoCallType CallType { get; set; }
