@@ -26,18 +26,7 @@ internal class Program
     }
     private enum CallDisplayEnum
     {
-        Back,
-        GetCallsQuantities,
-        GetCallsInList,
-        GetCall,
-        UpdateCall,
-        DeleteCall,
-        AddCall,
-        GetClosedCallByVolunteer,
-        GetOpenCallForVolunteer,
-        CompleteCall,
-        CancelCall,
-        AssignCall
+
     }
     private enum AdminDisplayEnum
     {

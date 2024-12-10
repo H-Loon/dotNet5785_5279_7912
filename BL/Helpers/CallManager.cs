@@ -4,55 +4,35 @@ namespace Helpers;
 internal static class CallManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
-    internal static bool ValidateCall(BO.Call call)
+    internal static void ValidateCallFormat(BO.Call call)
     {
+        if (call.Id <= 0)
+            throw new ArgumentException("Id must be a positive integer.");
+
         if (string.IsNullOrWhiteSpace(call.Address))
             throw new ArgumentException("Address cannot be null or empty.");
-
-        if (call.Id <= 0)
-            throw new ArgumentException("AssignmentId must be a positive integer.");
-
-        if (call.Latitude < -90 || call.Latitude > 90)
-            throw new ArgumentException("Latitude must be between -90 and 90.");
-
-        if (call.Longitude < -180 || call.Longitude > 180)
-            throw new ArgumentException("Longitude must be between -180 and 180.");
 
         if (call.StartTime == default)
             throw new ArgumentException("StartTime must be a valid date.");
 
-        if (call.MaxTime.HasValue && call.MaxTime <= call.StartTime)
-            throw new ArgumentException("MaxTime must be greater than StartTime.");
-
         if (!Enum.IsDefined(typeof(BO.BoCallType), call.CallType))
             throw new ArgumentException("Invalid CallType.");
 
+        if (call.Description != null && call.Description.Length > 500)
+            throw new ArgumentException("Description cannot be longer than 500 characters.");
+
         if (!Enum.IsDefined(typeof(BO.BoCallStatus), call.Status))
             throw new ArgumentException("Invalid CallStatus.");
-
-        if (call.AssignInList != null)
-        {
-            foreach (var assign in call.AssignInList)
-            {
-                if (assign.VolunteerId <= 0)
-                    throw new ArgumentException("VolunteerId must be a positive integer.");
-
-                if (string.IsNullOrWhiteSpace(assign.VolunteerName))
-                    throw new ArgumentException("VolunteerName cannot be null or empty.");
-
-                if (assign.AssignTime == default)
-                    throw new ArgumentException("AssignTime must be a valid date.");
-
-                if (assign.EndedTime.HasValue && assign.EndedTime <= assign.AssignTime)
-                    throw new ArgumentException("EndedTime must be greater than AssignTime.");
-
-                if (assign.EndType.HasValue && !Enum.IsDefined(typeof(BO.BoAssignmentEndReason), assign.EndType))
-                    throw new ArgumentException("Invalid EndType.");
-            }
-        }
-
-        return true;
     }
+    internal static void ValidateCallLogical(BO.Call call)
+    {
+        if (call.MaxTime.HasValue && call.MaxTime <= call.StartTime)
+            throw new ArgumentException("MaxTime must be greater than StartTime.");
+
+        if(Tools.AddressCheck(call.Address) == false)
+            throw new ArgumentException("Address is not valid.");
+    }
+
     internal static DO.Call ConvertToDoCall(BO.Call call)
     {
         var doCall = new DO.Call
@@ -69,13 +49,13 @@ internal static class CallManager
 
         return doCall;
     }
-    internal static void CheckStatus(BO.Call call)
+    internal static void CheckStatus(DO.Call call)
     {
         if (call == null)
         {
             throw new KeyNotFoundException("Call not found.");
         }
-        if (call.Status != BO.BoCallStatus.Open || (call.AssignInList != null && call.AssignInList.Any()))
+        if (GetCallStatus(call.Id) != BO.BoCallStatus.Open || s_dal.Assignment.Read(a => a.CallId == call.Id) != null)
         {
             throw new InvalidOperationException("Cannot delete call. The call is either not open or has been assigned to a volunteer.");
         }

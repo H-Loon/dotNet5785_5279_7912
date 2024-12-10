@@ -174,4 +174,6 @@ internal static class Tools
             throw new BlEmailNotSendException("Error sending email: " + ex.Message);
         }
     }
+
+    
 }
