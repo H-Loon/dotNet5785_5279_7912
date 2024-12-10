@@ -6,23 +6,14 @@ internal static class CallManager
     private static IDal s_dal = Factory.Get; //stage 4
     internal static void ValidateCallFormat(BO.Call call)
     {
-        if (call.Id <= 0)
-            throw new ArgumentException("Id must be a positive integer.");
+        if (call.Id < 1000)
+            throw new ArgumentException("Id must be above 1000.");
 
         if (string.IsNullOrWhiteSpace(call.Address))
             throw new ArgumentException("Address cannot be null or empty.");
 
-        if (call.StartTime == default)
-            throw new ArgumentException("StartTime must be a valid date.");
-
-        if (!Enum.IsDefined(typeof(BO.BoCallType), call.CallType))
-            throw new ArgumentException("Invalid CallType.");
-
         if (call.Description != null && call.Description.Length > 500)
             throw new ArgumentException("Description cannot be longer than 500 characters.");
-
-        if (!Enum.IsDefined(typeof(BO.BoCallStatus), call.Status))
-            throw new ArgumentException("Invalid CallStatus.");
     }
     internal static void ValidateCallLogical(BO.Call call)
     {
@@ -35,9 +26,9 @@ internal static class CallManager
 
     internal static DO.Call ConvertToDoCall(BO.Call call)
     {
-        var doCall = new DO.Call
+        return new DO.Call
         {
-
+            Id = call.Id,
             Type = (DO.CallType)call.CallType,
             Address = call.Address,
             Latitude = call.Latitude,
@@ -46,8 +37,6 @@ internal static class CallManager
             Description = call.Description,
             MaxTime = call.MaxTime,
         };
-
-        return doCall;
     }
     internal static void CheckStatus(DO.Call call)
     {
@@ -86,7 +75,7 @@ internal static class CallManager
             else if (call.MaxTime is null) // call has no MaxTime
                 return BO.BoCallStatus.InTreatment;
 
-            else if (now < maxTime - s_dal.Config.RiskRange) // call is in treatment and not overdue but in the risk range
+            else if (now > maxTime - s_dal.Config.RiskRange) // call is in treatment and not overdue but in the risk range
                 return BO.BoCallStatus.InTreatmentAndDanger;
 
             else // call is in treatment and not overdue
@@ -96,7 +85,7 @@ internal static class CallManager
         if (call.MaxTime is null) // call is open and has no MaxTime
             return BO.BoCallStatus.Open;
 
-        else if (now < maxTime - s_dal.Config.RiskRange) // call is open and not overdue but in the risk range
+        else if (now > maxTime - s_dal.Config.RiskRange) // call is open and not overdue but in the risk range
             return BO.BoCallStatus.OpenAndDanger;
 
         else // call is open and not overdue

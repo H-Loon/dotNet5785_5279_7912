@@ -2,6 +2,7 @@
 using BlApi;
 using System.Collections.Generic;
 using Helpers;
+using BO;
 
 internal class CallImplementation : ICall
 {
@@ -20,15 +21,22 @@ internal class CallImplementation : ICall
     }
     public void AddCall(BO.Call call)
     {
-
-        CallManager.ValidateCallFormat(call);
-        CallManager.ValidateCallLogical(call);
-
-        DO.Call dataCall = CallManager.ConvertToDoCall(call);
-
         try
         {
+            CallManager.ValidateCallFormat(call);
+            CallManager.ValidateCallLogical(call);
+
+            DO.Call dataCall = CallManager.ConvertToDoCall(call);
             _dal.Call.Create(dataCall);
+            var volunteers = from v in _dal.Volunteer.ReadAll()
+                             where v.MaxDistance is null || v.MaxDistance >= Tools.GetCallDistance(call.Id, v)
+                             select v;
+            string msg = "A new call has been added to the system and in your range. Please check the system for more details.";
+            foreach (var vol in volunteers)
+            {
+                Tools.SendEmail("noreply@weirdaid.com", vol.Email, $"Call n.{call.Id} is in your range ", msg);
+            }
+
         }
         catch (Exception ex)
         {
@@ -133,7 +141,11 @@ internal class CallImplementation : ICall
             var dataCall = _dal.Call.Read(callId) ?? throw new KeyNotFoundException("Call not found.");
 
             // Retrieve the list of assignments related to the call
-            var assignments = _dal.Assignment.ReadAll(a => a.CallId == callId) ?? throw new KeyNotFoundException("Assignments tot the Call not found.");
+            var assignments = _dal.Assignment.ReadAll(a => a.CallId == callId);
+            if (assignments.Count() == 0)
+            {
+                assignments = null;
+            }
 
             // Construct the BO.Call object
             var boCall = new BO.Call
@@ -147,13 +159,13 @@ internal class CallImplementation : ICall
                 StartTime = dataCall.StartTime,
                 MaxTime = dataCall.MaxTime,
                 Status = CallManager.GetCallStatus(dataCall.Id),
-                AssignInList = assignments.Select(a => new BO.CallAssignInList
+                AssignInList = assignments?.Select(a => new BO.CallAssignInList
                 {
                     VolunteerId = a.VolunteerId,
                     AssignTime = a.StartTime,
                     EndedTime = a.EndTime,
                     EndType = (BO.BoAssignmentEndReason?)a.EndReason
-                }).ToList()
+                }).ToList() ?? null
             };
 
             return boCall;
@@ -295,11 +307,14 @@ internal class CallImplementation : ICall
 
     public void AssignCall(int volunteerId, int callId)
     {
-        DO.Assignment assignment = _dal.Assignment.Read(a => a.CallId == callId) ?? throw new BO.BlNotAllowedException("You are not authorized to assign this call.");
+        DO.Assignment? assignment = _dal.Assignment.Read(a => a.CallId == callId);
+        if (assignment != null)
+            throw new BO.BlNotAllowedException("This call has already been assigned to a volunteer.");
         DO.Call call = _dal.Call.Read(callId) ?? throw new BO.BlNotExistException("Call not found.");
+
         DO.Volunteer volunteer = _dal.Volunteer.Read(volunteerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
             
-        if (CallManager.GetCallStatus(callId) is not BO.BoCallStatus.Open or BO.BoCallStatus.OpenAndDanger )
+        if (CallManager.GetCallStatus(callId) != BO.BoCallStatus.Open && CallManager.GetCallStatus(callId) != BO.BoCallStatus.OpenAndDanger )
             throw new BO.BlNotAllowedException("You are not authorized to assign this call.");
 
         try
@@ -324,13 +339,15 @@ internal class CallImplementation : ICall
     /// <exception cref="InvalidOperationException">Thrown when the call is not found or an error occurs during the update.</exception>
     public void UpdateCall(BO.Call call)
     {
-        CallManager.ValidateCallFormat(call);
-        CallManager.ValidateCallLogical(call);
-
-        DO.Call dataCall = CallManager.ConvertToDoCall(call);
 
         try
         {
+            CallManager.ValidateCallFormat(call);
+            CallManager.ValidateCallLogical(call);
+            (call.Latitude, call.Longitude) = Tools.AddressToCoordinates(call.Address);
+
+            DO.Call dataCall = CallManager.ConvertToDoCall(call);
+
             _dal.Call.Update(dataCall);
         }
         catch (KeyNotFoundException ex)
@@ -344,6 +361,3 @@ internal class CallImplementation : ICall
         }
     }
 }
-
-
-

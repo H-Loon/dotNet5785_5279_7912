@@ -26,7 +26,18 @@ internal class Program
     }
     private enum CallDisplayEnum
     {
-
+        Back,
+        GetCallsQuantities,
+        GetCallsInList,
+        GetCall,
+        UpdateCall,
+        DeleteCall,
+        AddCall,
+        GetClosedCallByVolunteer,
+        GetOpenCallForVolunteer,
+        CompleteCall,
+        CancelCall,
+        AssignCall
     }
     private enum AdminDisplayEnum
     {
@@ -459,7 +470,7 @@ internal class Program
             if (string.IsNullOrWhiteSpace(password))
                 password = null;
 
-            Console.WriteLine(s_bl.Volunteer.Login(name, password));
+            Console.WriteLine(s_bl.Volunteer.Login(name, password!));
         }
         catch (Exception e)
         {
@@ -711,16 +722,6 @@ internal class Program
                         value1 = StringCheck(StringTypeEnum.Name);
                         break;
                     case BO.CallInListField.TimeOpen:
-                        //Console.WriteLine("Choose between from or till the time open:");
-                        //Console.WriteLine("0. From");
-                        //Console.WriteLine("1. Till");
-                        //Console.Write("Please select an option: ");
-                        //if (int.TryParse(Console.ReadLine(), out int choice) && choice != 0 && choice != 1)
-                        //{
-                        //    Console.WriteLine("Invalid choice.");
-                        //    break;
-                        //}
-
                         Console.WriteLine("Enter the TimeOpen: ");
                         if (TimeSpan.TryParse(Console.ReadLine(), out tempTimeSpan))
                             value1 = tempTimeSpan;
@@ -827,7 +828,17 @@ internal class Program
             if (int.TryParse(Console.ReadLine(), out int callId))
             {
                 var call = s_bl.Call.GetCall(callId);
-                Console.WriteLine("Current Call Details: " + call);
+                Console.WriteLine("\nCurrent Call Details: " + call);
+
+                foreach (var callType in Enum.GetValues(typeof(DO.CallType)))
+                {
+                    Console.WriteLine($"{(int)callType}. {callType}");
+                }
+                Console.Write("Please select a call type: ");
+                if (Enum.TryParse(Console.ReadLine(), out BO.BoCallType callTypeSelected))
+                    call.CallType = callTypeSelected;
+                else
+                    Console.WriteLine("the type wont change.");
 
                 Console.Write("Enter new description (or press Enter to keep current): ");
                 string? description = Console.ReadLine();
@@ -843,12 +854,13 @@ internal class Program
                     call.Address = address;
                 }
 
-                Console.Write("Enter new status (or press Enter to keep current): ");
-                string? statusInput = Console.ReadLine();
-                if (Enum.TryParse(statusInput, out BO.BoCallStatus status))
+                Console.WriteLine("Enter new max time (or press Enter to keep current): ");
+                if (DateTime.TryParse(Console.ReadLine(), out DateTime maxTime))
                 {
-                    call.Status = status;
+                    call.MaxTime = maxTime;
                 }
+                else
+                    Console.WriteLine("the time wont change.");
 
                 s_bl.Call.UpdateCall(call);
                 Console.WriteLine("Call updated successfully.");
@@ -889,12 +901,12 @@ internal class Program
     {
         try
         {
-            Console.WriteLine("Choose a call type2:");
-            foreach (var callType in Enum.GetValues(typeof(BO.BoCallType)))
+            Console.WriteLine("Choose a call type:");
+            foreach (var callType in Enum.GetValues(typeof(DO.CallType)))
             {
                 Console.WriteLine($"{(int)callType}. {callType}");
             }
-            Console.Write("Please select a call type2: ");
+            Console.Write("Please select a call type: ");
             if (Enum.TryParse(Console.ReadLine(), out BO.BoCallType callTypeSelected))
             {
                 Console.Write("Enter the call description: ");
@@ -923,7 +935,7 @@ internal class Program
             }
             else
             {
-                Console.WriteLine("Invalid call type2.");
+                Console.WriteLine("Invalid call type.");
             }
         }
         catch (Exception e)
@@ -936,7 +948,43 @@ internal class Program
     {
         try
         {
-            // Implement logic to get closed call by volunteer
+            Console.Write("Enter the volunteer ID: ");
+            if (int.TryParse(Console.ReadLine(), out int volunteerId))
+            {
+                Console.WriteLine("Choose a call type:");
+                foreach (var callType1 in Enum.GetValues(typeof(BO.BoCallType)))
+                {
+                    Console.WriteLine($"{(int)callType1}. {callType1}");
+                }
+                Console.Write("Please select a call type: ");
+                BO.BoCallType? callTypeSelected = null;
+                if (Enum.TryParse(Console.ReadLine(), out BO.BoCallType callType))
+                {
+                    callTypeSelected = callType;
+                }
+
+                Console.WriteLine("Choose a field to sort by:");
+                foreach (var closedCallInListfield1 in Enum.GetValues(typeof(BO.ClosedCallInListField)))
+                {
+                    Console.WriteLine($"{(int)closedCallInListfield1}. {closedCallInListfield1}");
+                }
+                Console.Write("Please select a field: ");
+                BO.ClosedCallInListField? fieldSelected = null;
+                if (Enum.TryParse(Console.ReadLine(), out BO.ClosedCallInListField closedCallInListfield2))
+                {
+                    fieldSelected = closedCallInListfield2;
+                }
+
+                var closedCalls = s_bl.Call.GetClosedCallByVolunteer(volunteerId, callTypeSelected, fieldSelected);
+                foreach (var call in closedCalls)
+                {
+                    Console.WriteLine(call);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid volunteer ID.");
+            }
         }
         catch (Exception e)
         {
@@ -948,7 +996,48 @@ internal class Program
     {
         try
         {
-            // Implement logic to get open call for volunteer
+            Console.Write("Enter the volunteer ID: ");
+            if (int.TryParse(Console.ReadLine(), out int volunteerId))
+            {
+                BO.BoCallType? callTypeSelected = null;
+                BO.OpenCallInListField? fieldSelected = null;
+
+                Console.WriteLine("Choose a call type:");
+                foreach (var boCallType1 in Enum.GetValues(typeof(BO.BoCallType)))
+                {
+                    Console.WriteLine($"{(int)boCallType1}. {boCallType1}");
+                }
+                Console.Write("Please select a call type: ");
+                
+                if (Enum.TryParse(Console.ReadLine(), out BO.BoCallType boCallType2))
+                {
+                    callTypeSelected = boCallType2;
+                }
+                if (callTypeSelected != BO.BoCallType.None)
+                {
+                    Console.WriteLine("Choose a field to sort by:");
+                    foreach (var openCallInListField1 in Enum.GetValues(typeof(BO.OpenCallInListField)))
+                    {
+                        Console.WriteLine($"{(int)openCallInListField1}. {openCallInListField1}");
+                    }
+                    Console.Write("Please select a field: ");
+                    
+                    if (Enum.TryParse(Console.ReadLine(), out BO.OpenCallInListField openCallInListField2))
+                    {
+                        fieldSelected = openCallInListField2;
+                    }
+                }
+
+                var openCalls = s_bl.Call.GetOpenCallForVolunteer(volunteerId, callTypeSelected is BO.BoCallType.None ? null : callTypeSelected, fieldSelected);
+                foreach (var call in openCalls)
+                {
+                    Console.WriteLine(call);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid volunteer ID.");
+            }
         }
         catch (Exception e)
         {
@@ -1043,6 +1132,7 @@ internal class Program
         }
     }
 #endregion
+
     #region Helper methods
     private static string StringCheck(StringTypeEnum type)
     {

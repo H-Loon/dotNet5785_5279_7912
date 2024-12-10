@@ -440,4 +440,20 @@
     <EndTime>2024-12-10T11:26:01</EndTime>
     <AssignmentEndReason>OverDated</AssignmentEndReason>
   </Assignment>
+  <Assignment>
+    <Id>2055</Id>
+    <VolunteerId>213017833</VolunteerId>
+    <CallId>1062</CallId>
+    <StartTime>2024-12-10T22:35:00.6390755+02:00</StartTime>
+    <EndTime>2024-12-10T22:37:14.3629553+02:00</EndTime>
+    <AssignmentEndReason>Completed</AssignmentEndReason>
+  </Assignment>
+  <Assignment>
+    <Id>2056</Id>
+    <VolunteerId>213017833</VolunteerId>
+    <CallId>1054</CallId>
+    <StartTime>2024-12-10T22:38:37.1273597+02:00</StartTime>
+    <EndTime>2024-12-10T22:39:20.8499866+02:00</EndTime>
+    <AssignmentEndReason>CanceledByVolunteer</AssignmentEndReason>
+  </Assignment>
 </ArrayOfAssignment>

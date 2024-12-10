@@ -640,14 +640,4 @@
     <Description>HomeBot is trying to take over the house!</Description>
     <MaxTime>2025-04-13T11:26:01</MaxTime>
   </Call>
-  <Call>
-    <Id>1064</Id>
-    <Type>MyTimeTravelMachineIsLazy</Type>
-    <Address>42 Ben Gurion Blvd, Haifa</Address>
-    <Latitude>32.819</Latitude>
-    <Longitude>34.989</Longitude>
-    <StartTime>2022-07-28T00:00:00</StartTime>
-    <Description>My dishwasher is in depression!</Description>
-    <MaxTime>2025-10-15T11:26:01</MaxTime>
-  </Call>
 </ArrayOfCall>

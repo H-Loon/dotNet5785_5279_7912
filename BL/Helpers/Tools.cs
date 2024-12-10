@@ -91,12 +91,16 @@ internal static class Tools
             {
                 result += $"{property.Name}: {doubleValue.ToString("G", System.Globalization.CultureInfo.InvariantCulture)}\n"; // Format double to general format e.g. 1.1 instead of 11
             }
+            else if (value is not null)
+            {
+                result += $"{property.Name}: {value.ToString()}\n";
+            }
             else
             {
-                result += $"{property.Name}: {value}\n";
+                result += $"{property.Name}:\n";
             }
-        }
 
+        }
         return result;
     }
 

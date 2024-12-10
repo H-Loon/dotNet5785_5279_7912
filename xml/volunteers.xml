@@ -224,4 +224,18 @@
     <MaxDistance>38</MaxDistance>
     <DistanceType>Area</DistanceType>
   </Volunteer>
+  <Volunteer>
+    <Id>213017833</Id>
+    <Name>Menahem Katzir</Name>
+    <Phone>+972-54-1234567</Phone>
+    <Email>mkatzir@gmail.com</Email>
+    <Password>a6cc22bbdf6da042e839f1630c1119362d37b65e61b8395191997a1d94989c47</Password>
+    <Address>770 Eastern Parkway, Brooklyn, NY 11213, USA</Address>
+    <Latitude>40.6689619</Latitude>
+    <Longitude>-73.9427980769362</Longitude>
+    <IsActive>true</IsActive>
+    <Role>Volunteer</Role>
+    <MaxDistance>50</MaxDistance>
+    <DistanceType>Area</DistanceType>
+  </Volunteer>
 </ArrayOfVolunteer>
