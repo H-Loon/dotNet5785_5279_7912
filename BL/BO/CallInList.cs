@@ -4,15 +4,15 @@ namespace BO;
 
 public class CallInList
 {
-    public int AssignmentId { get; set; }
+    public int? AssignmentId { get; init; }
     public int CallId { get; init; }
-    public BoCallType CallType { get; set; }
+    public BoCallType CallType { get; init; }
     public DateTime StartTime { get; init; }
-    public TimeSpan? TimeLeft { get; set; }
-    public string? LastVolunteerName { get; set; }
-    public TimeSpan? TimeOpen { get; set; }
-    public BoCallStatus CallStatus { get; set; }
-    public int AssignCount { get; set; }
+    public TimeSpan? TimeLeft { get; init; }
+    public string? LastVolunteerName { get; init; }
+    public TimeSpan? TimeOpen { get; init; }
+    public BoCallStatus CallStatus { get; init; }
+    public int AssignCount { get; init; }
     public override string ToString() => this.ToStringProperty();
 
 }

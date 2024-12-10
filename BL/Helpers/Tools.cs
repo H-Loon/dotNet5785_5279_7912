@@ -89,7 +89,7 @@ internal static class Tools
             object? value = property.GetValue(obj);
             if (value is double doubleValue)
             {
-                result += $"{property.Name}: {doubleValue.ToString("G", System.Globalization.CultureInfo.InvariantCulture)}\n"; // Format double to general format
+                result += $"{property.Name}: {doubleValue.ToString("G", System.Globalization.CultureInfo.InvariantCulture)}\n"; // Format double to general format e.g. 1.1 instead of 11
             }
             else
             {

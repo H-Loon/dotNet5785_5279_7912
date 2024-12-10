@@ -60,8 +60,8 @@ internal static class CallManager
 
             Type = (DO.CallType)call.CallType,
             Address = call.Address,
-            Latitude = call.Latitude.Value,
-            Longitude = call.Longitude.Value,
+            Latitude = call.Latitude,
+            Longitude = call.Longitude,
             StartTime = call.StartTime,
             Description = call.Description,
             MaxTime = call.MaxTime,
@@ -168,6 +168,48 @@ internal static class CallManager
         }
     }
 
+    internal static TimeSpan? TimeLeft(DO.Call call)
+    {
+        if (call.MaxTime is null)
+            return null;
+        TimeSpan timeZero = new TimeSpan(0, 0, 0);
+        TimeSpan timeLeft = call.MaxTime.Value - ClockManager.Now;
+        return ( timeLeft > timeZero) ? timeLeft : timeZero;
+    }
+    internal static TimeSpan? TimeOpen(DO.Call call)
+    {
+        if (call.MaxTime is null)
+            return null;
+        if( GetCallStatus(call.Id) != BO.BoCallStatus.Closed && GetCallStatus(call.Id) != BO.BoCallStatus.OverDated)
+            return null;
+        TimeSpan timeOpen = ClockManager.Now - call.StartTime;
+        return timeOpen;
+    }
+
+    internal static IEnumerable<BO.CallInList> GetCallInList()
+    {
+        var calls = s_dal.Call.ReadAll();
+        var assignments = s_dal.Assignment.ReadAll();
+
+        return from call in calls
+        let assignment = assignments.LastOrDefault(a => a.CallId == call.Id)
+        let assignmentId = assignment?.Id ?? 0
+        let volunteerId = assignment?.VolunteerId ?? 0
+        let EndedTime = assignment?.EndTime
+        let assignCount = assignments.Count(a => a.CallId == call.Id)
+        select new BO.CallInList
+        {
+            AssignmentId = assignmentId is 0 ? null : assignmentId,
+            CallId = call.Id,
+            CallType = (BO.BoCallType)call.Type,
+            StartTime = call.StartTime,
+            TimeLeft = CallManager.TimeLeft(call),
+            LastVolunteerName = s_dal.Volunteer.Read(volunteerId)?.Name ?? null,
+            TimeOpen = CallManager.TimeOpen(call),
+            CallStatus = CallManager.GetCallStatus(call.Id),
+            AssignCount = assignCount
+        };
+    }
 }
 
 //bool ValidateCall(BO.Call call)

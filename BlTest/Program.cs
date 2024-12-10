@@ -55,6 +55,12 @@ internal class Program
         Name,
         Phone
     }
+    private enum ACCEnum
+    {
+        Assign,
+        Complete,
+        Cancel
+    }
     #endregion
 
     #region Main and main display
@@ -547,16 +553,6 @@ internal class Program
         }
     }
 
-    private static string StringCheck(StringTypeEnum type)
-    {
-        string? str;
-        do
-        {
-            Console.Write($"Enter the volunteer's {type}: ");
-            str = Console.ReadLine();
-        } while (string.IsNullOrWhiteSpace(str));
-        return str;
-    }
 
     private static string ReadPassword() // Ai helped
     {
@@ -580,12 +576,14 @@ internal class Program
         return password.ToString();
     }
     #endregion
+
+    #region Call display and methods
     private static void CallDisplay()
     {
         CallDisplayEnum choice;
         do
         {
-            Console.WriteLine("Call Menu:");
+            Console.WriteLine("\nCall Menu:");
             Console.WriteLine("0. Back");
             Console.WriteLine("1. Get Calls Quantities");
             Console.WriteLine("2. Get Calls In List");
@@ -649,8 +647,12 @@ internal class Program
     {
         try
         {
-            var quantities = s_bl.Call.GetCallsQuantities();
-            Console.WriteLine("Calls Quantities: " + string.Join(", ", quantities));
+            int[] quantities = s_bl.Call.GetCallsQuantities();
+            Console.WriteLine("Calls Quantities:");
+            foreach (var status in Enum.GetValues(typeof(BO.BoCallStatus)))
+            {
+                Console.WriteLine($"{status}: {quantities[(int)status]}");
+            }
         }
         catch (Exception e)
         {
@@ -662,12 +664,149 @@ internal class Program
     {
         try
         {
-            // Implement logic to get calls in list
+            BO.CallInListField? field1 = null, field2 = null;
+            object? value1 = null;
+            Console.WriteLine("What field you want to filtered by?");
+            CallInListDisplay();
+
+            int input;
+            int.TryParse(Console.ReadLine(), out input);
+            if (input >= 0 && input <= 7)
+                field1 = (BO.CallInListField)input;
+            else if (input == 9)
+                field1 = null;
+            else
+            {
+                Console.WriteLine("Invalid choice.");
+                return;
+            }
+            if (field1 is not null)
+            {
+                switch (field1)
+                {
+                    case BO.CallInListField.AssignmentId:
+                        Console.WriteLine("Enter the AssignmentId: ");
+                        int.TryParse(Console.ReadLine(), out int tempInt);
+                        value1 = tempInt;
+                        break;
+                    case BO.CallInListField.CallId:
+                        Console.WriteLine("Enter the CallId: ");
+                        int.TryParse(Console.ReadLine(), out tempInt);
+                        value1 = tempInt;
+                        break;
+                    case BO.CallInListField.CallType:
+                        foreach (var callType in Enum.GetValues(typeof(DO.CallType))) // to not print the None value
+                        {
+                            Console.WriteLine($"{(int)callType}. {callType}");
+                        }
+                        Console.Write("Choose the CallType: ");
+                        if (Enum.TryParse(Console.ReadLine(), out BO.BoCallType callTypeSelected1))
+                            value1 = callTypeSelected1;
+                        else
+                            Console.WriteLine("Invalid call type.");
+                        break;
+                    case BO.CallInListField.StartTime:
+                        Console.WriteLine("Enter the StartTime: ");
+                        if (DateTime.TryParse(Console.ReadLine(), out DateTime tempDateTime))
+                            value1 = tempDateTime;
+                        else
+                            Console.WriteLine("Invalid date.");
+                        break;
+                    case BO.CallInListField.TimeLeft:
+                        if (TimeSpan.TryParse(Console.ReadLine(), out TimeSpan tempTimeSpan))
+                            value1 = tempTimeSpan;
+                        else
+                            Console.WriteLine("Invalid date.");
+                        break;
+                    case BO.CallInListField.LastVolunteerName:
+                        value1 = StringCheck(StringTypeEnum.Name);
+                        break;
+                    case BO.CallInListField.TimeOpen:
+                        //Console.WriteLine("Choose between from or till the time open:");
+                        //Console.WriteLine("0. From");
+                        //Console.WriteLine("1. Till");
+                        //Console.Write("Please select an option: ");
+                        //if (int.TryParse(Console.ReadLine(), out int choice) && choice != 0 && choice != 1)
+                        //{
+                        //    Console.WriteLine("Invalid choice.");
+                        //    break;
+                        //}
+
+                        Console.WriteLine("Enter the TimeOpen: ");
+                        if (TimeSpan.TryParse(Console.ReadLine(), out tempTimeSpan))
+                            value1 = tempTimeSpan;
+                        else
+                            Console.WriteLine("Invalid date.");
+                        break;
+                    case BO.CallInListField.CallStatus:
+                        Console.WriteLine("Enter the CallStatus: ");
+                        foreach (var callType in Enum.GetValues(typeof(BO.BoCallStatus)))
+                        {
+                            Console.WriteLine($"{(int)callType}. {callType}");
+                        }
+                        Console.Write("Choose the CallType: ");
+                        if (Enum.TryParse(Console.ReadLine(), out BO.BoCallStatus callTypeSelected2))
+                            value1 = callTypeSelected2;
+                        else
+                            Console.WriteLine("Invalid call type.");
+                        break;
+                    case BO.CallInListField.AssignCount:
+                        Console.WriteLine("Enter the AssignCount: ");
+                        int.TryParse(Console.ReadLine(), out tempInt);
+                        value1 = tempInt;
+                        break;
+                }
+            }
+
+            Console.WriteLine("What field you want to sort by?");
+            CallInListDisplay();
+
+            int.TryParse(Console.ReadLine(), out input);
+            if (input >= 0 && input <= 7)
+                field2 = (BO.CallInListField)input;
+            else if (input == 9)
+                field2 = null;
+            else
+            {
+                Console.WriteLine("Invalid choice.");
+                return;
+            }
+
+            if (field1 is null)
+            {
+                foreach (var call in s_bl.Call.GetCallsInList(null, null, field2))
+                {
+                    Console.WriteLine(call);
+                }
+            }
+            else
+            {
+                foreach (var call in s_bl.Call.GetCallsInList(field1, value1, field2))
+                {
+                    Console.WriteLine(call);
+                }
+            }
+
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
         }
+    }
+
+    private static void CallInListDisplay()
+    {
+        Console.WriteLine("0. Assignment ID");
+        Console.WriteLine("1. Call ID");
+        Console.WriteLine("2. Call type");
+        Console.WriteLine("3. Start time");
+        Console.WriteLine("4. Time left");
+        Console.WriteLine("5. Last volunteer name");
+        Console.WriteLine("6. Time open");
+        Console.WriteLine("7. Call status");
+        Console.WriteLine("8. Assigned times");
+        Console.WriteLine("9. None");
+        Console.Write("Please select an option: ");
     }
 
     private static void GetCall()
@@ -695,7 +834,40 @@ internal class Program
     {
         try
         {
-            // Implement logic to update call
+            Console.Write("Enter the call ID: ");
+            if (int.TryParse(Console.ReadLine(), out int callId))
+            {
+                var call = s_bl.Call.GetCall(callId);
+                Console.WriteLine("Current Call Details: " + call);
+
+                Console.Write("Enter new description (or press Enter to keep current): ");
+                string? description = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(description))
+                {
+                    call.Description = description;
+                }
+
+                Console.Write("Enter new address (or press Enter to keep current): ");
+                string? address = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(address))
+                {
+                    call.Address = address;
+                }
+
+                Console.Write("Enter new status (or press Enter to keep current): ");
+                string? statusInput = Console.ReadLine();
+                if (Enum.TryParse(statusInput, out BO.BoCallStatus status))
+                {
+                    call.Status = status;
+                }
+
+                s_bl.Call.UpdateCall(call);
+                Console.WriteLine("Call updated successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Invalid call ID.");
+            }
         }
         catch (Exception e)
         {
@@ -728,7 +900,42 @@ internal class Program
     {
         try
         {
-            // Implement logic to add call
+            Console.WriteLine("Choose a call type2:");
+            foreach (var callType in Enum.GetValues(typeof(BO.BoCallType)))
+            {
+                Console.WriteLine($"{(int)callType}. {callType}");
+            }
+            Console.Write("Please select a call type2: ");
+            if (Enum.TryParse(Console.ReadLine(), out BO.BoCallType callTypeSelected))
+            {
+                Console.Write("Enter the call description: ");
+                string description = Console.ReadLine()!;
+
+                Console.Write("Enter the call address: ");
+                string address = Console.ReadLine()!;
+
+                Console.Write("Enter the call max time or click Enter to no limit: ");
+                if (DateTime.TryParse(Console.ReadLine(), out DateTime maxTime))
+                {
+                    BO.Call newCall = new BO.Call
+                    {
+                        Id = 0,
+                        Description = description,
+                        Address = address,
+                        CallType = callTypeSelected,
+                        Status = BO.BoCallStatus.Open,
+                        StartTime = DateTime.Now,
+                        MaxTime = maxTime
+                    };
+
+                    s_bl.Call.AddCall(newCall);
+                    Console.WriteLine("Call added successfully.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid call type2.");
+            }
         }
         catch (Exception e)
         {
@@ -764,7 +971,7 @@ internal class Program
     {
         try
         {
-            // Implement logic to complete call
+            ACCCall(ACCEnum.Complete);
         }
         catch (Exception e)
         {
@@ -776,7 +983,7 @@ internal class Program
     {
         try
         {
-            // Implement logic to cancel call
+            ACCCall(ACCEnum.Cancel);
         }
         catch (Exception e)
         {
@@ -788,14 +995,77 @@ internal class Program
     {
         try
         {
-            // Implement logic to assign call
+            ACCCall(ACCEnum.Assign);
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
         }
     }
-
+    private static void ACCCall(ACCEnum action)
+    {
+        string type1 = action switch
+        {
+            ACCEnum.Assign => "volunteer",
+            ACCEnum.Complete => "volunteer",
+            ACCEnum.Cancel => "canceler",
+            _ => ""
+        };
+        string type2 = action switch
+        {
+            ACCEnum.Assign => "call",
+            ACCEnum.Complete => "assignment",
+            ACCEnum.Cancel => "assignment",
+            _ => ""
+        };
+        Console.Write($"Enter the {type1} ID: ");
+        if (int.TryParse(Console.ReadLine(), out int typeId1))
+        {
+            Console.Write($"Enter the {type2} ID: ");
+            if (int.TryParse(Console.ReadLine(), out int typeId2))
+            {
+                switch (action)
+                {
+                    case ACCEnum.Assign:
+                        s_bl.Call.AssignCall(typeId1, typeId2);
+                        Console.WriteLine("Call assigned successfully.");
+                        break;
+                    case ACCEnum.Complete:
+                        s_bl.Call.CompleteCall(typeId1, typeId2);
+                        Console.WriteLine("Call completed successfully.");
+                        break;
+                    case ACCEnum.Cancel:
+                        s_bl.Call.CancelCall(typeId1, typeId2);
+                        Console.WriteLine("Call canceled successfully.");
+                        break;
+                    default:
+                        Console.WriteLine("Invalid action.");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Invalid {type2} ID.");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"Invalid {type1} ID.");
+        }
+    }
+#endregion
+    #region Helper methods
+    private static string StringCheck(StringTypeEnum type)
+    {
+        string? str;
+        do
+        {
+            Console.Write($"Enter the volunteer's {type}: ");
+            str = Console.ReadLine();
+        } while (string.IsNullOrWhiteSpace(str));
+        return str;
+    }
+    #endregion
 }
 
 

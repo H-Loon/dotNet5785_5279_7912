@@ -64,3 +64,24 @@ public class BlEmailNotSendException : Exception
     public BlEmailNotSendException(string? message) : base(message) { }
     public BlEmailNotSendException(string? message, Exception innerException) : base(message, innerException) { }
 }
+
+[Serializable]
+public class BlCallCompletionException : Exception
+{
+    public BlCallCompletionException(string? message) : base(message) { }
+    public BlCallCompletionException(string? message, Exception innerException) : base(message, innerException) { }
+}
+
+[Serializable]
+public class BlCallCancelException : Exception
+{
+    public BlCallCancelException(string? message) : base(message) { }
+    public BlCallCancelException(string? message, Exception innerException) : base(message, innerException) { }
+}
+
+[Serializable]
+public class BlCallAssignException : Exception
+{
+    public BlCallAssignException(string? message) : base(message) { }
+    public BlCallAssignException(string? message, Exception innerException) : base(message, innerException) { }
+}
