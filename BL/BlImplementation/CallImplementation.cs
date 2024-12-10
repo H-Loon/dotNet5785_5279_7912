@@ -2,7 +2,6 @@
 using BlApi;
 using System.Collections.Generic;
 using Helpers;
-using DO;
 
 internal class CallImplementation : ICall
 {
@@ -180,8 +179,36 @@ internal class CallImplementation : ICall
     /// <exception cref="InvalidOperationException">Thrown when an error occurs while retrieving the open calls.</exception>
     public IEnumerable<BO.OpenCallInList> GetOpenCallForVolunteer(int volunteerId, BO.BoCallType? boCallType, BO.OpenCallInListField? field = BO.OpenCallInListField.Id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // Retrieve all calls 
+            var allCalls = _dal.Call.ReadAll();
+            var volunteer = _dal.Volunteer.Read(volunteerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
+
+            // Filter calls with status "Open" or "OpenAndDanger"
+            return from openCall in allCalls
+                   let status = CallManager.GetCallStatus(openCall.Id)
+                   let callType = (BO.BoCallType)openCall.Type
+                   where (status == BO.BoCallStatus.Open || status == BO.BoCallStatus.OpenAndDanger) &&
+                         (boCallType is null || callType == boCallType)
+                   orderby openCall.GetType().GetProperty(field.ToString()!)
+                   select new BO.OpenCallInList
+                   {
+                       Id = openCall.Id,
+                       CallType = callType,
+                       Description = openCall.Description,
+                       Address = openCall.Address,
+                       StartTime = openCall.StartTime,
+                       MaxTime = openCall.MaxTime,
+                       CallDistance = Tools.GetCallDistance(openCall.Id, volunteer)
+                   };
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("An error occurred while trying to retrieve open calls for the volunteer.", ex);
+        }
     }
+
     public IEnumerable<BO.CallInList> GetCallsInList(BO.CallInListField? field1, object? obj, BO.CallInListField? field2) // filter by field1 and sort by field2
     {
         var assignments = _dal.Assignment.ReadAll();
@@ -277,7 +304,7 @@ internal class CallImplementation : ICall
 
         try
         {
-            _dal.Assignment.Create(new Assignment
+            _dal.Assignment.Create(new DO.Assignment
             {
                 CallId = callId,
                 VolunteerId = volunteerId,
@@ -287,6 +314,33 @@ internal class CallImplementation : ICall
         catch (Exception ex)
         {
             throw new BO.BlCallAssignException("An error occurred while trying to assign the call.", ex);
+        }
+    }
+
+    /// <summary>
+    /// Updates the details of an existing call.
+    /// </summary>
+    /// <param name="call">The call object containing updated details.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the call is not found or an error occurs during the update.</exception>
+    public void UpdateCall(BO.Call call)
+    {
+        CallManager.ValidateCallFormat(call);
+        CallManager.ValidateCallLogical(call);
+
+        DO.Call dataCall = CallManager.ConvertToDoCall(call);
+
+        try
+        {
+            _dal.Call.Update(dataCall);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            //if Id doesn't exist
+            throw new InvalidOperationException("Call not found.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("An error occurred while trying to update the call.", ex);
         }
     }
 }
