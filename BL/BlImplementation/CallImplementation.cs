@@ -7,7 +7,6 @@ using DO;
 internal class CallImplementation : ICall
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
-    //private readonly List<BO.Call> _calls = new List<BO.Call>();//
 
     public int[] GetCallsQuantities()
     {
@@ -181,12 +180,8 @@ internal class CallImplementation : ICall
     /// <exception cref="InvalidOperationException">Thrown when an error occurs while retrieving the open calls.</exception>
     public IEnumerable<BO.OpenCallInList> GetOpenCallForVolunteer(int volunteerId, BO.BoCallType? boCallType, BO.OpenCallInListField? field = BO.OpenCallInListField.Id)
     {
-        try
-        {
-            // Retrieve all calls 
-            var allCalls = _dal.Call.ReadAll();
-            var volunteer = _dal.Volunteer.Read(volunteerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
-
+        throw new NotImplementedException();
+    }
     public IEnumerable<BO.CallInList> GetCallsInList(BO.CallInListField? field1, object? obj, BO.CallInListField? field2) // filter by field1 and sort by field2
     {
         var assignments = _dal.Assignment.ReadAll();
@@ -221,16 +216,6 @@ internal class CallImplementation : ICall
             _ => callInList.OrderBy(c => c.AssignmentId)
         };
         return callInList;
-    }
-
-    public IEnumerable<BO.ClosedCallInList> GetClosedCallByVolunteer(int id, BO.BoCallType? boCallType, BO.ClosedCallInListField? field)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<BO.CallInList> GetCallsInList(BO.CallInListField? field1, object? obj, BO.CallInListField? field2)
-    {
-        throw new NotImplementedException();
     }
 
     public void CompleteCall(int volunteerId, int assignmentId)
