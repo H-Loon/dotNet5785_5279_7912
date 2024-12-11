@@ -115,7 +115,7 @@ internal class CallImplementation : ICall
             Longitude = (double)callElem.Element("Longitude")!,
             StartTime = (DateTime)callElem.Element("StartTime")!,
             Description = callElem.Element("Description")?.Value,
-            MaxTime = (DateTime)callElem.Element("MaxTime")!
+            MaxTime = callElem.Element("MaxTime")?.Value.ToString() == "" ? null : (DateTime?)callElem.Element("MaxTime")!
         };
     }
 

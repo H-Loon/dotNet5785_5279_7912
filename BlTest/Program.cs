@@ -303,7 +303,7 @@ internal class Program
     {
         try
         {
-            int active;
+            bool active;
             int id = int.Parse(StringCheck(StringTypeEnum.Id));
             string name = StringCheck(StringTypeEnum.Name);
 
@@ -311,9 +311,9 @@ internal class Program
             Console.WriteLine("0. No");
             Console.WriteLine("1. Yes");
 
-            while (int.TryParse(Console.ReadLine(), out active) && active is < 0 or > 1)
+            while (bool.TryParse(Console.ReadLine(), out active))
             {
-                Console.WriteLine("Invalid choice. Please enter a number between 0 and 2.");
+                Console.WriteLine("Invalid choice. Please enter a number between 0 and 1.");
                 Console.Write("Please select an option: ");
             }
 
@@ -327,7 +327,7 @@ internal class Program
                 Password = volunteer.Password,
                 Phone = volunteer.Phone,
                 Address = volunteer.Address,
-                IsActive = bool.Parse(active.ToString()),
+                IsActive = active,
                 Role = volunteer.Role,
                 MaxDistance = volunteer.MaxDistance,
             });
@@ -916,22 +916,22 @@ internal class Program
                 string address = Console.ReadLine()!;
 
                 Console.Write("Enter the call max time or click Enter to no limit: ");
-                if (DateTime.TryParse(Console.ReadLine(), out DateTime maxTime))
-                {
-                    BO.Call newCall = new BO.Call
-                    {
-                        Id = 0,
-                        Description = description,
-                        Address = address,
-                        CallType = callTypeSelected,
-                        Status = BO.BoCallStatus.Open,
-                        StartTime = DateTime.Now,
-                        MaxTime = maxTime
-                    };
+                DateTime.TryParse(Console.ReadLine(), out DateTime maxTime);
 
-                    s_bl.Call.AddCall(newCall);
-                    Console.WriteLine("Call added successfully.");
-                }
+                BO.Call newCall = new BO.Call
+                {
+                    Id = 0,
+                    Description = description,
+                    Address = address,
+                    CallType = callTypeSelected,
+                    Status = BO.BoCallStatus.Open,
+                    StartTime = DateTime.Now,
+                    MaxTime = maxTime == default ? null : maxTime
+                };
+
+                s_bl.Call.AddCall(newCall);
+                Console.WriteLine("Call added successfully.");
+
             }
             else
             {

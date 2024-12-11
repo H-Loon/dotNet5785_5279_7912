@@ -26,21 +26,26 @@ internal class CallImplementation : ICall
             CallManager.ValidateCallFormat(call);
             CallManager.ValidateCallLogical(call);
 
+            (call.Latitude, call.Longitude) = Tools.AddressToCoordinates(call.Address);
+
             DO.Call dataCall = CallManager.ConvertToDoCall(call);
             _dal.Call.Create(dataCall);
+
+            var callId = _dal.Call.ReadAll().Last().Id;
             var volunteers = from v in _dal.Volunteer.ReadAll()
-                             where v.MaxDistance is null || v.MaxDistance >= Tools.GetCallDistance(call.Id, v)
+                             where v.MaxDistance == null || v.MaxDistance >= Tools.GetCallDistance(callId, v)
                              select v;
-            string msg = "A new call has been added to the system and in your range. Please check the system for more details.";
+
+            string msg = "A new call has been added to the system and in your range.\n Please check the system for more details.";
             foreach (var vol in volunteers)
             {
-                Tools.SendEmail("noreply@weirdaid.com", vol.Email, $"Call n.{call.Id} is in your range ", msg);
+                Tools.SendEmail("noreply@weirdaid.com", vol.Email, $"New Call n.{callId} has been open and is in your range ", msg);
             }
 
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("A call with the same ID already exists.", ex);
+            throw new Exception(ex.Message, ex);
         }
     }
 

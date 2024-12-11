@@ -6,9 +6,6 @@ internal static class CallManager
     private static IDal s_dal = Factory.Get; //stage 4
     internal static void ValidateCallFormat(BO.Call call)
     {
-        if (call.Id < 1000)
-            throw new ArgumentException("Id must be above 1000.");
-
         if (string.IsNullOrWhiteSpace(call.Address))
             throw new ArgumentException("Address cannot be null or empty.");
 
@@ -26,6 +23,7 @@ internal static class CallManager
 
     internal static DO.Call ConvertToDoCall(BO.Call call)
     {
+
         return new DO.Call
         {
             Id = call.Id,

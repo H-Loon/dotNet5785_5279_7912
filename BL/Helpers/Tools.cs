@@ -12,7 +12,10 @@ internal static class Tools
     internal static double GetCallDistance(int callId, DO.Volunteer v)
     {
         if (v.Address is not null)
-            return Haversine(s_dal.Call.Read(callId)!.Latitude, s_dal.Call.Read(callId)!.Longitude, v.Latitude!.Value, v.Longitude!.Value);
+        {
+            var call = s_dal.Call.Read(callId);
+            return Haversine(call.Latitude, call.Longitude, v.Latitude!.Value, v.Longitude!.Value);
+        }
         else
             throw new BO.BlAddressNotValidException("Volunteer address is not valid.");
     }
