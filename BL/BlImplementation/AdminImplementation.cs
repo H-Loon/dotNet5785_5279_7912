@@ -54,6 +54,7 @@ internal class AdminImplementation : IAdmin
     public void InitDB()
     {
         DalTest.Initialization.Do();
+        VolunteerManager.PasswordFillerForInit();
         ClockManager.UpdateClock(ClockManager.Now);
     }
 
