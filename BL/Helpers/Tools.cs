@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using System.Reflection;
 using System.Net.Mail;
 using BO;
+using System.Collections.Generic;
 
 namespace Helpers;
 
@@ -94,13 +95,17 @@ internal static class Tools
             {
                 result += $"{property.Name}: {doubleValue.ToString("G", System.Globalization.CultureInfo.InvariantCulture)}\n"; // Format double to general format e.g. 1.1 instead of 11
             }
-            else if (value is not null)
+            else if (value is List<BO.CallAssignInList>)
             {
-                result += $"{property.Name}: {value.ToString()}\n";
+                result += $"{property.Name}:";
+                foreach (var item in (List<BO.CallAssignInList>)value)
+                {
+                    result += $"\t{item}\n";
+                }
             }
             else
             {
-                result += $"{property.Name}:\n";
+                result += $"{property.Name}: {value}\n";
             }
 
         }

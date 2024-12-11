@@ -180,23 +180,22 @@ internal static class VolunteerManager
     /// </summary>
     /// <param name="volunteer">The BO.Volunteer object to be validated.</param>
     /// <returns>True if all properties are valid, otherwise false.</returns>
-    internal static bool BOVolunteerCheck(BO.Volunteer volunteer)
+    internal static void BOVolunteerCheck(BO.Volunteer volunteer)
     {
         if (IdCheck(volunteer.Id) is false)
-            return false;
+            throw new BO.BlNotValidEntityException("Volunteer Id is not valid");
         if (NameCheck(volunteer.Name) is false)
-            return false;
+            throw new BO.BlNotValidEntityException("Volunteer Name is not valid");
         if (PhoneCheck(volunteer.Phone) is false)
-            return false;
+            throw new BO.BlNotValidEntityException("Volunteer Phone is not valid");
         if (EmailCheck(volunteer.Email) is false)
-            return false;
+            throw new BO.BlNotValidEntityException("Volunteer Email is not valid");
         if (PasswordCheck(volunteer.Password!) is false)
-            return false;
+            throw new BO.BlNotValidEntityException("Volunteer Password is not valid");
         if (Tools.AddressCheck(volunteer.Address) is false)
-            return false;
+            throw new BO.BlNotValidEntityException("Volunteer Address is not valid");
         if (MaxDistanceCheck(volunteer.MaxDistance) is false)
-            return false;
-        return true;
+            throw new BO.BlNotValidEntityException("Volunteer Max Distance is not valid");
     }
 
     /// <summary>
@@ -277,7 +276,7 @@ internal static class VolunteerManager
     /// <returns>True if the phone number is valid, otherwise false.</returns>
     internal static bool PhoneCheck(string pn)
     {
-        string pattern = @"^\+972-[0-9]{2}-[0-9]{7}$"; // (e.g. +972-55-1234567)
+        string pattern = @"^0[\d]{9}$"; // (e.g. 0551234567)
         return Regex.IsMatch(pn, pattern);
     }
 

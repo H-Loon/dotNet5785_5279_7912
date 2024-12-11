@@ -67,8 +67,14 @@ internal static class CallManager
 
         else if (assignment is not null) // call is assigned
         {
-            if (assignment.EndReason is not null) // call is closed
+            if (assignment.EndReason is DO.AssignmentEndReason.Completed) // call is closed
                 return BO.BoCallStatus.Closed;
+
+            if (assignment.EndReason is (DO.AssignmentEndReason.CanceledByAdmin or DO.AssignmentEndReason.CanceledByVolunteer) && now > maxTime - s_dal.Config.RiskRange) // call is open and in danger because no in treatment and is in the risk range
+                return BO.BoCallStatus.OpenAndDanger;
+
+            if (assignment.EndReason is DO.AssignmentEndReason.CanceledByAdmin or DO.AssignmentEndReason.CanceledByVolunteer) // call is open because no in treatment
+                return BO.BoCallStatus.Open;
 
             else if (call.MaxTime is null) // call has no MaxTime
                 return BO.BoCallStatus.InTreatment;
@@ -124,6 +130,7 @@ internal static class CallManager
                     DO.Assignment assignment = s_dal.Assignment.Read(a => a.CallId == call.Id)!;
                     s_dal.Assignment.Update(new DO.Assignment
                     {
+                        Id = assignment.Id,
                         CallId = call.Id,
                         VolunteerId = assignment.VolunteerId,
                         StartTime = assignment.StartTime,

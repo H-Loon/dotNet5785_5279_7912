@@ -2,7 +2,6 @@
 using BlApi;
 using System.Collections.Generic;
 using Helpers;
-using BO;
 
 internal class CallImplementation : ICall
 {
@@ -264,6 +263,7 @@ internal class CallImplementation : ICall
 
     public void CompleteCall(int volunteerId, int assignmentId)
     {
+        if (_dal.Volunteer.Read(volunteerId) is null) throw new BO.BlNotExistException("Volunteer/Admin not found.");
         DO.Assignment assignment = _dal.Assignment.Read(assignmentId) ?? throw new BO.BlNotExistException("Assignment not found.");
         if (assignment.VolunteerId != volunteerId)
             throw new BO.BlNotAllowedException("You are not authorized to complete this call.");
@@ -285,16 +285,16 @@ internal class CallImplementation : ICall
 
     public void CancelCall(int cancelerId, int assignmentId)
     {
-        DO.Assignment assignment = _dal.Assignment.Read(assignmentId) ?? throw new BO.BlNotExistException("Assignment not found.");
-        var canceler = _dal.Volunteer.Read(cancelerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
-
-        if (assignment.VolunteerId != cancelerId && canceler.Role is not DO.RoleType.Admin)
-            throw new BO.BlNotAllowedException("You are not authorized to cancel this call.");
-        if (assignment.EndTime is not null)
-            throw new BO.BlNotAllowedException("This call has already been ended.");
-        var endReason = canceler.Role is DO.RoleType.Admin ? DO.AssignmentEndReason.CanceledByAdmin : DO.AssignmentEndReason.CanceledByVolunteer;
         try
         {
+            DO.Assignment assignment = _dal.Assignment.Read(assignmentId) ?? throw new BO.BlNotExistException("Assignment not found.");
+            var canceler = _dal.Volunteer.Read(cancelerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
+
+            if (assignment.VolunteerId != cancelerId && canceler.Role is not DO.RoleType.Admin)
+                throw new BO.BlNotAllowedException("You are not authorized to cancel this call.");
+            if (assignment.EndTime is not null)
+                throw new BO.BlNotAllowedException("This call has already been ended.");
+            var endReason = canceler.Role is DO.RoleType.Admin ? DO.AssignmentEndReason.CanceledByAdmin : DO.AssignmentEndReason.CanceledByVolunteer;
             _dal.Assignment.Update(assignment with
             {
                 EndTime = DateTime.Now,
@@ -312,18 +312,23 @@ internal class CallImplementation : ICall
 
     public void AssignCall(int volunteerId, int callId)
     {
-        DO.Assignment? assignment = _dal.Assignment.Read(a => a.CallId == callId);
-        if (assignment != null)
-            throw new BO.BlNotAllowedException("This call has already been assigned to a volunteer.");
-        DO.Call call = _dal.Call.Read(callId) ?? throw new BO.BlNotExistException("Call not found.");
-
-        DO.Volunteer volunteer = _dal.Volunteer.Read(volunteerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
-            
-        if (CallManager.GetCallStatus(callId) != BO.BoCallStatus.Open && CallManager.GetCallStatus(callId) != BO.BoCallStatus.OpenAndDanger )
-            throw new BO.BlNotAllowedException("You are not authorized to assign this call.");
-
         try
         {
+            if(_dal.Call.Read(callId) is null) throw new BO.BlNotExistException("Call not found.");
+
+            DO.Volunteer volunteer = _dal.Volunteer.Read(volunteerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
+
+            if(VolunteerManager.ConvertToBO(volunteerId).CurrentCall is not null) throw new BO.BlNotExistException("Volunteer has already a call assigned.");
+            
+            if (CallManager.GetCallStatus(callId) is not (BO.BoCallStatus.Open or BO.BoCallStatus.OpenAndDanger)) // call is not open or open and danger
+                throw new BO.BlNotAllowedException("This call has already been assigned to a volunteer or is over dated.");
+
+            if (volunteer.IsActive is false)
+                throw new BO.BlNotAllowedException("The Volunteer is not active.");  
+
+            if (CallManager.GetCallStatus(callId) != BO.BoCallStatus.Open && CallManager.GetCallStatus(callId) != BO.BoCallStatus.OpenAndDanger )
+                throw new BO.BlNotAllowedException("You are not authorized to assign this call.");
+
             _dal.Assignment.Create(new DO.Assignment
             {
                 CallId = callId,
@@ -333,7 +338,7 @@ internal class CallImplementation : ICall
         }
         catch (Exception ex)
         {
-            throw new BO.BlCallAssignException("An error occurred while trying to assign the call.", ex);
+            throw new BO.BlCallAssignException("An error occurred while trying to assign the call. ", ex);
         }
     }
 

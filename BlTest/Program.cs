@@ -168,7 +168,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -184,7 +184,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -198,7 +198,10 @@ internal class Program
             Console.Write("Enter the new risk range in hours: ");
             if (int.TryParse(Console.ReadLine(), out int hours))
             {
-                s_bl.Admin.UpdateRiskRange(new TimeSpan(hours, 0, 0));
+                int days = (hours / 24);
+                hours = hours % 24;
+
+                s_bl.Admin.UpdateRiskRange(new TimeSpan(days, hours, 0 , 0));
                 Console.WriteLine("Risk range updated successfully.");
             }
             else
@@ -208,7 +211,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -247,7 +250,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
     #endregion
@@ -334,7 +337,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -366,14 +369,13 @@ internal class Program
             };
 
             Console.WriteLine("What field you want to sort by?");
-            Console.WriteLine("0. AssignmentId");
+            Console.WriteLine("0. Id");
             Console.WriteLine("1. Name");
             Console.WriteLine("2. Active");
             Console.WriteLine("3. Completed Calls");
             Console.WriteLine("4. Canceled Calls");
-            Console.WriteLine("5. Over Dated Calls");
-            Console.WriteLine("6. Call In Treatment");
-            Console.WriteLine("7. Current Call Type");
+            Console.WriteLine("5. Call In Treatment");
+            Console.WriteLine("6. Current Call Type");
             Console.Write("Please select an option: ");
             field = int.Parse(Console.ReadLine());
             if (field is < 0 or > 7)
@@ -386,7 +388,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -399,7 +401,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -420,7 +422,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -454,7 +456,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -474,107 +476,11 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
-        }
-    }
-
-    private static BO.Volunteer VolunteerFill()
-    {
-        try
-        {
-            Console.Write("Enter the volunteer's email: ");
-            string email = Console.ReadLine()!;
-
-            string password1="";
-            string password2="";
-            do
-            {
-                if (password1 != password2)
-                    Console.WriteLine("Try again:");
-
-                Console.Write("Enter the volunteer's password click enter to skip: ");
-                password1 = Console.ReadLine();
-
-                if (!string.IsNullOrWhiteSpace(password1))
-                { 
-                    Console.Write("Confirm the volunteer's password: ");
-                    password2 = Console.ReadLine();
-                }
-            }
-            while (password1 != password2);
-
-            string phone = StringCheck(StringTypeEnum.Phone);
-
-            Console.Write("Enter the volunteer's address or click enter to skip: ");
-            string? address = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(address))
-                address = null;
-
-
-            Console.Write("Enter the volunteer's max distance (Km) or click enter to skip: ");
-            string maxDistanceInput = Console.ReadLine()!;
-            double? maxDistance = null;
-            if (!string.IsNullOrWhiteSpace(maxDistanceInput))
-            {
-                if (double.TryParse(maxDistanceInput, out double maxDistanceValue))
-                {
-                    maxDistance = maxDistanceValue;
-                }
-            }
-
-            Console.WriteLine("Enter the volunteer's role: ");
-            Console.WriteLine("0. Volunteer");
-            Console.WriteLine("1. Admin");
-            int role;
-            while (!int.TryParse(Console.ReadLine(), out role) || (role != 0 && role != 1))
-            {
-                Console.WriteLine("Invalid choice. Please enter a number between 0 and 1.");
-                Console.WriteLine("Enter the volunteer's role: ");
-            }
-
-            return new BO.Volunteer
-            {
-                Id = 0,
-                Name = "",
-                Email = email,
-                Password = password2,
-                Phone = phone,
-                Address = address,
-                IsActive = true,
-                Role = (BO.BoRoleType)role,
-                MaxDistance = maxDistance,
-            };
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-            Console.WriteLine("Please try again.");
-            return VolunteerFill();
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
 
-    private static string ReadPassword() // Ai helped
-    {
-        var password = new StringBuilder();
-        ConsoleKeyInfo keyInfo;
-        do
-        {
-            keyInfo = Console.ReadKey(intercept: true);
-            if (keyInfo.Key != ConsoleKey.Enter && keyInfo.Key != ConsoleKey.Backspace)
-            {
-                password.Append(keyInfo.KeyChar);
-                Console.Write("*");
-            }
-            else if (keyInfo.Key == ConsoleKey.Backspace && password.Length > 0)
-            {
-                password.Remove(password.Length - 1, 1);
-                Console.Write("\b \b");
-            }
-        } while (keyInfo.Key != ConsoleKey.Enter);
-        Console.WriteLine();
-        return password.ToString();
-    }
     #endregion
 
     #region Call display and methods
@@ -656,7 +562,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -780,7 +686,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -816,7 +722,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -872,7 +778,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -893,7 +799,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -916,7 +822,8 @@ internal class Program
                 string address = Console.ReadLine()!;
 
                 Console.Write("Enter the call max time or click Enter to no limit: ");
-                DateTime.TryParse(Console.ReadLine(), out DateTime maxTime);
+                if(DateTime.TryParse(Console.ReadLine(), out DateTime maxTime))
+                    Console.Write("Incorrect DateTime - Max time will be null: ");
 
                 BO.Call newCall = new BO.Call
                 {
@@ -940,7 +847,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine( "" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -988,7 +895,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -1041,7 +948,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -1053,7 +960,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -1065,7 +972,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
     }
 
@@ -1077,8 +984,106 @@ internal class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
         }
+    }
+#endregion
+
+    #region Helper methods
+    private static BO.Volunteer VolunteerFill()
+    {
+        try
+        {
+            Console.Write("Enter the volunteer's email: ");
+            string email = Console.ReadLine()!;
+
+            string password1="";
+            string password2="";
+            do
+            {
+                if (password1 != password2)
+                    Console.WriteLine("Try again:");
+
+                Console.Write("Enter the volunteer's password click enter to skip: ");
+                password1 = Console.ReadLine();
+
+                if (!string.IsNullOrWhiteSpace(password1))
+                { 
+                    Console.Write("Confirm the volunteer's password: ");
+                    password2 = Console.ReadLine();
+                }
+            }
+            while (password1 != password2);
+
+            string phone = StringCheck(StringTypeEnum.Phone);
+
+            Console.Write("Enter the volunteer's address or click enter to skip: ");
+            string? address = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(address))
+                address = null;
+
+
+            Console.Write("Enter the volunteer's max distance (Km) or click enter to skip: ");
+            string maxDistanceInput = Console.ReadLine()!;
+            double? maxDistance = null;
+            if (!string.IsNullOrWhiteSpace(maxDistanceInput))
+            {
+                if (double.TryParse(maxDistanceInput, out double maxDistanceValue))
+                {
+                    maxDistance = maxDistanceValue;
+                }
+            }
+
+            Console.WriteLine("Enter the volunteer's role: ");
+            Console.WriteLine("0. Volunteer");
+            Console.WriteLine("1. Admin");
+            int role;
+            while (!int.TryParse(Console.ReadLine(), out role) || (role != 0 && role != 1))
+            {
+                Console.WriteLine("Invalid choice. Please enter a number between 0 and 1.");
+                Console.WriteLine("Enter the volunteer's role: ");
+            }
+
+            return new BO.Volunteer
+            {
+                Id = 0,
+                Name = "",
+                Email = email,
+                Password = password2,
+                Phone = phone,
+                Address = address,
+                IsActive = true,
+                Role = (BO.BoRoleType)role,
+                MaxDistance = maxDistance,
+            };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine("Please try again.");
+            return VolunteerFill();
+        }
+    }
+    private static string ReadPassword() // Ai helped
+    {
+        var password = new StringBuilder();
+        ConsoleKeyInfo keyInfo;
+        do
+        {
+            keyInfo = Console.ReadKey(intercept: true);
+            if (keyInfo.Key != ConsoleKey.Enter && keyInfo.Key != ConsoleKey.Backspace)
+            {
+                password.Append(keyInfo.KeyChar);
+                Console.Write("*");
+            }
+            else if (keyInfo.Key == ConsoleKey.Backspace && password.Length > 0)
+            {
+                password.Remove(password.Length - 1, 1);
+                Console.Write("\b \b");
+            }
+        } while (keyInfo.Key != ConsoleKey.Enter);
+        Console.WriteLine();
+        return password.ToString();
     }
     private static void ACCCall(ACCEnum action)
     {
@@ -1131,9 +1136,6 @@ internal class Program
             Console.WriteLine($"Invalid {type1} ID.");
         }
     }
-#endregion
-
-    #region Helper methods
     private static string StringCheck(StringTypeEnum type)
     {
         string? str;
@@ -1146,16 +1148,3 @@ internal class Program
     }
     #endregion
 }
-
-
-/*
-213017833
-Menahem Katzir
-mkatzir@gmail.com
-MashiahNow770!
-MashiahNow770!
-+972-54-1234567
-770 Eastern Parkway, Brooklyn, NY 11213, USA
-50
-0
- */

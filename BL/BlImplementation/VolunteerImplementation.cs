@@ -15,8 +15,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     {
         try
         {
-            if (VolunteerManager.BOVolunteerCheck(volunteer) is false)
-                throw new BO.BlNotValidEntityException("Volunteer is not valid");
+            VolunteerManager.BOVolunteerCheck(volunteer);     
 
             if (_dal.Volunteer.Read(volunteer.Id) is not null)
                 throw new BO.BlAlreadyExistsException("Volunteer already exists");
@@ -26,7 +25,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            throw new Exception(e.Message , e);
         }
     }
 
@@ -51,7 +50,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            throw new Exception(e.Message , e);
         }
     }
 
@@ -68,7 +67,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            throw new Exception(e.Message, e);
         }
     }
 
@@ -99,7 +98,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            throw new Exception(e.Message, e);
         }
     }
 
@@ -128,7 +127,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            throw new Exception(e.Message, e);
         }
     }
 
@@ -142,10 +141,10 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     {
         try
         {
-            var asker = _dal.Volunteer.Read(id) ?? throw new ArgumentException("Volunteer not found");
+            var asker = _dal.Volunteer.Read(id) ?? throw new BO.BlNotExistException("Volunteer not found");
 
-            if (VolunteerManager.BOVolunteerCheck(volunteer) is false)
-                throw new BO.BlNotValidEntityException("Volunteer is not valid");
+            VolunteerManager.BOVolunteerCheck(volunteer);
+                
 
             if (asker.Role is not DO.RoleType.Admin)
             {
@@ -158,7 +157,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            throw new Exception(e.Message , e);
         }
     }
 }
