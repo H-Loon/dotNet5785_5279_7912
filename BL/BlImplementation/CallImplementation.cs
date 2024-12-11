@@ -93,12 +93,13 @@ internal class CallImplementation : ICall
 
             // Filter only the closed calls associated
             var closedCalls = from assignment in assignments
-                              let call = _dal.Call.Read(assignment.CallId)
-                              where call != null && (CallManager.GetCallStatus(call.Id)== BO.BoCallStatus.Closed)
+                              let call = _dal.Call.Read(assignment.CallId)!
+                              let callType = (BO.BoCallType)call!.Type
+                              where boCallType is null || callType == boCallType
                               select new BO.ClosedCallInList
                               {
                                   Id = assignment.CallId,
-                                  CallType = (BO.BoCallType)call.Type,
+                                  CallType = callType,
                                   Address = call.Address,
                                   StartTime = call.StartTime,
                                   AssignTime = assignment.StartTime,
@@ -370,4 +371,5 @@ internal class CallImplementation : ICall
             throw new InvalidOperationException("An error occurred while trying to update the call.", ex);
         }
     }
+
 }

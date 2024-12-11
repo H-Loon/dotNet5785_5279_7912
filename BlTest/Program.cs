@@ -865,7 +865,7 @@ internal class Program
                 }
                 Console.Write("Please select a call type: ");
                 BO.BoCallType? callTypeSelected = null;
-                if (Enum.TryParse(Console.ReadLine(), out BO.BoCallType callType))
+                if (Enum.TryParse(Console.ReadLine(), out BO.BoCallType callType) && callType is not BO.BoCallType.None)
                 {
                     callTypeSelected = callType;
                 }
