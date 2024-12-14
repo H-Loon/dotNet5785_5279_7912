@@ -4,6 +4,8 @@ namespace Helpers;
 internal static class CallManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
+
+    internal static ObserverManager Observers = new(); //stage 5 
     internal static void ValidateCallFormat(BO.Call call)
     {
         if (string.IsNullOrWhiteSpace(call.Address))
@@ -59,7 +61,7 @@ internal static class CallManager
         DO.Call call = s_dal.Call.Read(callId) ?? throw new BO.BlNotExistException("Call not found");
         DO.Assignment? assignment = s_dal.Assignment.Read(a => a.CallId == callId);
 
-        DateTime now = ClockManager.Now;
+        DateTime now = AdminManager.Now;
         DateTime? maxTime = s_dal.Call.Read(callId)!.MaxTime;
 
         if (maxTime is not null && now > maxTime) // call is overdue
@@ -103,7 +105,7 @@ internal static class CallManager
     /// </summary>
     internal static void UpdateCallStatus()
     {
-        var clock = ClockManager.Now;
+        var clock = AdminManager.Now;
         var overDatedCalls = from call in s_dal.Call.ReadAll()
                              let assign = s_dal.Assignment.Read(a => a.CallId == call.Id)
                              where call.MaxTime is not null && clock > call.MaxTime
@@ -137,6 +139,7 @@ internal static class CallManager
                         EndTime = clock,
                         EndReason = DO.AssignmentEndReason.OverDated
                     });
+                    Observers.NotifyItemUpdated(assignment.Id); //stage 5
                 }
             }
         }
@@ -147,7 +150,7 @@ internal static class CallManager
         if (call.MaxTime is null)
             return null;
         TimeSpan timeZero = new TimeSpan(0, 0, 0);
-        TimeSpan timeLeft = call.MaxTime.Value - ClockManager.Now;
+        TimeSpan timeLeft = call.MaxTime.Value - AdminManager.Now;
         return ( timeLeft > timeZero) ? timeLeft : timeZero;
     }
     internal static TimeSpan? TimeOpen(DO.Call call)
@@ -156,7 +159,7 @@ internal static class CallManager
             return null;
         if( GetCallStatus(call.Id) != BO.BoCallStatus.Closed && GetCallStatus(call.Id) != BO.BoCallStatus.OverDated)
             return null;
-        TimeSpan timeOpen = ClockManager.Now - call.StartTime;
+        TimeSpan timeOpen = AdminManager.Now - call.StartTime;
         return timeOpen;
     }
 
@@ -185,22 +188,5 @@ internal static class CallManager
         };
     }
 }
-
-//bool ValidateCall(BO.Call call)
-//{
-//    if (string.IsNullOrWhiteSpace(call.Address))
-//        throw new ArgumentException("Address cannot be null or empty.");
-//    if(call.AssignmentId)
-//    if (call.Latitude < -90 || call.Latitude > 90)
-//        throw new ArgumentException("Latitude must be between -90 and 90.");
-//    if (call.Longitude < -180 || call.Longitude > 180)
-//        throw new ArgumentException("Longitude must be between -180 and 180.");
-//    if (call.StartTime == default)
-//        throw new ArgumentException("StartTime must be a valid date.");
-//    if (call.MaxTime.HasValue && call.MaxTime <= call.StartTime)
-//        throw new ArgumentException("MaxTime must be greater than StartTime.");
-//    return true;
-//}
-
 
 

@@ -7,6 +7,17 @@ internal class CallImplementation : ICall
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
 
+    #region Stage 5
+    public void AddObserver(Action listObserver) =>
+        CallManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) =>
+        CallManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) =>
+        CallManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) =>
+        CallManager.Observers.RemoveObserver(id, observer); //stage 5
+    #endregion Stage 5
+
     public int[] GetCallsQuantities()
     {
         var callsGroup = _dal.Call.ReadAll().GroupBy(c => CallManager.GetCallStatus(c.Id)).Select(g => new { Status = g.Key, Count = g.Count() });
@@ -29,7 +40,7 @@ internal class CallImplementation : ICall
 
             DO.Call dataCall = CallManager.ConvertToDoCall(call);
             _dal.Call.Create(dataCall);
-
+            CallManager.Observers.NotifyListUpdated();  //stage 5
             var callId = _dal.Call.ReadAll().Last().Id;
             var volunteers = from v in _dal.Volunteer.ReadAll()
                              where v.MaxDistance == null || v.MaxDistance >= Tools.GetCallDistance(callId, v)
@@ -56,23 +67,19 @@ internal class CallImplementation : ICall
             var call = _dal.Call.Read(id) ?? throw new KeyNotFoundException("Call not found.");
             if(call == null)
         {
-                throw new KeyNotFoundException("Call not found.");
+                throw new BO.BlNotExistException("Call not found.");
             }
             if (CallManager.GetCallStatus(call.Id) != BO.BoCallStatus.Open || _dal.Assignment.Read(a => a.CallId == call.Id) != null)
             {
-                throw new InvalidOperationException("Cannot delete call. The call is either not open or has been assigned to a volunteer.");
+                throw new BO.BlNotAllowedException("Cannot delete call. The call is either not open or has been assigned to a volunteer.");
             }
 
             _dal.Call.Delete(id);
-        }
-        catch (KeyNotFoundException ex)
-        {
-
-            throw new InvalidOperationException("Call not found.", ex);
+            CallManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("An error occurred while trying to delete the call.", ex);
+            throw new Exception("An error occurred while trying to delete the call.", ex);
         }
     }
 
@@ -273,10 +280,12 @@ internal class CallImplementation : ICall
         try
         {
             _dal.Assignment.Update(assignment with
-                    {
-                        EndTime = DateTime.Now,
-                        EndReason = DO.AssignmentEndReason.Completed
-                    });
+            {
+                EndTime = DateTime.Now,
+                EndReason = DO.AssignmentEndReason.Completed
+            });
+            AssignmentManager.Observers.NotifyItemUpdated(assignmentId);  //stage 5
+            AssignmentManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception ex)
         {
@@ -301,6 +310,8 @@ internal class CallImplementation : ICall
                 EndTime = DateTime.Now,
                 EndReason = endReason
             });
+            AssignmentManager.Observers.NotifyItemUpdated(assignmentId);  //stage 5
+            AssignmentManager.Observers.NotifyListUpdated();  //stage 5
             string msg = $"The call has been canceled by {canceler.Name}.";
             string receiver = _dal.Volunteer.Read(assignment.VolunteerId)?.Email ?? throw new BO.BlNotExistException("Volunteer not found.");
             Tools.SendEmail("noreply@weirdaid.com",receiver, $"Call n.{assignment.CallId} has been canceled " , msg);
@@ -336,6 +347,7 @@ internal class CallImplementation : ICall
                 VolunteerId = volunteerId,
                 StartTime = DateTime.Now
             });
+            AssignmentManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception ex)
         {
@@ -360,15 +372,12 @@ internal class CallImplementation : ICall
             DO.Call dataCall = CallManager.ConvertToDoCall(call);
 
             _dal.Call.Update(dataCall);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            //if Id doesn't exist
-            throw new InvalidOperationException("Call not found.", ex);
+            CallManager.Observers.NotifyItemUpdated(call.Id);  //stage 5
+            CallManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("An error occurred while trying to update the call.", ex);
+            throw new Exception("An error occurred while trying to update the call.", ex);
         }
     }
 

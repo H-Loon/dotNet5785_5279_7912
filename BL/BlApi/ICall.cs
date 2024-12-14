@@ -1,6 +1,6 @@
 ﻿namespace BlApi;
 
-public interface ICall
+public interface ICall : IObservable //stage 5
 {
     /// <summary>
     /// Gets the quantities of calls.

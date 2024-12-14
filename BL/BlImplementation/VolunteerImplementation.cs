@@ -1,10 +1,22 @@
 ﻿namespace BlImplementation;
 
+using DO;
 using Helpers;
 
 internal class VolunteerImplementation : BlApi.IVolunteer
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
+
+    #region Stage 5
+    public void AddObserver(Action listObserver) =>
+        VolunteerManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) =>
+        VolunteerManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) =>
+        VolunteerManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) =>
+        VolunteerManager.Observers.RemoveObserver(id, observer); //stage 5
+    #endregion Stage 5
 
     /// <summary>  
     /// Adds a new volunteer to the system.  
@@ -22,6 +34,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
 
             VolunteerManager.DOVolunteerFiller(volunteer);
             _dal.Volunteer.Create(VolunteerManager.ConvertToDO(volunteer));
+            VolunteerManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception e)
         {
@@ -47,6 +60,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
                 throw new BO.BlDeletionImpossibleException("Volunteer has no completed calls");
 
             _dal.Volunteer.Delete(id);
+            VolunteerManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception e)
         {
@@ -154,6 +168,8 @@ internal class VolunteerImplementation : BlApi.IVolunteer
 
             VolunteerManager.DOVolunteerFiller(volunteer);
             _dal.Volunteer.Update(VolunteerManager.ConvertToDO(volunteer));
+            VolunteerManager.Observers.NotifyItemUpdated(volunteer.Id);  //stage 5
+            VolunteerManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception e)
         {

@@ -8,6 +8,8 @@ internal static class VolunteerManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
 
+    internal static ObserverManager Observers = new(); //stage 5
+
     /// <summary>
     /// Retrieves a list of volunteers based on their active status.
     /// </summary>
@@ -83,6 +85,7 @@ internal static class VolunteerManager
                 MaxDistance = v.MaxDistance,
                 DistanceType = v.DistanceType
             });
+            Observers.NotifyItemUpdated(v.Id); //stage 5
         }
     }
 

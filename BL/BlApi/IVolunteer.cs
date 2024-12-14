@@ -1,6 +1,6 @@
 ﻿namespace BlApi;
 
-public interface IVolunteer
+public interface IVolunteer : IObservable //stage 5
 {
     /// <summary>
     /// Authenticates a volunteer using their name and password.

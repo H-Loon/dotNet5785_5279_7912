@@ -11,32 +11,32 @@ internal class AdminImplementation : IAdmin
         switch (type)
         {
             case BO.TimeUnit.Seconds:
-                ClockManager.UpdateClock(ClockManager.Now.AddSeconds(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddSeconds(value));
                 break;
             case BO.TimeUnit.Minutes:
-                ClockManager.UpdateClock(ClockManager.Now.AddMinutes(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddMinutes(value));
                 break;
             case BO.TimeUnit.Hours:
-                ClockManager.UpdateClock(ClockManager.Now.AddHours(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddHours(value));
                 break;
             case BO.TimeUnit.Days:
-                ClockManager.UpdateClock(ClockManager.Now.AddDays(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddDays(value));
                 break;
             case BO.TimeUnit.Weeks:
-                ClockManager.UpdateClock(ClockManager.Now.AddDays(value * 7));
+                AdminManager.UpdateClock(AdminManager.Now.AddDays(value * 7));
                 break;
             case BO.TimeUnit.Months:
-                ClockManager.UpdateClock(ClockManager.Now.AddMonths(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddMonths(value));
                 break;
             case BO.TimeUnit.Years:
-                ClockManager.UpdateClock(ClockManager.Now.AddYears(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddYears(value));
                 break;
         }
     }
 
     public DateTime GetConfigClock()
     {
-        return ClockManager.Now;
+        return AdminManager.Now;
     }
 
     public TimeSpan GetRiskRange()
@@ -55,17 +55,30 @@ internal class AdminImplementation : IAdmin
     {
         DalTest.Initialization.Do();
         VolunteerManager.PasswordFillerForInit();
-        ClockManager.UpdateClock(ClockManager.Now);
+        AdminManager.UpdateClock(AdminManager.Now);
+        AdminManager.RiskRange = AdminManager.RiskRange;
     }
 
     public void ResetDB()
     {
         _dal.ResetDB();
-        ClockManager.UpdateClock(ClockManager.Now);
+        AdminManager.UpdateClock(AdminManager.Now);
+        AdminManager.RiskRange = AdminManager.RiskRange;
     }
 
     public void UpdateRiskRange(TimeSpan riskRange)
     {
         _dal.Config.RiskRange = riskRange;
     }
+
+    #region Stage 5
+    public void AddClockObserver(Action clockObserver) =>
+        AdminManager.ClockUpdatedObservers += clockObserver;
+    public void RemoveClockObserver(Action clockObserver) =>
+        AdminManager.ClockUpdatedObservers -= clockObserver;
+    public void AddConfigObserver(Action configObserver) =>
+        AdminManager.ConfigUpdatedObservers += configObserver;
+    public void RemoveConfigObserver(Action configObserver) =>
+        AdminManager.ConfigUpdatedObservers -= configObserver;
+    #endregion Stage 5
 }
