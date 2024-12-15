@@ -5,11 +5,11 @@ namespace BO;
 public class OpenCallInList
 {
     public int Id { get; init; }
-    public BoCallType CallType { get; set; }
-    public string? Description { get; set; }
-    public required string Address { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime? MaxTime { get; set; }
-    public double CallDistance { get; set; }
+    public BoCallType CallType { get; init; }
+    public string? Description { get; init; }
+    public required string Address { get; init; }
+    public DateTime StartTime { get; init; }
+    public DateTime? MaxTime { get; init; }
+    public double CallDistance { get; init; }
     public override string ToString() => this.ToStringProperty();
 }

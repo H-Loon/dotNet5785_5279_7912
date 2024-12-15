@@ -10,9 +10,9 @@ public class Call
     public required string Address { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
-    public DateTime StartTime { get; set; }
+    public DateTime StartTime { get; init; }
     public DateTime? MaxTime { get; set; }
-    public BoCallStatus Status { get; set; }
-    public List<BO.CallAssignInList>? AssignInList { get; set; }
+    public BoCallStatus Status { get; init; }
+    public List<BO.CallAssignInList>? AssignInList { get; init; }
     public override string ToString() => this.ToStringProperty();
 }

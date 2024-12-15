@@ -5,11 +5,11 @@ namespace BO;
 public class ClosedCallInList
 {
     public int Id { get; init; }
-    public BoCallType CallType { get; set; }
-    public required string Address { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime AssignTime { get; set; }
-    public DateTime EndedTime { get; set; }
-    public BoAssignmentEndReason EndType { get; set; }
+    public BoCallType CallType { get; init; }
+    public required string Address { get; init; }
+    public DateTime StartTime { get; init; }
+    public DateTime AssignTime { get; init; }
+    public DateTime EndedTime { get; init; }
+    public BoAssignmentEndReason EndType { get; init; }
     public override string ToString() => this.ToStringProperty();
 }
