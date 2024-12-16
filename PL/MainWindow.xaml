@@ -103,9 +103,9 @@
             </Grid.Effect>
             <TextBlock Text="WeirdAid" FontSize="48" Foreground="White" FontWeight="Regular" TextAlignment="Center" Margin="10,10,88,10" Width="375" HorizontalAlignment="Center" VerticalAlignment="Center" />
             <!-- Header Button -->
-            <Border HorizontalAlignment="Left" Margin="42,20,0,19" Background="#FF7690A3" Height="55" Width="890" Grid.Column="1">
+            <Border HorizontalAlignment="Left" Margin="42,20,0,19" Background="#FF7690A3" Height="55" Width="890" Grid.Column="1" CornerRadius="16">
                 <Grid>
-                    <Button Content="Volunteers" Style="{StaticResource HeaderButtonStyle}" Click="" Margin="50,8,650,8"/>
+                    <Button Content="Volunteers" Style="{StaticResource HeaderButtonStyle}" Click="Button_Click_1" Margin="50,8,650,8"/>
                     <Button Content="Calls" Style="{StaticResource HeaderButtonStyle}" Click="Button_Click_1" Margin="375,8,375,8"/>
                     <Button Content="Assignments" Style="{StaticResource HeaderButtonStyle}" Click="Button_Click_1" Width="190" Margin="650,8,50,8"/>
                 </Grid>
@@ -113,7 +113,7 @@
         </Grid>
 
         <!-- Left Section -->
-        <Border Margin="134,358,0,240" HorizontalAlignment="Left" Width="650" Background="#FF284151" Grid.RowSpan="2">
+        <Border Margin="134,358,0,240" HorizontalAlignment="Left" Width="650" Background="#FF284151" Grid.RowSpan="2" CornerRadius="16">
             <Border.Effect>
                 <DropShadowEffect Opacity="0.25" BlurRadius="10" ShadowDepth="7.3" Direction="-75"/>
             </Border.Effect>
