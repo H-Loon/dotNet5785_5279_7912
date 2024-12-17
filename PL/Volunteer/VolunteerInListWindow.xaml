@@ -7,55 +7,7 @@
         mc:Ignorable="d"
         Title="VolunteerInListWindow" Height="1080px" Width="1920px">
     <Window.Resources>
-        <!-- Default style for all buttons -->
-        <Style TargetType="Button">
-            <Setter Property="Foreground" Value="#99FFFFFF"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="24"/>
-            <Setter Property="Background" Value="#7690A3"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" CornerRadius="16">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#96ACBC"/>
-                                <Setter Property="Foreground" Value="#FFFFFF"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Specific style for header buttons -->
-        <Style x:Key="HeaderButtonStyle" TargetType="Button">
-            <Setter Property="Foreground" Value="#99FFFFFF"/>
-            <Setter Property="FontFamily" Value="Iner"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="24"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" CornerRadius="16">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#96ACBC"/>
-                                <Setter TargetName="border" Property="CornerRadius" Value="16"/>
-                                <Setter Property="Foreground" Value="#FFFFFF"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -85,7 +37,7 @@
             <!-- Header Button -->
             <Border HorizontalAlignment="Left" Margin="42,20,0,19" Background="#FF7690A3" Height="55" Width="890" CornerRadius="16" Grid.Column="1">
                 <Grid>
-                    <Button Content="Volunteers" Style="{StaticResource HeaderButtonStyle}" Click="Button_Click_1" Margin="50,8,650,8"/>
+                    <Button Content="Volunteers" Style="{StaticResource HeaderButtonStyle}" Margin="50,8,650,8" Foreground="White"/>
                     <Button Content="Calls" Style="{StaticResource HeaderButtonStyle}" Click="Button_Click_1" Margin="375,8,375,8"/>
                     <Button Content="Assignments" Style="{StaticResource HeaderButtonStyle}" Click="Button_Click_1" Width="190" Margin="650,8,50,8"/>
                 </Grid>

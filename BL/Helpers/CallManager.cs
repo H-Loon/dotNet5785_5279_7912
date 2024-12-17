@@ -1,4 +1,5 @@
 ﻿using DalApi;
+using DO;
 namespace Helpers;
 
 internal static class CallManager
@@ -126,6 +127,7 @@ internal static class CallManager
                         EndTime = clock,
                         EndReason = DO.AssignmentEndReason.OverDated
                     });
+                    Observers.NotifyListUpdated(); //stage 5
                 }
                 else if (callGroup.Key is false) // call has an assignment
                 {
