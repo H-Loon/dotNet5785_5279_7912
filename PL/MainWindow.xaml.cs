@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,6 +24,7 @@ namespace PL;
 public partial class MainWindow : Window
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    public RiskRangeViewModel riskRangeViewModel { get; set; } = new RiskRangeViewModel();
     public DateTime ConfigTime
     {
         get { return (DateTime)GetValue(ConfigTimeNowProperty); }
@@ -32,19 +35,24 @@ public partial class MainWindow : Window
     public static readonly DependencyProperty ConfigTimeNowProperty =
         DependencyProperty.Register("ConfigTime", typeof(DateTime), typeof(MainWindow));
 
-    public TimeSpan RiskRange
+    public TimeSpan RiskRangeView
     {
-        get { return (TimeSpan)GetValue(RiskRangeProperty); }
-        set { SetValue(RiskRangeProperty, value); }
+        get { return (TimeSpan)GetValue(RiskRangeViewProperty); }
+        set { SetValue(RiskRangeViewProperty, value); }
     }
 
     // Using a DependencyProperty as the backing store for RiskRange.  This enables animation, styling, binding, etc...
-    public static readonly DependencyProperty RiskRangeProperty =
-        DependencyProperty.Register("RiskRange", typeof(TimeSpan), typeof(MainWindow));
+    public static readonly DependencyProperty RiskRangeViewProperty =
+        DependencyProperty.Register("RiskRangeView", typeof(TimeSpan), typeof(MainWindow));
 
     public MainWindow()
     {    
         InitializeComponent();
+    }
+    // Apply Button Click - Update the RiskRange property
+    private void ApplyButton_Click(object sender, RoutedEventArgs e)
+    {
+        s_bl.Admin.UpdateRiskRange(TimeSpan.Parse(riskRangeViewModel.RiskRange));
     }
 
     private void ClockObserver()
@@ -53,7 +61,7 @@ public partial class MainWindow : Window
     }
     private void RiskRangeObserver()
     {
-        RiskRange = s_bl.Admin.GetRiskRange();
+        RiskRangeView = s_bl.Admin.GetRiskRange();
     }
     private void WindowClosed(object sender, EventArgs e)
     {
@@ -63,7 +71,7 @@ public partial class MainWindow : Window
     private void WindowLoaded(object sender, EventArgs e)
     {
         ConfigTime = s_bl.Admin.GetConfigClock();
-        RiskRange = s_bl.Admin.GetRiskRange();
+        RiskRangeView = s_bl.Admin.GetRiskRange();
 
         s_bl.Admin.AddClockObserver(ClockObserver);
         s_bl.Admin.AddConfigObserver(RiskRangeObserver);
@@ -116,65 +124,73 @@ public partial class MainWindow : Window
         new Volunteer.VolunteerInListWindow().Show();
     }
 }
-public static class WatermarkService
-{
-    // Define the Watermark attached property
-    public static readonly DependencyProperty WatermarkProperty =
-        DependencyProperty.RegisterAttached(
-            "Watermark",
-            typeof(string),
-            typeof(WatermarkService),
-            new PropertyMetadata(string.Empty, OnWatermarkChanged));
-
-    // Getter and setter for the attached property
-    public static void SetWatermark(UIElement element, string value)
-    {
-        element.SetValue(WatermarkProperty, value);
-    }
-
-    public static string GetWatermark(UIElement element)
-    {
-        return (string)element.GetValue(WatermarkProperty);
-    }
-
-    private static void OnWatermarkChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is TextBox textBox)
-        {
-            // Hook up focus events
-            textBox.GotFocus += RemoveWatermark;
-            textBox.LostFocus += ApplyWatermark;
-
-            // Apply watermark initially
-            ApplyWatermark(textBox, null);
-        }
-    }
-
-    private static void RemoveWatermark(object sender, RoutedEventArgs e)
-    {
-        if (sender is TextBox textBox && textBox.Text == GetWatermark(textBox))
-        {
-            textBox.Text = "";
-        }
-    }
-
-    private static void ApplyWatermark(object sender, RoutedEventArgs e)
-    {
-        if (sender is TextBox textBox && string.IsNullOrWhiteSpace(textBox.Text))
-        {
-            textBox.Text = GetWatermark(textBox);
-        }
-    }
-}
-public class BoolToVisibilityConverter : IValueConverter
+public class BoolToOpacityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return (value is bool boolValue && boolValue) ? Visibility.Collapsed : Visibility.Visible;
+        return (value is bool boolValue && boolValue) ? 0 : 1;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
+    }
+}
+
+public class RiskRangeViewModel : INotifyPropertyChanged
+{
+    private string _riskRange;
+
+    public string RiskRange
+    {
+        get => _riskRange;
+        set
+        {
+            string formattedValue = FormatRiskRange(value);
+            if (_riskRange != formattedValue)
+            {
+                _riskRange = formattedValue;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public RiskRangeViewModel()
+    {
+        _riskRange = "0.00:00:00"; // Default value
+    }
+
+    // Format the input string and enforce rules
+    private string FormatRiskRange(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return "0.00:00:00";
+
+        // Remove all non-numeric characters
+        string cleanInput = Regex.Replace(input, "[^0-9]", "");
+
+        // Ensure at least 7 digits for the format (pad with zeros if needed)
+        cleanInput = cleanInput.PadLeft(7, '0');
+
+        // Split the digits into days, hours, minutes, and seconds
+        int days = int.Parse(cleanInput.Substring(0, 1));
+        int hours = int.Parse(cleanInput.Substring(1, 2));
+        int minutes = int.Parse(cleanInput.Substring(3, 2));
+        int seconds = int.Parse(cleanInput.Substring(5, 2));
+
+        // Apply constraints
+        days = Math.Min(days, 30);
+        hours = Math.Min(hours, 23);
+        minutes = Math.Min(minutes, 59);
+        seconds = Math.Min(seconds, 59);
+
+        // Return formatted string
+        return $"{days}.{hours:00}:{minutes:00}:{seconds:00}";
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

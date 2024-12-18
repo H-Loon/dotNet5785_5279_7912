@@ -43,7 +43,7 @@ internal class AdminImplementation : IAdmin
     {
         try 
         { 
-            return _dal.Config.RiskRange;
+            return AdminManager.RiskRange;
         }
         catch (Exception e)
         {
@@ -68,7 +68,7 @@ internal class AdminImplementation : IAdmin
 
     public void UpdateRiskRange(TimeSpan riskRange)
     {
-        _dal.Config.RiskRange = riskRange;
+        AdminManager.RiskRange = riskRange;
     }
 
     #region Stage 5
