@@ -6,30 +6,27 @@ using System;
 internal class AdminImplementation : IAdmin
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
-    public void ForwardClock(int value, BO.TimeUnit type)
+    public void ForwardClock(BO.TimeUnit type)
     {
         switch (type)
         {
             case BO.TimeUnit.Seconds:
-                AdminManager.UpdateClock(AdminManager.Now.AddSeconds(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddSeconds(1));
                 break;
             case BO.TimeUnit.Minutes:
-                AdminManager.UpdateClock(AdminManager.Now.AddMinutes(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddMinutes(1));
                 break;
             case BO.TimeUnit.Hours:
-                AdminManager.UpdateClock(AdminManager.Now.AddHours(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddHours(1));
                 break;
             case BO.TimeUnit.Days:
-                AdminManager.UpdateClock(AdminManager.Now.AddDays(value));
-                break;
-            case BO.TimeUnit.Weeks:
-                AdminManager.UpdateClock(AdminManager.Now.AddDays(value * 7));
+                AdminManager.UpdateClock(AdminManager.Now.AddDays(1));
                 break;
             case BO.TimeUnit.Months:
-                AdminManager.UpdateClock(AdminManager.Now.AddMonths(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddMonths(1));
                 break;
             case BO.TimeUnit.Years:
-                AdminManager.UpdateClock(AdminManager.Now.AddYears(value));
+                AdminManager.UpdateClock(AdminManager.Now.AddYears(1));
                 break;
         }
     }

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
-  <NextCallId>1000</NextCallId>
-  <NextAssignmentId>2000</NextAssignmentId>
-  <Clock>18-12-24 12:36:41</Clock>
+  <NextCallId>1065</NextCallId>
+  <NextAssignmentId>2055</NextAssignmentId>
+  <Clock>19-12-24 00:43:24</Clock>
   <!-- Example ISO 8601 date -->
-  <RiskRange>23:00:00</RiskRange>
+  <RiskRange>1.00:00:00</RiskRange>
   <!-- 1 day in TimeSpan format -->
 </config>

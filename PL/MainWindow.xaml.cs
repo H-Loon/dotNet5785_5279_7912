@@ -78,27 +78,27 @@ public partial class MainWindow : Window
     }
     private void PlusOneSec(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(1 , BO.TimeUnit.Seconds);
+        s_bl.Admin.ForwardClock(BO.TimeUnit.Seconds);
     }
     private void PlusOneMin(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(1, BO.TimeUnit.Minutes);
+        s_bl.Admin.ForwardClock(BO.TimeUnit.Minutes);
     }
     private void PlusOneHour(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(1, BO.TimeUnit.Hours);
+        s_bl.Admin.ForwardClock(BO.TimeUnit.Hours);
     }
     private void PlusOneDay(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(1, BO.TimeUnit.Days);
+        s_bl.Admin.ForwardClock(BO.TimeUnit.Days);
     }
     private void PlusOneMonth(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(1, BO.TimeUnit.Months);
+        s_bl.Admin.ForwardClock(BO.TimeUnit.Months);
     }
     private void PlusOneYear(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(1, BO.TimeUnit.Years);
+        s_bl.Admin.ForwardClock(BO.TimeUnit.Years);
     }
     private void ResetDB(object sender, RoutedEventArgs e)
     {

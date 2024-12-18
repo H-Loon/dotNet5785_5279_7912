@@ -13,7 +13,7 @@ public interface IAdmin
     /// </summary>
     /// <param name="value">The amount to advance the clock.</param>
     /// <param name="type">The unit of time to use for advancing the clock.</param>
-    void ForwardClock(int value, BO.TimeUnit type);
+    void ForwardClock(BO.TimeUnit type);
 
     /// <summary>
     /// Gets the current risk range.
