@@ -64,6 +64,8 @@ namespace PL.Volunteer
         {
             if (ButtonText == "Add") s_bl.Volunteer.AddVolunteer(Volunteer);
             else s_bl.Volunteer.UpdateVolunteer(Volunteer.Id, Volunteer);
+
+            Close();
         }
        
     }
