@@ -112,39 +112,39 @@ internal static class Tools
         return result;
     }
 
-    internal static (double Latitude, double Longitude) AddressToCoordinates(string address) // Ai helped
+    internal static (double Latitude, double Longitude) AddressToCoordinates(string address)
     {
-        // Geocoding API key
-        string apiKey = "6754830d05d34753981159dre426e6e";
+        // Replace with your Google Geocoding API key
+        string apiKey = "AIzaSyDu1zy41KXVg2J2gkqRglW-oh5TzoPz0mE";
         string format = "xml";
 
         // Encode the address to make it URL-safe
         string encodedAddress = Uri.EscapeDataString(address);
 
-        // Geocoding API URL for XML format
-        string url = $"https://geocode.maps.co/search?q={encodedAddress}&api_key={apiKey}&format={format}";
+        // Google Geocoding API URL for XML format
+        string url = $"https://maps.googleapis.com/maps/api/geocode/{format}?address={encodedAddress}&key={apiKey}";
 
         using HttpClient client = new HttpClient();
 
         try
         {
-            // Synchronously send the HTTP GET request and get the response
+            // Send the HTTP GET request and get the response
             HttpResponseMessage response = client.GetAsync(url).Result;
             response.EnsureSuccessStatusCode();
 
-            // Read the response content synchronously
+            // Read the response content
             string xmlResponse = response.Content.ReadAsStringAsync().Result;
 
             // Parse the XML response
             XDocument doc = XDocument.Parse(xmlResponse);
 
             // Extract latitude and longitude from the XML
-            var placeElement = doc.Root?.Element("place");
-            if (placeElement == null)
+            var locationElement = doc.Descendants("location").FirstOrDefault();
+            if (locationElement == null)
                 throw new BO.BlCoordinatesNotFoundException("Could not find coordinates for the given address.");
 
-            double latitude = double.Parse(placeElement.Attribute("lat")!.Value.ToString(), System.Globalization.CultureInfo.InvariantCulture);
-            double longitude = double.Parse(placeElement.Attribute("lon")!.Value.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+            double latitude = double.Parse(locationElement.Element("lat")!.Value, System.Globalization.CultureInfo.InvariantCulture);
+            double longitude = double.Parse(locationElement.Element("lng")!.Value, System.Globalization.CultureInfo.InvariantCulture);
 
             return (latitude, longitude);
         }

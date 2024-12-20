@@ -63,12 +63,12 @@ public partial class MainWindow : Window
     {
         RiskRangeView = s_bl.Admin.GetRiskRange();
     }
-    private void WindowClosed(object sender, EventArgs e)
+    private void Window_Closed(object sender, EventArgs e)
     {
         s_bl.Admin.RemoveClockObserver(ClockObserver);
         s_bl.Admin.RemoveConfigObserver(RiskRangeObserver);
     }
-    private void WindowLoaded(object sender, EventArgs e)
+    private void Window_Loaded(object sender, EventArgs e)
     {
         ConfigTime = s_bl.Admin.GetConfigClock();
         RiskRangeView = s_bl.Admin.GetRiskRange();

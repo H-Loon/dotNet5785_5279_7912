@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
-        Loaded="WindowLoaded" Closed="WindowClosed" WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded" Closed="Window_Closed" WindowStartupLocation="CenterScreen"
         Title="WeirdAid" Height="1080" Width="1920">
     <Window.Resources>
         <!-- Bool to Visibility Converter -->
@@ -135,15 +135,15 @@
 
                 <Button 
                         Click="InitDB" FontSize="36" 
-                        Grid.Row="1" Grid.ColumnSpan="3" 
+                        Grid.Row="1" Grid.ColumnSpan="2" 
                         MinHeight="40" MinWidth="100" 
                         RenderTransformOrigin="0.5,0.5" 
                         VerticalContentAlignment="Stretch"
                         HorizontalContentAlignment="Stretch" 
-                        Margin="43,38,0,38">
-                        <Viewbox>
+                        Margin="1,38,2,38" Grid.Column="1">
+                    <Viewbox>
                         <TextBlock Text="Initialize Database" IsHitTestVisible="False" Width="339" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Viewbox>
+                    </Viewbox>
                 </Button>
 
 
@@ -152,13 +152,13 @@
                         MinHeight="40" MinWidth="100"
                         HorizontalContentAlignment="Stretch" 
                         VerticalContentAlignment="Stretch" 
-                        Grid.ColumnSpan="3" Margin="43,22,0,21" 
-                        Grid.Row="2">
+                        Grid.ColumnSpan="2" Margin="1,22,2,21" 
+                        Grid.Row="2" Grid.Column="1">
                     <Viewbox>
                         <TextBlock Text="Reset Database" IsHitTestVisible="False" Width="332" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Viewbox>
                 </Button>
-                    <!-- Placeholder TextBlock -->
+                <!-- Placeholder TextBlock -->
                 <TextBox x:Name="SetRiskRangeTB"
                          Text="{Binding riskRangeViewModel.RiskRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource RiskRangeTextBoxStyle}" 

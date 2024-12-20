@@ -22,7 +22,8 @@ namespace PL.Volunteer
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
-
+        public BO.VolunteerInList? SelectedVolunteer { get; set; }
+        public BO.VolunteerInListField VolunteerInListField { get; set; } = BO.VolunteerInListField.Id;
         public IEnumerable<BO.VolunteerInList> VolunteerInList
         {
             get { return (IEnumerable<BO.VolunteerInList>)GetValue(VolunteerInListProperty); }
@@ -32,23 +33,35 @@ namespace PL.Volunteer
         // Using a DependencyProperty as the backing store for VolunteerInList.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty VolunteerInListProperty =
             DependencyProperty.Register("VolunteerInList", typeof(IEnumerable<BO.VolunteerInList>), typeof(VolunteerInListWindow));
-
-
-        public BO.VolunteerInListField Field { get; set; } = BO.VolunteerInListField.Id;
-
-        private void ComboBox_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, Field);
-        }
-
+       
         public VolunteerInListWindow()
         {
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
+        private void QueryVolunteerList( object sender, RoutedEventArgs e)
+            => VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
+        private void VolunteerListObserver()
+            => VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+            => s_bl.Volunteer.AddObserver(VolunteerListObserver);
 
+        private void Window_Closed(object sender, EventArgs e)
+            => s_bl.Volunteer.RemoveObserver(VolunteerListObserver);
+
+        private void OpenVolunteerWindowAdd(object sender, RoutedEventArgs e)
+        {
+            new VolunteerWindow().Show();
+        }
+        private void lsvVolunteersList_MouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            new VolunteerWindow(SelectedVolunteer!.Id).Show();
+        }
+        void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.CommandParameter is BO.VolunteerInList volunteer)
+                if (MessageBox.Show($"Are you sure you want to delete {volunteer.Name}?", "Delete Volunteer", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    s_bl.Volunteer.DeleteVolunteer(volunteer.Id);
         }
     }
     internal class VolunteerField : IEnumerable
@@ -58,5 +71,6 @@ namespace PL.Volunteer
 
         public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
     }
+
 
 }

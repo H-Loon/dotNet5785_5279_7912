@@ -13,9 +13,9 @@ public static class Initialization
     // Sample data arrays
     private static readonly string[] s_names =
     [
-        "David Cohen", "Yossi Levi", "Miriam Katz", "Rivka Goldberg", "Moshe Ben-David",
+        "David Cohen", "Yossi Levi", "Miriam Katz", "Rivka Goldberg", "Moshe Ben David",
         "Sara Peretz", "Yaakov Shapiro", "Rachel Mizrahi", "Shlomo Rosen", "Esther Friedman",
-        "Noa Bar", "Elior Shalom", "Tamar Levi", "Avi Cohen", "Lior Ben-Ami", "Hila Shalev"
+        "Noa Bar", "Elior Shalom", "Tamar Levi", "Avi Cohen", "Lior Ben Ami", "Hila Shalev"
     ];
 
     private static readonly string[] s_emails =
@@ -38,10 +38,10 @@ public static class Initialization
 
     private static readonly List<string> s_phoneNumbers =
     [
-        "+972-50-1234567", "+972-52-2345678", "+972-54-3456789", "+972-55-4567890",
-        "+972-56-5678901", "+972-57-6789012", "+972-58-7890123", "+972-59-8901234",
-        "+972-50-9012345", "+972-52-0123456", "+972-50-6543210", "+972-52-7654321",
-        "+972-54-8765432", "+972-55-9876543", "+972-56-0987654", "+972-57-1098765"
+        "0501234567", "0522345678", "0543456789", "0554567890",
+        "0565678901", "0576789012", "0587890123", "0598901234",
+        "0509012345", "0520123456", "0506543210", "0527654321",
+        "0548765432", "0559876543", "0560987654", "0571098765"
     ];
 
     private static readonly List<string> s_addresses =
@@ -108,7 +108,7 @@ public static class Initialization
 
         s_dal!.Volunteer.Create(new Volunteer
         {
-            Id = s_rand.Next(200000000, 400000000),
+            Id = s_rand.Next(200000000/40, 400000000/40)*40,
             Name = s_names[0],
             Phone = s_phoneNumbers[0],
             Email = s_emails[0],
