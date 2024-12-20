@@ -185,8 +185,8 @@ internal static class VolunteerManager
     /// <returns>True if all properties are valid, otherwise false.</returns>
     internal static void BOVolunteerCheck(BO.Volunteer volunteer)
     {
-        //if (IdCheck(volunteer.Id) is false)
-        //    throw new BO.BlNotValidEntityException("Volunteer Id is not valid");
+        if (IdCheck(volunteer.Id) is false)
+            throw new BO.BlNotValidEntityException("Volunteer Id is not valid");
         if (NameCheck(volunteer.Name) is false)
             throw new BO.BlNotValidEntityException("Volunteer Name is not valid");
         if (PhoneCheck(volunteer.Phone) is false)
@@ -206,26 +206,26 @@ internal static class VolunteerManager
     /// </summary>
     /// <param name="id">The ID to be checked.</param>
     /// <returns>True if the ID is valid, otherwise false.</returns>
-    //internal static bool IdCheck(int id) // AI helped
-    //{
-    //    {
-    //        string idString = id.ToString();
+    internal static bool IdCheck(int id) // AI helped
+    {
+        {
+            string idString = id.ToString();
 
-    //        if (idString.Length != 9)
-    //            return false;
+            if (idString.Length != 9)
+                return false;
 
-    //        int sum = 0;
+            int sum = 0;
 
-    //        for (int i = 0; i < 9; i++)
-    //        {
-    //            int digit = int.Parse(idString[i].ToString()); // Get the digit at the current index
-    //            int product = digit * (i % 2 == 0 ? 1 : 2); // Multiply the digit by 1 if the index is even, otherwise multiply it by 2
-    //            sum += product > 9 ? product - 9 : product; // If the product is greater than 9, subtract 9 from it to get the sum of its digits (e.g. 12 - 9 = 1 + 2)
-    //        }
+            for (int i = 0; i < 9; i++)
+            {
+                int digit = int.Parse(idString[i].ToString()); // Get the digit at the current index
+                int product = digit * (i % 2 == 0 ? 1 : 2); // Multiply the digit by 1 if the index is even, otherwise multiply it by 2
+                sum += product > 9 ? product - 9 : product; // If the product is greater than 9, subtract 9 from it to get the sum of its digits (e.g. 12 - 9 = 1 + 2)
+            }
 
-    //        return sum % 10 == 0; // The ID is valid if the sum is divisible by 10
-    //    }
-    //}
+            return sum % 10 == 0; // The ID is valid if the sum is divisible by 10
+        }
+    }
 
     /// <summary>
     /// Checks if the given password is strong enough.
