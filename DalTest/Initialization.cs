@@ -168,11 +168,17 @@ public static class Initialization
     /// Generates a random date within a specified range.
     /// </summary>
     /// <returns>A random DateTime value.</returns>
-    private static DateTime RandomDate()
+    private static DateTime RandomDate(DateTime dateTime = default(DateTime), bool flag = true)
     {
-        DateTime startTime = new(s_dal!.Config.Clock.Year - s_rand.Next(5), 1, 1);
-        int range = (s_dal!.Config.Clock - startTime).Days;
-        return startTime.AddDays(s_rand.Next(range));
+        if (flag)
+        {
+            DateTime startTime = new(s_dal!.Config.Clock.Year - s_rand.Next(5), 1, 1);
+            int range1 = (s_dal!.Config.Clock - startTime).Days;
+            return startTime.AddDays(s_rand.Next(range1));
+        }
+        int range2 = (s_dal!.Config.Clock - dateTime).Days;
+        return dateTime.AddDays(s_rand.Next(range2));
+
     }
 
     /// <summary>
@@ -187,14 +193,13 @@ public static class Initialization
 
         for (int i = 0; i < 15; i++)
         {
-            DateTime startDate = RandomDate();
-
-            int daysBetween = (startDate - s_dal!.Config.Clock).Days;
-
             int index = s_rand.Next(0, lc.Count);
 
             callId = lc[index].Id;
+            DateTime startDate = RandomDate(lc[index].StartTime, false);
             lc.RemoveAt(index);
+
+            int daysBetween = (startDate - s_dal!.Config.Clock).Days;
 
             index = s_rand.Next(0, lv.Count);
 
@@ -211,14 +216,14 @@ public static class Initialization
         }
         for (int i = 0; i < 35; i++)
         {
-            DateTime startDate = RandomDate();
-
-            int daysBetween = (startDate - s_dal!.Config.Clock).Days;
-
             int index = s_rand.Next(0, lc.Count);
 
             callId = lc[index].Id;
+            DateTime startDate = RandomDate(lc[index].StartTime,false);
             lc.RemoveAt(index);
+
+
+            int daysBetween = (startDate - s_dal!.Config.Clock).Days;
 
             index = s_rand.Next(0, lv.Count);
 
