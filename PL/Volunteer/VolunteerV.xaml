@@ -85,7 +85,7 @@
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
+                <RowDefinition Height="40*"/>
                 <RowDefinition Height="27"/>
             </Grid.RowDefinitions>
             <TextBox Text="{Binding Volunteer.Id, Mode=OneTime}" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Grid.Row="1" Height="20" Width="170"/>
@@ -102,7 +102,9 @@
             <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CompletedCalls, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="13" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Margin="8,0,0,0"/>
             <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CanceledCalls, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="14" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Margin="8,0,0,0"/>
             <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.OverDatedCalls, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="15" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Margin="8,0,0,0"/>
-            <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CurrentCall, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="16" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2"/>
+            <ScrollViewer Grid.Row="16" Grid.Column="1" Margin="126,11,1,0" Height="auto" Width="265" Grid.ColumnSpan="2" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CurrentCall, Mode = OneWay}" TextWrapping="Wrap" FontSize="16" Width="246"/>
+            </ScrollViewer>
             <Label Content="Id:" FontSize="22" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="34"/>
             <Label Grid.Row="2" Content="Name:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="73"/>
             <Label Grid.Row="3" Content="Phone:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="76"/>
