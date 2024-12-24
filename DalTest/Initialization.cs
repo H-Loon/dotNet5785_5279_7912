@@ -105,6 +105,7 @@ public static class Initialization
         List<string> copyAddresses = new(s_addresses);
         List<double> copyLatitudes = new(s_latitudes);
         List<double> copyLongitudes = new(s_longitudes);
+        List<string> copyPhones = new(s_phoneNumbers);
 
         s_dal!.Volunteer.Create(new Volunteer
         {
@@ -135,8 +136,8 @@ public static class Initialization
                 id = s_rand.Next(200000000, 400000000);
             } while (s_dal!.Volunteer.Read(id) != null);
 
-            phone = s_phoneNumbers[s_rand.Next(0, s_phoneNumbers.Count)];
-            s_phoneNumbers.Remove(phone);
+            phone = copyPhones[s_rand.Next(0, copyPhones.Count)];
+            copyPhones.Remove(phone);
 
             int r = s_rand.Next(0, copyAddresses.Count);
             address = copyAddresses[r];

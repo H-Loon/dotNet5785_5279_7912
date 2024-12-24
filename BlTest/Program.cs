@@ -135,7 +135,7 @@ internal class Program
             switch (choice)
             {
                 case AdminDisplayEnum.ForwardClock:
-                    ForwardClock();
+                    //ForwardClock();
                     break;
                 case AdminDisplayEnum.GetConfigClock:
                     Console.WriteLine(s_bl.Admin.GetConfigClock());
@@ -218,41 +218,41 @@ internal class Program
     /// <summary>
     /// Forwards the system clock by a specified value and time unit.
     /// </summary>
-    private static void ForwardClock()
-    {
-        try
-        {
-            Console.Write("Enter the value to forward the clock by: ");
-            if (int.TryParse(Console.ReadLine(), out int value))
-            {
-                Console.WriteLine("0. Seconds");
-                Console.WriteLine("1. Minutes");
-                Console.WriteLine("2. Hours");
-                Console.WriteLine("3. Days");
-                Console.WriteLine("4. Weeks");
-                Console.WriteLine("5. Months");
-                Console.WriteLine("6. Years");
-                Console.Write("Please select a time unit: ");
-                if (Enum.TryParse(Console.ReadLine(), out BO.TimeUnit timeUnit))
-                {
-                    s_bl.Admin.ForwardClock(value, timeUnit);
-                    Console.WriteLine("Clock forwarded successfully.");
-                }
-                else
-                {
-                    Console.WriteLine("Invalid time unit.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice.");
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
-        }
-    }
+    //private static void ForwardClock()
+    //{
+    //    try
+    //    {
+    //        Console.Write("Enter the value to forward the clock by: ");
+    //        if (int.TryParse(Console.ReadLine(), out int value))
+    //        {
+    //            Console.WriteLine("0. Seconds");
+    //            Console.WriteLine("1. Minutes");
+    //            Console.WriteLine("2. Hours");
+    //            Console.WriteLine("3. Days");
+    //            Console.WriteLine("4. Weeks");
+    //            Console.WriteLine("5. Months");
+    //            Console.WriteLine("6. Years");
+    //            Console.Write("Please select a time unit: ");
+    //            if (Enum.TryParse(Console.ReadLine(), out BO.TimeUnit timeUnit))
+    //            {
+    //                s_bl.Admin.ForwardClock(timeUnit);
+    //                Console.WriteLine("Clock forwarded successfully.");
+    //            }
+    //            else
+    //            {
+    //                Console.WriteLine("Invalid time unit.");
+    //            }
+    //        }
+    //        else
+    //        {
+    //            Console.WriteLine("Invalid choice.");
+    //        }
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        Console.WriteLine("" + e.InnerException?.GetType() + ": " + e.Message);
+    //    }
+    //}
     #endregion
 
     #region Volunteer display and methods

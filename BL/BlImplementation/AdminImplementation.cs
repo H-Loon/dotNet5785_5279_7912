@@ -54,6 +54,9 @@ internal class AdminImplementation : IAdmin
         VolunteerManager.PasswordFillerForInit();
         AdminManager.UpdateClock(AdminManager.Now);
         AdminManager.RiskRange = AdminManager.RiskRange;
+        VolunteerManager.Observers.NotifyListUpdated();
+        CallManager.Observers.NotifyListUpdated();
+        AssignmentManager.Observers.NotifyListUpdated();
     }
 
     public void ResetDB()
@@ -61,6 +64,9 @@ internal class AdminImplementation : IAdmin
         _dal.ResetDB();
         AdminManager.UpdateClock(AdminManager.Now);
         AdminManager.RiskRange = AdminManager.RiskRange;
+        VolunteerManager.Observers.NotifyListUpdated();
+        CallManager.Observers.NotifyListUpdated();
+        AssignmentManager.Observers.NotifyListUpdated();
     }
 
     public void UpdateRiskRange(TimeSpan riskRange)

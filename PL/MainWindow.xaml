@@ -6,64 +6,14 @@
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
-        Loaded="Window_Loaded" Closed="Window_Closed" WindowStartupLocation="CenterScreen"
-        Title="WeirdAid" Height="1080" Width="1920">
-    <Window.Resources>
-        <!-- Bool to Visibility Converter -->
-        <local:BoolToOpacityConverter x:Key="BoolToOpacityConverter"/>
-
-        <local:RiskRangeViewModel x:Key="RiskRangeVM"/>
-
-        <!-- Style for the risk range textbox -->
-        <Style x:Key="RiskRangeTextBoxStyle" TargetType="TextBox">
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" CornerRadius="16">
-                            <ScrollViewer x:Name="PART_ContentHost" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-
-            <Setter Property="Background" Value="#96ACBC"/>
-            <Setter Property="Foreground" Value="#99FFFFFF"/>
-            <Setter Property="FontSize" Value="28"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TextAlignment" Value="Center"/>
-
-            <Style.Triggers>
-                <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="Foreground" Value="White"/>
-                </Trigger>
-            </Style.Triggers>
-
-        </Style>
-
-        <!-- Style for the Apply and Cancel buttons -->
-        <Style x:Key="ApplyCancelStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <!-- Default State -->
-            <Setter Property="Opacity" Value="0" />
-            <Setter Property="IsHitTestVisible" Value="False" />
-
-            <!-- Triggers -->
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=SetRiskRangeTB}" Value="True">
-                    <Setter Property="Opacity" Value="1" />
-                    <Setter Property="IsHitTestVisible" Value="True" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Resources>
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded" Closed="Window_Closed"
+        Title="WeirdAid" Height="1080" Width="1920" MinWidth="1300" MinHeight="920">
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="110"/>
-            <RowDefinition Height="48*"/>
-            <RowDefinition Height="855*"/>
-            <RowDefinition Height="51*"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.Background>
             <RadialGradientBrush Center="0.5,0" GradientOrigin="0.5,0">
@@ -73,10 +23,9 @@
         </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
-            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <!-- Header -->
-        <Grid Grid.ColumnSpan="2" Background="#284151" Panel.ZIndex="0">
+        <Grid Background="#284151" Panel.ZIndex="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="86*"/>
                 <ColumnDefinition Width="295"/>
@@ -93,158 +42,17 @@
             <!-- Header Button -->
             <Border Margin="0,28,0,28" Background="#FF7690A3" Grid.Column="3" CornerRadius="16" MinWidth="500">
                 <Grid MinWidth="500">
-                    <Button Content="Volunteers" Style="{StaticResource HeaderButtonStyle}" Click="OpenVolunteerInListWindow" HorizontalAlignment="Left" Width="140" Margin="20,0,0,0" Height="40"/>
-                    <Button Content="Calls" Style="{StaticResource HeaderButtonStyle}" HorizontalAlignment="Center" Width="64" Height="40"/>
-                    <Button Content="Assignments" Style="{StaticResource HeaderButtonStyle}" HorizontalAlignment="Right" Width="160" Margin="0,0,20,0" Height="40"/>
+                    <RadioButton Content="Volunteers" Style="{StaticResource HeaderRadioButtonStyle}" Click="CurrentViewToVolunteerInList" HorizontalAlignment="Left" Width="140" Margin="20,0,0,0" Height="40"/>
+                    <RadioButton Content="Calls" Style="{StaticResource HeaderRadioButtonStyle}" HorizontalAlignment="Center" Width="64" Height="40"/>
+                    <RadioButton Content="Assignments" Style="{StaticResource HeaderRadioButtonStyle}" HorizontalAlignment="Right" Width="160" Margin="0,0,20,0" Height="40"/>
                 </Grid>
             </Border>
             <Grid Grid.Column="5" Margin="11,18,34,17">
                 <Ellipse Fill="#FF7690A3" Height="75" Width="75"/>
-                <TextBlock Text="EH" Foreground="White" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Button Content="EH" FontSize="36" Click="CurrentViewToAdmin" VerticalAlignment="Center" HorizontalAlignment="Center" Width="51" Height="49"/>
             </Grid>
         </Grid>
 
-        <!-- Left Section -->
-        <Border Margin="124,195,186,194" Background="#FF284151" CornerRadius="16" Grid.Row="2">
-            <Border.Effect>
-                <DropShadowEffect Opacity="0.25" BlurRadius="10" ShadowDepth="7.3" Direction="-75"/>
-            </Border.Effect>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20*"/>
-                    <ColumnDefinition Width="130*"/>
-                    <ColumnDefinition Width="133*"/>
-                    <ColumnDefinition Width="17*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="83*"/>
-                    <RowDefinition Height="83*"/>
-                    <RowDefinition Height="66*"/>
-                    <RowDefinition Height="17*"/>
-                </Grid.RowDefinitions>
-                <Label x:Name="RiskRangeLabel"                              
-                        VerticalAlignment="Stretch" FontWeight="SemiBold" 
-                        Opacity="{Binding ElementName=SetRiskRangeTB, Path=IsFocused, Converter={StaticResource BoolToOpacityConverter}}" 
-                        Grid.Column="2" HorizontalAlignment="Stretch" Margin="17,37,10,38">
-                    <Viewbox>
-                        <TextBlock Text="{Binding RiskRangeView ,Mode=OneWay}" Margin="7,5,7,5" />
-                    </Viewbox>
-                </Label>
-
-                <!-- Bottom Buttons -->
-
-                <Button 
-                        Click="InitDB" FontSize="36" 
-                        Grid.Row="1" Grid.ColumnSpan="2" 
-                        MinHeight="40" MinWidth="100" 
-                        RenderTransformOrigin="0.5,0.5" 
-                        VerticalContentAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch" 
-                        Margin="1,38,2,38" Grid.Column="1">
-                    <Viewbox>
-                        <TextBlock Text="Initialize Database" IsHitTestVisible="False" Width="339" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Viewbox>
-                </Button>
-
-
-                <Button  
-                        Click="ResetDB" FontSize="36" 
-                        MinHeight="40" MinWidth="100"
-                        HorizontalContentAlignment="Stretch" 
-                        VerticalContentAlignment="Stretch" 
-                        Grid.ColumnSpan="2" Margin="1,22,2,21" 
-                        Grid.Row="2" Grid.Column="1">
-                    <Viewbox>
-                        <TextBlock Text="Reset Database" IsHitTestVisible="False" Width="332" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Viewbox>
-                </Button>
-                <!-- Placeholder TextBlock -->
-                <TextBox x:Name="SetRiskRangeTB"
-                         Text="{Binding riskRangeViewModel.RiskRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource RiskRangeTextBoxStyle}" 
-                         Margin="5,37,25,37" 
-                         VerticalAlignment="Stretch" 
-                         FontWeight="SemiBold"
-                         FontSize="36" HorizontalAlignment="Stretch"
-                         Width="Auto" Height="auto" Grid.Column="1"/>
-                <!-- Apply Button -->
-                <Button Content="Apply"
-                        Width="107" Height="80"
-                        Margin="41,0,0,0"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Left"
-                        Grid.Column="2"
-                        Click="ApplyButton_Click"
-                        Style="{StaticResource ApplyCancelStyle}">
-                </Button>
-
-                <!-- Cancel Button -->
-                <Button Content="Cancel"
-                    Width="107" Height="80"
-                    Margin="160,0,0,0"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Left"
-                    Grid.Column="2"
-                    Style="{StaticResource ApplyCancelStyle}" Grid.ColumnSpan="2">
-                </Button>
-                <Viewbox Margin="10,44,30,44" Grid.Column="1">
-                    <!-- Placeholder TextBlock -->
-                    <TextBlock Text="Enter Risk Range"
-                           Background="#96ACBC"
-                           Foreground="#99FFFFFF"
-                           FontWeight="DemiBold"
-                           FontSize="26"
-                           TextAlignment="Center"
-                           IsHitTestVisible="False"
-                           Opacity="{Binding IsFocused, Converter={StaticResource BoolToOpacityConverter}, ElementName=SetRiskRangeTB}"
-                           Panel.ZIndex="1" Height="42" Width="213"/>
-                </Viewbox>
-            </Grid>
-        </Border>
-
-        <!-- Right Section -->
-        <Border Background="#FF284151" CornerRadius="16" BorderThickness="0" Margin="8,1,152,0" Grid.Column="1" Grid.Row="2" Height="310" VerticalAlignment="Top">
-            <Border.Effect>
-                <DropShadowEffect Opacity="0.25" BlurRadius="10" ShadowDepth="7.3" Direction="-75"/>
-            </Border.Effect>
-            <Grid>
-                <Label 
-                       FontSize="48" FontWeight="SemiBold" 
-                       Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                       Background="#007690A3">
-                    <Viewbox Margin="40,30,40,30">
-                        <TextBlock Text="{Binding ConfigTime, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}" />
-                    </Viewbox>
-                </Label>
-            </Grid>
-        </Border>
-        <Border Background="#FF284151" BorderThickness="1" Margin="8,331,152,7" CornerRadius="16" Grid.Column="1" Grid.Row="2" MinHeight="350">
-            <Border.Effect>
-                <DropShadowEffect Opacity="0.25" BlurRadius="10" ShadowDepth="7.3" Direction="-75"/>
-            </Border.Effect>
-            <Grid MinHeight="350">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="45*"/>
-                    <ColumnDefinition Width="702*"/>
-                    <ColumnDefinition Width="45*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30*"/>
-                    <RowDefinition Height="80*"/>
-                    <RowDefinition Height="80*"/>
-                    <RowDefinition Height="80*"/>
-                    <RowDefinition Height="80*"/>
-                    <RowDefinition Height="80*"/>
-                    <RowDefinition Height="80*"/>
-                    <RowDefinition Height="30*"/>
-                </Grid.RowDefinitions>
-                <Button Content="+1 Sec" Margin="0,4,0,11" Width="Auto" Height="auto" Click="PlusOneSec" Grid.Column="1" Grid.Row="1"/>
-                <Button Content="+1 Min" Margin="0,10,0,9" Width="Auto" Height="Auto" Click="PlusOneMin" Grid.Row="2" Grid.Column="1"/>
-                <Button Content="+1 Hour" Margin="0,8,0,9" Width="Auto" Height="Auto" Click="PlusOneHour" Grid.Row="3" Grid.Column="1"/>
-                <Button Content="+1 Day" Margin="0,13,0,8" Width="Auto" Height="Auto" Click="PlusOneDay" Grid.Row="4" Grid.Column="1"/>
-                <Button Content="+1 Month" Margin="0,11,0,10" Width="Auto" Height="Auto" Click="PlusOneMonth" Grid.Row="5" Grid.Column="1"/>
-                <Button Content="+1 Year" Margin="0,10,0,10" Width="Auto" Height="Auto" Click="PlusOneYear" Grid.Row="6" Grid.Column="1"/>
-            </Grid>
-        </Border>
+        <ContentControl Grid.Row="1" Content="{Binding CurrentView}"/>
     </Grid>
 </Window>

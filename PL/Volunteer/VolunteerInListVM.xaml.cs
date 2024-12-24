@@ -11,18 +11,44 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace PL.Volunteer
 {
     /// <summary>
-    /// Interaction logic for VolunteerInListWindow.xaml
+    /// Interaction logic for VolunteerInListVM.xaml
     /// </summary>
-    public partial class VolunteerInListWindow : Window
+    public partial class VolunteerInListVM : UserControl
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private int Id = -1;
 
-        public BO.VolunteerInList? SelectedVolunteer { get; set; }
+
+
+        public VolunteerV VolunteerView
+        {
+            get { return (VolunteerV)GetValue(VolunteerViewProperty); }
+            set { SetValue(VolunteerViewProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for VolunteerView.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty VolunteerViewProperty =
+            DependencyProperty.Register("VolunteerView", typeof(VolunteerV), typeof(VolunteerInListVM), new PropertyMetadata(null));
+
+
+
+        private BO.VolunteerInList? _selectedVolunteer;
+        public BO.VolunteerInList? SelectedVolunteer
+        {
+            get => _selectedVolunteer;
+            set {
+                _selectedVolunteer = value;
+                if (value != null)
+                    VolunteerView = new VolunteerV(value.Id);
+                }
+            }
+
         public BO.VolunteerInListField VolunteerInListField { get; set; } = BO.VolunteerInListField.Id;
         public IEnumerable<BO.VolunteerInList> VolunteerInList
         {
@@ -32,29 +58,40 @@ namespace PL.Volunteer
 
         // Using a DependencyProperty as the backing store for VolunteerInList.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty VolunteerInListProperty =
-            DependencyProperty.Register("VolunteerInList", typeof(IEnumerable<BO.VolunteerInList>), typeof(VolunteerInListWindow));
-       
-        public VolunteerInListWindow()
+            DependencyProperty.Register("VolunteerInList", typeof(IEnumerable<BO.VolunteerInList>), typeof(VolunteerInListVM));
+        public VolunteerInListVM()
         {
             InitializeComponent();
         }
-
-        private void QueryVolunteerList( object sender, RoutedEventArgs e)
+        private void QueryVolunteerList(object sender, RoutedEventArgs e)
             => VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
-        private void VolunteerListObserver()
+        public void VolunteerListObserver()
             => VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-            => s_bl.Volunteer.AddObserver(VolunteerListObserver);
 
-        private void Window_Closed(object sender, EventArgs e)
-            => s_bl.Volunteer.RemoveObserver(VolunteerListObserver);
-
-        private void OpenVolunteerWindowAdd(object sender, RoutedEventArgs e)
+        private void VolunteerVAdd(object sender, RoutedEventArgs e)
         {
             new VolunteerWindow().Show();
         }
         private void lsvVolunteersList_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
+            // Check if the window is already open
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window is VolunteerWindow)
+                {
+                    if (Id != SelectedVolunteer!.Id)
+                    {
+                        window.Close();
+                        Id = SelectedVolunteer!.Id;
+                        new VolunteerWindow(Id).Show();
+                        return;
+                    }
+                    // Bring the existing window to the front
+                    window.Activate();
+                    return; // Exit the method
+                }
+            }
+            Id = SelectedVolunteer!.Id;
             new VolunteerWindow(SelectedVolunteer!.Id).Show();
         }
         void btnDelete_Click(object sender, RoutedEventArgs e)
@@ -71,6 +108,4 @@ namespace PL.Volunteer
 
         public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
     }
-
-
 }

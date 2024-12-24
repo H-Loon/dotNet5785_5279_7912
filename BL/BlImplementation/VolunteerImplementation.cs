@@ -27,7 +27,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     {
         try
         {
-            VolunteerManager.BOVolunteerCheck(volunteer);     
+            VolunteerManager.BOVolunteerCheck(volunteer, true, true);     
 
             if (_dal.Volunteer.Read(volunteer.Id) is not null)
                 throw new BO.BlAlreadyExistsException("Volunteer already exists");
@@ -158,8 +158,8 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         try
         {
             var asker = _dal.Volunteer.Read(id) ?? throw new BO.BlNotExistException("Volunteer not found");
-
-            VolunteerManager.BOVolunteerCheck(volunteer);
+            bool flag = asker.Address.Equals(volunteer.Address);
+            VolunteerManager.BOVolunteerCheck(volunteer, false, flag);
                 
 
             if (asker.Role is not DO.RoleType.Admin)

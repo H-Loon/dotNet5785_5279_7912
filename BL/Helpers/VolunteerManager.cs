@@ -183,9 +183,9 @@ internal static class VolunteerManager
     /// </summary>
     /// <param name="volunteer">The BO.Volunteer object to be validated.</param>
     /// <returns>True if all properties are valid, otherwise false.</returns>
-    internal static void BOVolunteerCheck(BO.Volunteer volunteer)
+    internal static void BOVolunteerCheck(BO.Volunteer volunteer , bool flag1 , bool flag2)
     {
-        if (IdCheck(volunteer.Id) is false)
+        if (flag1 && IdCheck(volunteer.Id) is false)
             throw new BO.BlNotValidEntityException("Volunteer Id is not valid");
         if (NameCheck(volunteer.Name) is false)
             throw new BO.BlNotValidEntityException("Volunteer Name is not valid");
@@ -195,7 +195,7 @@ internal static class VolunteerManager
             throw new BO.BlNotValidEntityException("Volunteer Email is not valid");
         if (PasswordCheck(volunteer.Password!) is false)
             throw new BO.BlNotValidEntityException("Volunteer Password is not valid");
-        if (Tools.AddressCheck(volunteer.Address) is false)
+        if (flag2 && Tools.AddressCheck(volunteer.Address) is false)
             throw new BO.BlNotValidEntityException("Volunteer Address is not valid");
         if (MaxDistanceCheck(volunteer.MaxDistance) is false)
             throw new BO.BlNotValidEntityException("Volunteer Max Distance is not valid");
