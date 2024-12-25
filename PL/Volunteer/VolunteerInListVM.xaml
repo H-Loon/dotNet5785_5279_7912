@@ -9,6 +9,7 @@
              d:DesignHeight="970" d:DesignWidth="1920">
     <UserControl.Resources>
         <local:VolunteerField x:Key="VolunteerField"/>
+        <local:IsDeletable x:Key="IsDeletable"/>
     </UserControl.Resources>
     <Grid>
         <Border Margin="125,79,695,75" Grid.Row="1" Background="#FF284151" CornerRadius="16,16,16,16">
@@ -39,7 +40,7 @@
                             <GridViewColumn Header="" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="Delete" Click="btnDelete_Click" CommandParameter="{Binding}"  Style="{StaticResource ListViewButton}" MinWidth="100"/>
+                                        <Button Content="Delete" Click="btnDelete_Click" CommandParameter="{Binding}" Style="{StaticResource ListViewButton}" MinWidth="100" IsEnabled="{Binding Id, Converter={StaticResource IsDeletable}}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

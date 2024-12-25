@@ -43,4 +43,6 @@ public interface IVolunteer : IObservable //stage 5
     /// </summary>
     /// <param name="volunteer">The volunteer to add.</param>
     void AddVolunteer(BO.Volunteer volunteer);
+
+    bool IsDeletable(int id);
 }

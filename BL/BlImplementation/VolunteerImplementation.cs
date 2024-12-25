@@ -60,9 +60,10 @@ internal class VolunteerImplementation : BlApi.IVolunteer
 
             if (boVolunteer.CompletedCalls is 0)
                 throw new BO.BlDeletionImpossibleException("Volunteer has no completed calls");
-
+ 
             _dal.Volunteer.Delete(id);
             VolunteerManager.Observers.NotifyListUpdated();  //stage 5
+
         }
         catch (Exception e)
         {
@@ -180,6 +181,19 @@ internal class VolunteerImplementation : BlApi.IVolunteer
         {
             throw new Exception(e.Message , e);
         }
+    }
+
+    public bool IsDeletable(int id)
+    {
+        var boVolunteer = VolunteerManager.ConvertToBO(id);
+
+        if (boVolunteer.CurrentCall is not null)
+            return false;
+
+        if (boVolunteer.CompletedCalls is 0)
+            return false;
+
+        return true;
     }
 }
 

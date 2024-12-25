@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,8 +26,6 @@ namespace PL.Volunteer
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private int Id = -1;
 
-
-
         public VolunteerV VolunteerView
         {
             get { return (VolunteerV)GetValue(VolunteerViewProperty); }
@@ -36,18 +36,17 @@ namespace PL.Volunteer
         public static readonly DependencyProperty VolunteerViewProperty =
             DependencyProperty.Register("VolunteerView", typeof(VolunteerV), typeof(VolunteerInListVM), new PropertyMetadata(null));
 
-
-
         private BO.VolunteerInList? _selectedVolunteer;
         public BO.VolunteerInList? SelectedVolunteer
         {
             get => _selectedVolunteer;
-            set {
+            set
+            {
                 _selectedVolunteer = value;
                 if (value != null)
                     VolunteerView = new VolunteerV(value.Id);
-                }
             }
+        }
 
         public BO.VolunteerInListField VolunteerInListField { get; set; } = BO.VolunteerInListField.Id;
         public IEnumerable<BO.VolunteerInList> VolunteerInList
@@ -66,7 +65,9 @@ namespace PL.Volunteer
         private void QueryVolunteerList(object sender, RoutedEventArgs e)
             => VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
         public void VolunteerListObserver()
-            => VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
+        {
+            VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
+        }
 
         private void VolunteerVAdd(object sender, RoutedEventArgs e)
         {
@@ -94,11 +95,25 @@ namespace PL.Volunteer
             Id = SelectedVolunteer!.Id;
             new VolunteerWindow(SelectedVolunteer!.Id).Show();
         }
-        void btnDelete_Click(object sender, RoutedEventArgs e)
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.CommandParameter is BO.VolunteerInList volunteer)
                 if (MessageBox.Show($"Are you sure you want to delete {volunteer.Name}?", "Delete Volunteer", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     s_bl.Volunteer.DeleteVolunteer(volunteer.Id);
+        }
+
+    }
+    public class IsDeletable : IValueConverter
+    {
+        private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return s_bl.Volunteer.IsDeletable((int)value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
     internal class VolunteerField : IEnumerable
