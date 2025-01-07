@@ -26,10 +26,10 @@
             <Setter Property="FontSize" Value="18"/>
         </Style>
 
-        <Style TargetType="ComboBoxItem">
+        <!--<Style TargetType="ComboBoxItem">
             <Setter Property="TextBlock.Foreground" Value="Black"/>
             <Setter Property="TextBlock.FontSize" Value="10"/>
-        </Style>
+        </Style>-->
 
         <Style TargetType="TextBox">
             <Setter Property="Background">
@@ -110,16 +110,16 @@
                 <TextBox Text="{Binding Volunteer.Email, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
                 <TextBox Text="{Binding Volunteer.Password, Mode = OneWayToSource, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
                 <TextBox Text="{Binding Volunteer.Address, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.Latitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Margin="8,0,0,0"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.Longitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Margin="8,0,0,0"/>
-                <ComboBox ItemsSource="{Binding Source={StaticResource VolunteerRole}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding Role, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="9" Grid.Column="2" VerticalAlignment="Center"/>
-                <CheckBox IsChecked="{Binding Volunteer.IsActive, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="10" VerticalAlignment="Center" Margin="62,0,0,0" Height="15" Width="16" Grid.Column="2"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.Latitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.Longitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
+                <ComboBox ItemsSource="{Binding Source={StaticResource VolunteerRole}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding Role, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" Margin="-4,0,0,0"/>
+                <CheckBox IsChecked="{Binding Volunteer.IsActive, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="10" VerticalAlignment="Center" Height="15" Width="16" Grid.Column="2"/>
                 <TextBox Text="{Binding Volunteer.MaxDistance, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
-                <ComboBox IsEnabled="False" ItemsSource="{Binding Source={StaticResource DistanceType}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding DistanceType, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="12" VerticalAlignment="Center" Grid.Column="2"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CompletedCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="13" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Margin="8,0,0,0"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CanceledCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="14" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Margin="8,0,0,0"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.OverDatedCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="15" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Margin="8,0,0,0"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CurrentCall, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="16" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Margin="8,0,0,0"/>
+                <ComboBox IsEnabled="False" ItemsSource="{Binding Source={StaticResource DistanceType}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding DistanceType, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="12" VerticalAlignment="Center" Grid.Column="2" Margin="-4,0,0,0"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CompletedCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="13" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CanceledCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="14" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.OverDatedCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="15" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CurrentCall, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="16" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
                 <Label Content="Id:" FontSize="22" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <Label Grid.Row="2" Content="Name:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <Label Grid.Row="3" Content="Phone:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>

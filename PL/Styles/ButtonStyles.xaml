@@ -65,6 +65,11 @@
                             <Setter TargetName="border" Property="CornerRadius" Value="16"/>
                             <Setter Property="Foreground" Value="#FFFFFF"/>
                         </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#96ACBC"/>
+                            <Setter TargetName="border" Property="CornerRadius" Value="16"/>
+                            <Setter Property="Foreground" Value="#FFFFFF"/>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

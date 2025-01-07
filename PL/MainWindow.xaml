@@ -8,8 +8,8 @@
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded" Closed="Window_Closed"
-        Title="WeirdAid" Height="1080" Width="1920" MinWidth="1300" MinHeight="920">
-    
+        Title="WeirdAid" MinWidth="1350" MinHeight="850">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="110"/>
@@ -40,11 +40,10 @@
             </Grid.Effect>
             <TextBlock Text="WeirdAid" FontSize="48" Foreground="White" FontWeight="Regular" TextAlignment="Center" Width="268" HorizontalAlignment="Left" VerticalAlignment="Top" Height="64" Margin="0,28,0,0" Grid.Column="1" />
             <!-- Header Button -->
-            <Border Margin="0,28,0,28" Background="#FF7690A3" Grid.Column="3" CornerRadius="16" MinWidth="500">
-                <Grid MinWidth="500">
-                    <RadioButton Content="Volunteers" Style="{StaticResource HeaderRadioButtonStyle}" Click="CurrentViewToVolunteerInList" HorizontalAlignment="Left" Width="140" Margin="20,0,0,0" Height="40"/>
-                    <RadioButton Content="Calls" Style="{StaticResource HeaderRadioButtonStyle}" HorizontalAlignment="Center" Width="64" Height="40"/>
-                    <RadioButton Content="Assignments" Style="{StaticResource HeaderRadioButtonStyle}" HorizontalAlignment="Right" Width="160" Margin="0,0,20,0" Height="40"/>
+            <Border Background="#FF7690A3" Grid.Column="3" CornerRadius="16" MinWidth="300" MaxWidth="500" MaxHeight="55">
+                <Grid>
+                    <RadioButton Content="Volunteers" Style="{StaticResource HeaderRadioButtonStyle}" Click="CurrentViewToVolunteerInList" HorizontalAlignment="Left" Width="140" Margin="50,0,0,0" Height="40"/>
+                    <RadioButton Content="Calls" Style="{StaticResource HeaderRadioButtonStyle}" Height="40" Margin="0,7,50,7" HorizontalAlignment="Right" Width="64"/>
                 </Grid>
             </Border>
             <Grid Grid.Column="5" Margin="11,18,34,17">
