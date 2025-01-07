@@ -27,13 +27,13 @@
         <!-- Header -->
         <Grid Background="#284151" Panel.ZIndex="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="86*"/>
+                <ColumnDefinition Width="53*"/>
                 <ColumnDefinition Width="295"/>
-                <ColumnDefinition Width="114*"/>
-                <ColumnDefinition Width="915*"/>
-                <ColumnDefinition Width="255*"/>
+                <ColumnDefinition Width="70*"/>
+                <ColumnDefinition Width="559.479"/>
+                <ColumnDefinition Width="156*"/>
                 <ColumnDefinition Width="158"/>
-                <ColumnDefinition Width="97*"/>
+                <ColumnDefinition Width="59*"/>
             </Grid.ColumnDefinitions>
             <Grid.Effect>
                 <DropShadowEffect Opacity="0.25" BlurRadius="10" ShadowDepth="7.3" Direction="-90"/>

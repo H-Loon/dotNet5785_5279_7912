@@ -117,7 +117,7 @@ public static class Initialization
             Address = s_addresses[0],
             Latitude = s_latitudes[0],
             Longitude = s_longitudes[0],
-            IsActive = s_rand.Next(0, 2) is 1,
+            IsActive = true,
             MaxDistance = s_rand.Next(50, 200),
             Role = RoleType.Admin
         });
