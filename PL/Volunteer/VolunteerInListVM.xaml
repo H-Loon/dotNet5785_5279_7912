@@ -87,7 +87,9 @@
         </Border>
         <Border Margin="0,79,120,75" Grid.Row="1" Background="#FF284151" CornerRadius="16,16,16,16" HorizontalAlignment="Right" Width="500">
             <Grid>
-                <ContentControl  Content="{Binding VolunteerView}" Panel.ZIndex="1" Margin="27,27,27,27"/>
+                <ScrollViewer VerticalScrollBarVisibility="Hidden" Margin="27,27,27,27" Panel.ZIndex="1">
+                    <ContentControl  Content="{Binding VolunteerView}" Panel.ZIndex="1"/>
+                </ScrollViewer>
                 <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Margin="100,0,100,0">
                     <TextBlock HorizontalAlignment="Center" Text="Select a volunteer" VerticalAlignment="Center" Foreground="#99FFFFFF" FontSize="28" TextWrapping="Wrap"/>
                 </Viewbox>
