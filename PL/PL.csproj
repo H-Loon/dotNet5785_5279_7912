@@ -14,12 +14,38 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Volunteer\**" />
+    <EmbeddedResource Remove="Volunteer\**" />
+    <None Remove="Volunteer\**" />
+    <Page Remove="Volunteer\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Images\3643767_key_keys_main_password_privilege_icon.png" />
+    <None Remove="Images\6777283_human_id_identification_identity_myaccount_icon.png" />
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <None Remove="3643767_key_keys_main_password_privilege_icon.png" />
+    <None Remove="6777283_human_id_identification_identity_myaccount_icon.png" />
+  </ItemGroup>-->
+
+  <ItemGroup>
     <ProjectReference Include="..\BL\BL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Assignment\" />
-    <Folder Include="Call\" />
+    <Resource Include="Images\3643767_key_keys_main_password_privilege_icon.png" />
+    <Resource Include="Images\6777283_human_id_identification_identity_myaccount_icon.png" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Admin\Call\" />
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <Resource Include="3643767_key_keys_main_password_privilege_icon.png" />
+    <Resource Include="6777283_human_id_identification_identity_myaccount_icon.png" />
+  </ItemGroup>-->
 
 </Project>

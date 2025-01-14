@@ -13,14 +13,14 @@ public static class Initialization
     // Sample data arrays
     private static readonly string[] s_names =
     [
-        "David Cohen", "Yossi Levi", "Miriam Katz", "Rivka Goldberg", "Moshe Ben David",
+        "David Cohen","David Locohen", "Yossi Levi", "Miriam Katz", "Rivka Goldberg", "Moshe Ben David",
         "Sara Peretz", "Yaakov Shapiro", "Rachel Mizrahi", "Shlomo Rosen", "Esther Friedman",
         "Noa Bar", "Elior Shalom", "Tamar Levi", "Avi Cohen", "Lior Ben Ami", "Hila Shalev"
     ];
 
     private static readonly string[] s_emails =
     [
-        "david.cohen@example.com", "yossi.levi@example.com", "miriam.katz@example.com",
+        "david.cohen@example.com", "david.locohen@example.com", "yossi.levi@example.com", "miriam.katz@example.com",
         "rivka.goldberg@example.com", "moshe.ben-david@example.com", "sara.peretz@example.com",
         "yaakov.shapiro@example.com", "rachel.mizrahi@example.com", "shlomo.rosen@example.com",
         "esther.friedman@example.com", "noa.bar@example.com", "elior.shalom@example.com",
@@ -30,7 +30,7 @@ public static class Initialization
 
     private static readonly string[] s_passwords = new string[]
     {
-        "Password1!", "Secure2Pass@", "Strong3Pwd#", "Valid4Pass$", "Check5Pass%",
+        "Password1!","Password1!", "Secure2Pass@", "Strong3Pwd#", "Valid4Pass$", "Check5Pass%",
         "Safe6Passw^", "Good7Passw&", "Right8Pass*", "Valid9Pass(", "Strong0Pwd)",
         "Check1Pass-", "Safe2Passw_", "Good3Passw=", "Right4Pass+", "Valid5Pass[",
         "Strong6Pwd]"  
@@ -38,7 +38,7 @@ public static class Initialization
 
     private static readonly List<string> s_phoneNumbers =
     [
-        "0501234567", "0522345678", "0543456789", "0554567890",
+        "0501234567","0501234568", "0522345678", "0543456789", "0554567890",
         "0565678901", "0576789012", "0587890123", "0598901234",
         "0509012345", "0520123456", "0506543210", "0527654321",
         "0548765432", "0559876543", "0560987654", "0571098765"
@@ -46,7 +46,7 @@ public static class Initialization
 
     private static readonly List<string> s_addresses =
     [
-        "1 Rothschild Blvd, Tel Aviv", "2 Herzl St, Haifa", "3 Jabotinsky St, Ramat Gan",
+        "1 Rothschild Blvd, Tel Aviv","2 Rothschild Blvd, Tel Aviv", "2 Herzl St, Haifa", "3 Jabotinsky St, Ramat Gan",
         "4 Ben Yehuda St, Jerusalem", "5 Dizengoff St, Tel Aviv", "6 Weizmann St, Rehovot",
         "7 Begin Blvd, Beersheba", "8 Allenby St, Tel Aviv", "9 King George St, Jerusalem",
         "10 Bialik St, Ramat Gan", "11 Arlozorov St, Tel Aviv", "12 Ibn Gabirol St, Tel Aviv",
@@ -70,7 +70,7 @@ public static class Initialization
 
     private static readonly List<double> s_latitudes =
     [
-        32.065, 32.818, 32.083, 31.776, 32.075, 31.894, 31.252, 32.067, 31.780, 32.082,
+        32.065, 32.818, 32.065, 32.083, 31.776, 32.075, 31.894, 31.252, 32.067, 31.780, 32.082,
         32.070, 32.073, 32.074, 32.075, 32.076, 32.077, 32.078, 32.079, 32.080, 32.081,
         32.065, 32.818, 32.083, 31.776, 32.075, 31.894, 31.252, 32.067, 31.780, 32.082,
         32.070, 32.073, 32.074, 32.075, 32.076, 32.077, 32.078, 32.079, 32.080, 32.081,
@@ -80,7 +80,7 @@ public static class Initialization
 
     private static readonly List<double> s_longitudes =
     [
-        34.774, 34.988, 34.814, 35.213, 34.774, 34.811, 34.791, 34.770, 35.220, 34.814,
+        34.774, 34.774, 34.988, 34.814, 35.213, 34.774, 34.811, 34.791, 34.770, 35.220, 34.814,
         34.780, 34.781, 34.782, 34.783, 34.784, 34.785, 34.786, 34.787, 34.788, 34.789,
         34.774, 34.988, 34.814, 35.213, 34.774, 34.811, 34.791, 34.770, 35.220, 34.814,
         34.780, 34.781, 34.782, 34.783, 34.784, 34.785, 34.786, 34.787, 34.788, 34.789,
@@ -109,7 +109,7 @@ public static class Initialization
 
         s_dal!.Volunteer.Create(new Volunteer
         {
-            Id = s_rand.Next(200000000/40, 400000000/40)*40,
+            Id = 238336280,
             Name = s_names[0],
             Phone = s_phoneNumbers[0],
             Email = s_emails[0],
@@ -126,7 +126,26 @@ public static class Initialization
         copyLatitudes.RemoveAt(0);
         copyLongitudes.RemoveAt(0);
 
-        for (int i = 1; i < s_names.Length; i++)
+        s_dal!.Volunteer.Create(new Volunteer
+        {
+            Id = 256810680,
+            Name = s_names[1],
+            Phone = s_phoneNumbers[1],
+            Email = s_emails[1],
+            Password = s_passwords[1],
+            Address = s_addresses[1],
+            Latitude = s_latitudes[1],
+            Longitude = s_longitudes[1],
+            IsActive = true,
+            MaxDistance = s_rand.Next(50, 200),
+            Role = RoleType.Admin
+        });
+
+        copyAddresses.RemoveAt(1);
+        copyLatitudes.RemoveAt(1);
+        copyLongitudes.RemoveAt(1);
+
+        for (int i = 2; i < s_names.Length; i++)
         {
             int id;
             string phone, address;

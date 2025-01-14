@@ -4,15 +4,17 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PL.Volunteer
+namespace PL.Admin.Menu
 {
     /// <summary>
-    /// Interaction logic for AdminView.xaml
+    /// Interaction logic for MenuView.xaml
     /// </summary>
-    public partial class AdminView : UserControl
+    public partial class MenuView : UserControl
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        public RiskRangeViewModel riskRangeViewModel { get; set; } = new RiskRangeViewModel();
+
+        public RiskRangeEditor RiskRangeEdt { get; set; } = new RiskRangeEditor();
+
         public DateTime ConfigTime
         {
             get { return (DateTime)GetValue(ConfigTimeNowProperty); }
@@ -21,9 +23,9 @@ namespace PL.Volunteer
 
         // Using a DependencyProperty as the backing store for DateTimeNow.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ConfigTimeNowProperty =
-            DependencyProperty.Register("ConfigTime", typeof(DateTime), typeof(AdminView));
+            DependencyProperty.Register("ConfigTime", typeof(DateTime), typeof(MenuView));
 
-        public TimeSpan RiskRangeView
+        public TimeSpan RiskRange
         {
             get { return (TimeSpan)GetValue(RiskRangeViewProperty); }
             set { SetValue(RiskRangeViewProperty, value); }
@@ -31,20 +33,20 @@ namespace PL.Volunteer
 
         // Using a DependencyProperty as the backing store for RiskRangeEditor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RiskRangeViewProperty =
-            DependencyProperty.Register("RiskRange", typeof(TimeSpan), typeof(AdminView));
-        public AdminView()
+            DependencyProperty.Register("RiskRange", typeof(TimeSpan), typeof(MenuView));
+        public MenuView()
         {
             InitializeComponent();
         }
         // Apply Button Click - Update the RiskRangeEditor property
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.UpdateRiskRange(TimeSpan.Parse(riskRangeViewModel.RiskRange));
-            riskRangeViewModel.RiskRange = "0.00:00:00";
+            s_bl.Admin.UpdateRiskRange(TimeSpan.Parse(RiskRangeEdt.RiskRange));
+            RiskRangeEdt.RiskRange = "0.00:00:00";
         }
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            riskRangeViewModel.RiskRange = "0.00:00:00";
+            RiskRangeEdt.RiskRange = "0.00:00:00";
         }
         private void ClockObserver()
         {
@@ -52,7 +54,7 @@ namespace PL.Volunteer
         }
         private void RiskRangeObserver()
         {
-            RiskRangeView = s_bl.Admin.GetRiskRange();
+            RiskRange = s_bl.Admin.GetRiskRange();
         }
         //private void Window_Closed(object sender, EventArgs e)
         //{
@@ -62,7 +64,7 @@ namespace PL.Volunteer
         private void Window_Loaded(object sender, EventArgs e)
         {
             ConfigTime = s_bl.Admin.GetConfigClock();
-            RiskRangeView = s_bl.Admin.GetRiskRange();
+            RiskRange = s_bl.Admin.GetRiskRange();
 
             s_bl.Admin.AddClockObserver(ClockObserver);
             s_bl.Admin.AddConfigObserver(RiskRangeObserver);
@@ -101,7 +103,7 @@ namespace PL.Volunteer
             s_bl.Admin.InitDB();
         }
     }
-    public class RiskRangeViewModel : INotifyPropertyChanged
+    public class RiskRangeEditor : INotifyPropertyChanged
     {
         private string _riskRange;
 
@@ -119,7 +121,7 @@ namespace PL.Volunteer
             }
         }
 
-        public RiskRangeViewModel()
+        public RiskRangeEditor()
         {
             _riskRange = "0.00:00:00"; // Default value
         }

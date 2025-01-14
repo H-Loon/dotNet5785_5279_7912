@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="PL.LogIn"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PL"
+             xmlns:c="clr-namespace:PL.Components"
+             DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+             mc:Ignorable="d" 
+             d:DesignHeight="850" d:DesignWidth="1350">
+    <Grid>
+        <Border CornerRadius="16" MinWidth="400" MinHeight="500" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FF284151" >
+            <Border.Effect>
+                <DropShadowEffect Opacity="0.25" BlurRadius="10" ShadowDepth="7.3" Direction="-75"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="350"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="125"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="WeirdAid" FontSize="38" Foreground="White" FontWeight="Regular" TextAlignment="Center" Width="268" HorizontalAlignment="Center"  Grid.Column="1" Grid.Row="1" Margin="0,0,0,16" Grid.RowSpan="2"/>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Center" Margin="0" Orientation="Horizontal" Grid.Row="3">
+                    <Image Source="Images/6777283_human_id_identification_identity_myaccount_icon.png" MaxHeight="50"/>
+                    <TextBox Style="{StaticResource IDTextBoxStyle}" Text="{Binding IdText.IdTextString, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" MaxHeight="45" FontSize="24" Width="300" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Center" Margin="0" Orientation="Horizontal" Grid.Row="4">
+                    <Image Source="Images/3643767_key_keys_main_password_privilege_icon.png" MaxHeight="50"/>
+                    <c:BindablePasswordBox Password="{Binding Password, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" MaxHeight="45" FontSize="24" Width="300" />
+                </StackPanel>
+                <Button Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" Content="Log In" FontSize="24" MinHeight="45" Click="btn_LogIn"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

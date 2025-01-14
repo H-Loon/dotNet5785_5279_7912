@@ -16,27 +16,26 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PL.Volunteer
+namespace PL.Admin.Volunteer
 {
-    /// <summary>
-    /// Interaction logic for VolunteerInListVM.xaml
-    /// </summary>
     public enum ActiveField { All, Active, Inactive }
-
-    public partial class VolunteerInListVM : UserControl
+    /// <summary>
+    /// Interaction logic for VolunteerInListView.xaml
+    /// </summary>
+    public partial class VolunteerInListView : UserControl
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private int Id = -1;
 
-        public VolunteerV VolunteerView
+        public VolunteerInfoView VolunteerInfo
         {
-            get { return (VolunteerV)GetValue(VolunteerViewProperty); }
+            get { return (VolunteerInfoView)GetValue(VolunteerViewProperty); }
             set { SetValue(VolunteerViewProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for VolunteerInfo.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty VolunteerViewProperty =
-            DependencyProperty.Register("VolunteerInfo", typeof(VolunteerV), typeof(VolunteerInListVM), new PropertyMetadata(null));
+            DependencyProperty.Register("VolunteerInfo", typeof(VolunteerInfoView), typeof(VolunteerInListView), new PropertyMetadata(null));
 
         private BO.VolunteerInList? _selectedVolunteer;
         public BO.VolunteerInList? SelectedVolunteer
@@ -46,7 +45,7 @@ namespace PL.Volunteer
             {
                 _selectedVolunteer = value;
                 if (value != null)
-                    VolunteerView = new VolunteerV(value.Id);
+                    VolunteerInfo = new VolunteerInfoView(value.Id);
             }
         }
 
@@ -60,8 +59,8 @@ namespace PL.Volunteer
 
         // Using a DependencyProperty as the backing store for VolunteerInList.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty VolunteerInListProperty =
-            DependencyProperty.Register("VolunteerInList", typeof(IEnumerable<BO.VolunteerInList>), typeof(VolunteerInListVM));
-        public VolunteerInListVM()
+            DependencyProperty.Register("VolunteerInList", typeof(IEnumerable<BO.VolunteerInList>), typeof(VolunteerInListView));
+        public VolunteerInListView()
         {
             InitializeComponent();
         }
@@ -98,20 +97,20 @@ namespace PL.Volunteer
 
         private void VolunteerVAdd(object sender, RoutedEventArgs e)
         {
-            new VolunteerWindow().Show();
+            new AddUpdateVolunteerWindow().Show();
         }
         private void lsvVolunteersList_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
             // Check if the window is already open
             foreach (Window window in Application.Current.Windows)
             {
-                if (window is VolunteerWindow)
+                if (window is VolunteerInfoView)
                 {
                     if (Id != SelectedVolunteer!.Id)
                     {
                         window.Close();
                         Id = SelectedVolunteer!.Id;
-                        new VolunteerWindow(Id).Show();
+                        new AddUpdateVolunteerWindow(Id).Show();
                         return;
                     }
                     // Bring the existing window to the front
@@ -120,7 +119,7 @@ namespace PL.Volunteer
                 }
             }
             Id = SelectedVolunteer!.Id;
-            new VolunteerWindow(SelectedVolunteer!.Id).Show();
+            new AddUpdateVolunteerWindow(SelectedVolunteer!.Id).Show();
         }
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {

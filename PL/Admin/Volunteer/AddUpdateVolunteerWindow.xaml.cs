@@ -14,12 +14,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace PL.Volunteer
+namespace PL.Admin.Volunteer
 {
     /// <summary>
-    /// Interaction logic for VolunteerWindow.xaml
+    /// Interaction logic for AddUpdateVolunteerWindow.xaml
     /// </summary>
-    public partial class VolunteerWindow : Window
+    public partial class AddUpdateVolunteerWindow : Window
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public string ButtonText { get; set; }
@@ -35,13 +35,13 @@ namespace PL.Volunteer
 
         // Using a DependencyProperty as the backing store for Volunteer.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty VolunteerProperty =
-            DependencyProperty.Register("VolunteerW", typeof(BO.Volunteer), typeof(VolunteerWindow), new PropertyMetadata(null));
+            DependencyProperty.Register("VolunteerW", typeof(BO.Volunteer), typeof(AddUpdateVolunteerWindow), new PropertyMetadata(null));
 
 
-        public VolunteerWindow(int id = 0)
+        public AddUpdateVolunteerWindow(int id = 0)
         {
             ButtonText = id == 0 ? "Add" : "Update";
-            if (id == 0) Volunteer = new BO.Volunteer() 
+            if (id == 0) Volunteer = new BO.Volunteer()
             {
                 Id = 0,
                 Name = "",
@@ -77,7 +77,7 @@ namespace PL.Volunteer
             if (flag == false)
                 Close();
         }
-       
+
     }
     internal class VolunteerRole : IEnumerable
     {

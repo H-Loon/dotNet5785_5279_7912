@@ -8,15 +8,18 @@
                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" CornerRadius="16">
                         <Grid>
                             <TextBox x:Name="RiskRangeTextBox"
-                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, Mode=TwoWay , UpdateSourceTrigger=PropertyChanged}"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            FontSize="{TemplateBinding FontSize}"
-                            FontWeight="{TemplateBinding FontWeight}"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Foreground="White"
-                            TextAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                                Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, Mode=TwoWay , UpdateSourceTrigger=PropertyChanged}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Foreground="White"
+                                TextAlignment="Center" 
+                                HorizontalContentAlignment="Center" 
+                                VerticalContentAlignment="Center" 
+                                CaretBrush="White">
                                 <TextBox.Style>
                                     <Style TargetType="TextBox">
                                         <Style.Triggers>
@@ -29,20 +32,78 @@
                             </TextBox>
                             <Viewbox>
                                 <TextBlock
-                                IsHitTestVisible="False"
-                                Text="Enter Risk Range"
-                                VerticalAlignment="Stretch"
-                                HorizontalAlignment="Stretch"
-                                TextAlignment="Center"
-                                FontSize="30"
-                                Margin="10,0,10,0"
-                                Foreground="#99FFFFFF">
+                                    IsHitTestVisible="False"
+                                    Text="Enter Risk Range"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Stretch"
+                                    TextAlignment="Center"
+                                    FontSize="30"
+                                    Margin="10,0,10,0"
+                                    Foreground="#99FFFFFF">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsFocused ,ElementName=RiskRangeTextBox}" Value="true">
                                                     <Setter Property="Visibility" Value="Hidden"/>
                                                 </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Viewbox>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Background" Value="#96ACBC"/>
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+    <Style x:Key="IDTextBoxStyle" TargetType="TextBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" CornerRadius="16">
+                        <Grid>
+                            <TextBox x:Name="IDTextBoxStyle"
+                                Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, Mode=TwoWay , UpdateSourceTrigger=PropertyChanged}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Foreground="White"
+                                Padding="10,0,0,0"
+                                TextAlignment="Left" 
+                                HorizontalContentAlignment="Center" 
+                                VerticalContentAlignment="Center" 
+                                CaretBrush="White">
+                            </TextBox>
+                            <Viewbox HorizontalAlignment="Left" Margin="0,5,0,5">
+                                <TextBlock
+                                    IsHitTestVisible="False"
+                                    Text="Id"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Left"
+                                    TextAlignment="Center"
+                                    Foreground="#99FFFFFF" 
+                                    FontWeight="Medium" 
+                                    Margin="10,0,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Hidden"/>
+                                            <Style.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsFocused ,ElementName=IDTextBoxStyle}" Value="false"/>
+                                                        <Condition Binding="{Binding Text ,ElementName=IDTextBoxStyle}" Value=""/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </MultiDataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </TextBlock.Style>

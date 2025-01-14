@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="PL.Components.TimePicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PL.Components"
+             d:DesignHeight="30"
+             d:DesignWidth="100"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary Source="TimePickerStyle.xaml" />
+    </UserControl.Resources>
+    <Grid>
+        <ComboBox
+            x:Name="HoursComboBox"
+            Width="40"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            ItemsSource="{Binding Hours}"
+            SelectedIndex="{Binding HourIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Text=":" />
+        <ComboBox
+            x:Name="MinutesComboBox"
+            Width="40"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            ItemsSource="{Binding Minutes}"
+            SelectedIndex="{Binding MinuteIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+    </Grid>
+</UserControl>
