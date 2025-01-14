@@ -242,15 +242,15 @@ internal class CallImplementation : ICall
             
         callInList = field1 switch
         {
-            BO.CallInListField.AssignmentId => callInList.Where(c => c.AssignmentId == (int)obj!),
-            BO.CallInListField.CallId => callInList.Where(c => c.CallId == (int)obj!),
+            BO.CallInListField.AssignmentId => callInList.Where(c => c.AssignmentId.ToString().Contains((string)obj!)),
+            BO.CallInListField.CallId => callInList.Where(c => c.CallId.ToString().Contains((string)obj!)),
             BO.CallInListField.CallType => callInList.Where(c => c.CallType == (BO.BoCallType)obj!),
             BO.CallInListField.StartTime => callInList.Where(c => c.StartTime == (DateTime)obj!),
             BO.CallInListField.TimeLeft => callInList.Where(c => c.TimeLeft == (TimeSpan)obj!),
-            BO.CallInListField.LastVolunteerName => callInList.Where(c => c.LastVolunteerName == (string)obj!),
+            BO.CallInListField.LastVolunteerName => callInList.Where(c => c.LastVolunteerName.Contains((string)obj!)),
             BO.CallInListField.TimeOpen => callInList.Where(c => c.TimeOpen == (TimeSpan)obj!),
             BO.CallInListField.CallStatus => callInList.Where(c => c.CallStatus == (BO.BoCallStatus)obj!),
-            BO.CallInListField.AssignCount => callInList.Where(c => c.AssignCount == (int)obj!),
+            BO.CallInListField.AssignCount => callInList.Where(c => c.AssignCount == int.Parse((string)obj!)),
             _ => callInList
         };
         callInList = field2 switch

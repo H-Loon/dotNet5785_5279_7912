@@ -14,13 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Volunteer\**" />
-    <EmbeddedResource Remove="Volunteer\**" />
-    <None Remove="Volunteer\**" />
-    <Page Remove="Volunteer\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Images\3643767_key_keys_main_password_privilege_icon.png" />
     <None Remove="Images\6777283_human_id_identification_identity_myaccount_icon.png" />
   </ItemGroup>
@@ -40,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Admin\Call\" />
+    <Folder Include="Volunteer\" />
   </ItemGroup>
 
   <!--<ItemGroup>

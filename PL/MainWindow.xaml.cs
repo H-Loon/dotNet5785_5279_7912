@@ -92,35 +92,34 @@ public partial class MainWindow : Window
 
         if (tab != null)
         {
-            if (MessageBox.Show(string.Format
-            ("Are you sure you want to remove the tab '{0}'?", tab.Header.ToString()),
-                "Remove Tab", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (_tabItems.Count < 3 && MessageBox.Show(string.Format
+                                            ("Are you sure you want to remove the tab '{0}'? \nIt will close the app.", tab.Header.ToString()),
+                                            "Remove Tab", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                            {
+                                                Close();
+                                            }
+
+            // get selected tab
+            TabItem selectedTab = tabDynamic.SelectedItem as TabItem;
+
+            // clear tab control binding
+            tabDynamic.DataContext = null;
+
+
+            _tabItems.Remove(tab);
+            if (tab.Content.GetType() == typeof(Admin.AdminMainView))
+                isAdminConnected = false;
+
+            // bind tab control
+            tabDynamic.DataContext = _tabItems;
+
+
+            // select previously selected tab. if that is removed then select first tab
+            if (selectedTab == null || selectedTab.Equals(tab))
             {
-                // get selected tab
-                TabItem selectedTab = tabDynamic.SelectedItem as TabItem;
-
-                // clear tab control binding
-                tabDynamic.DataContext = null;
-
-                _tabItems.Remove(tab);
-                if (tab.Content.GetType() == typeof(Admin.AdminMainView))
-                    isAdminConnected = false;
-
-                // bind tab control
-                tabDynamic.DataContext = _tabItems;
-
-                if (_tabItems.Count < 3)
-                {
-                    Close();
-                }
-
-                // select previously selected tab. if that is removed then select first tab
-                if (selectedTab == null || selectedTab.Equals(tab))
-                {
-                    selectedTab = _tabItems[0];
-                }
-                tabDynamic.SelectedItem = selectedTab;
+                selectedTab = _tabItems[0];
             }
+            tabDynamic.SelectedItem = selectedTab;
         }
     }
 

@@ -71,7 +71,8 @@ public enum CallInListField
     LastVolunteerName,
     TimeOpen,
     CallStatus,
-    AssignCount
+    AssignCount,
+    None
 }
 public enum OpenCallInListField
 {
