@@ -16,14 +16,14 @@
         <Border Margin="125,79,695,75" Grid.Row="1" Background="#FF284151" CornerRadius="16,16,16,16">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="39*"/>
+                    <ColumnDefinition Width="40*"/>
                     <ColumnDefinition Width="170*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="164*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="475*"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="39*"/>
+                    <ColumnDefinition Width="40*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80*"/>

@@ -2,8 +2,8 @@
 <config>
   <NextCallId>1065</NextCallId>
   <NextAssignmentId>2055</NextAssignmentId>
-  <Clock>14-01-25 22:26:12</Clock>
+  <Clock>21-01-25 20:24:21</Clock>
   <!-- Example ISO 8601 date -->
-  <RiskRange>9.23:00:00</RiskRange>
+  <RiskRange>1.00:00:00</RiskRange>
   <!-- 1 day in TimeSpan format -->
 </config>

@@ -66,9 +66,8 @@ internal class CallImplementation : ICall
             // Retrieve the call details
             var call = _dal.Call.Read(id) ?? throw new KeyNotFoundException("Call not found.");
             if(call == null)
-        {
                 throw new BO.BlNotExistException("Call not found.");
-            }
+
             if (!IsDeletable(call.Id))
             {
                 throw new BO.BlNotAllowedException("Cannot delete call. The call is either not open or has been assigned to a volunteer.");

@@ -1,4 +1,5 @@
 ﻿using BO;
+using PL.Admin.Volunteer;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,7 +28,7 @@ namespace PL.Admin
         public string Initials { get; set; }
         public Call.CallInListView CallInListView { get; set; } = new Call.CallInListView();
         public Menu.MenuView MenuView { get; set; } = new Menu.MenuView();
-        public Volunteer.VolunteerInListView VolunteerInListView { get; set; } = new Volunteer.VolunteerInListView();
+        public VolunteerInListView VolunteerInListView { get; set; } = new VolunteerInListView();
 
         public UserControl CurrentView
         {
@@ -46,13 +47,12 @@ namespace PL.Admin
             InitializeComponent();
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
-            => s_bl.Volunteer.AddObserver(VolunteerInListView.VolunteerListObserver);
-
-        //private void Window_Closed(object sender, EventArgs e)
-        //        => s_bl.Volunteer.RemoveObserver(VolunteerInListView.VolunteerListObserver);
+        {
+            s_bl.Volunteer.AddObserver(VolunteerInListView.VolunteerListObserver);
+            s_bl.Call.AddObserver(CallInListView.CallListObserver);
+        }
         private void CurrentViewToVolunteerInList(object sender, RoutedEventArgs e)
         {
-
             CurrentView = VolunteerInListView;
         }
 

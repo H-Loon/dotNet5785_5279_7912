@@ -16,13 +16,13 @@
         <Border Margin="125,79,695,75" Grid.Row="1" Background="#FF284151" CornerRadius="16,16,16,16">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30*"/>
                     <ColumnDefinition MinWidth="55" Width="300*"/>
                     <ColumnDefinition MinWidth="55" Width="300*"/>
                     <ColumnDefinition Width="180" />
                     <ColumnDefinition Width="205*"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
@@ -60,7 +60,7 @@
 
                 <TextBox Visibility="{Binding TextBoxVisibility}" 
                          TextChanged="QueryCallList" Grid.Column="3" 
-                         Foreground="white" FontSize="26" 
+                         Foreground="white" FontSize="12" 
                          VerticalAlignment="Center" 
                          Style="{StaticResource MaterialDesignFilledTextBox}"
                          MaxHeight="47" Grid.Row="1" Margin="10,0,0,10"/>
