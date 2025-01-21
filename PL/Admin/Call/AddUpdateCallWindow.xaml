@@ -6,13 +6,12 @@
         xmlns:local="clr-namespace:PL.Admin.Call"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
-        Title="AddUpdateVolunteerWindow" Height="840" Width="500"
-        ResizeMode="NoResize">
+        Title="AddUpdateCallWindow" Height="840" Width="500"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <!--<local:VolunteerRole x:Key="VolunteerRole"/>
-        <local:DistanceType x:Key="DistanceType"/>
-        <local:ConvertUpdateToTrueKey x:Key="ConvertUpdateToTrueKey"/>
-        <local:ConvertUpdateToVisibleKey x:Key="ConvertUpdateToVisibleKey"/>-->
+        <!--<local:CallType x:Key="CallType"/>
+        <local:Status x:Key="Status"/>-->
 
         <Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxStyle2}"/>
         <Style TargetType="Label">
@@ -25,11 +24,6 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="18"/>
         </Style>
-
-        <!--<Style TargetType="ComboBoxItem">
-        <Setter Property="TextBlock.Foreground" Value="Black"/>
-        <Setter Property="TextBlock.FontSize" Value="10"/>
-    </Style>-->
 
         <Style TargetType="TextBox">
             <Setter Property="Background">
@@ -83,60 +77,87 @@
                     <ColumnDefinition Width="181*"/>
                     <ColumnDefinition Width="27"/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="27"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="2*"/>
 
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="62*"/>
+                    <RowDefinition Height="81*"/>
+                    <RowDefinition Height="81*"/>
+                    <RowDefinition Height="81*"/>
+                    <RowDefinition Height="81*"/>
+                    <RowDefinition Height="81*"/>
+                    <RowDefinition Height="81*"/>
+                    <RowDefinition Height="81*"/>
+                    <RowDefinition Height="81*"/>
+                    <RowDefinition Height="54*"/>
                 </Grid.RowDefinitions>
-                <TextBox Text="{Binding Volunteer.Name, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
-                <TextBox Text="{Binding Volunteer.Phone, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
-                <TextBox Text="{Binding Volunteer.Email, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
-                <TextBox Text="{Binding Volunteer.Password, Mode = OneWayToSource, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
-                <TextBox Text="{Binding Volunteer.Address, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.Latitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.Longitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
-                <ComboBox ItemsSource="{Binding Source={StaticResource VolunteerRole}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding Role, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" Margin="-4,0,0,0"/>
-                <CheckBox IsChecked="{Binding Volunteer.IsActive, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="10" VerticalAlignment="Center" Height="15" Width="16" Grid.Column="2"/>
-                <TextBox Text="{Binding Volunteer.MaxDistance, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
-                <ComboBox IsEnabled="False" ItemsSource="{Binding Source={StaticResource DistanceType}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding DistanceType, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="12" VerticalAlignment="Center" Grid.Column="2" Margin="-4,0,0,0"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CompletedCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="13" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CanceledCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="14" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.OverDatedCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="15" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CurrentCall, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="16" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
-                <Label Content="{Binding IdLabel}" FontSize="22" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
-                <Label Grid.Row="2" Content="Name:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Label Grid.Row="3" Content="Phone:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Label Grid.Row="4" Content="Type of Call:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Label Grid.Row="5" Content="Description:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Label Grid.Row="6" Content="Address:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Label Grid.Row="7" Content="Latitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <Label Grid.Row="8" Content="Longitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <Label Grid.Row="9" Content="Role:" FontSize="22" Grid.Column="1"/>
-                <Label Grid.Row="10" Content="Active:" FontSize="22" Grid.Column="1"/>
-                <Label Grid.Row="11" Content="Max distance:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <Label Grid.Row="12" Content="Distance type:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <Label Grid.Row="13" Content="Completed calls:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Label Grid.Row="14" Content="Canceled calls:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Label Grid.Row="15" Content="Over dated calls:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Label Grid.Row="16" Content="Current call:" FontSize="22" Grid.Column="1" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                <Label Grid.Row="1" Content="Type of Call:" FontSize="22" Grid.ColumnSpan="2" Margin="24,17,3,27" Grid.RowSpan="2"/>
+                <ComboBox ItemsSource="{Binding Source={StaticResource CallType}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding CallType, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="212,0,0,0" Grid.ColumnSpan="1" Height="30" Width="37"/>
+
+                <Label Grid.Row="2" Content="Description:" FontSize="22" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,25,176,10"/>
+                <TextBox Text="{Binding Call.Description, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" Height="20" Width="170"/>
+
+                <Label Grid.Row="3" Content="Adresse:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="39" Width="142"/>
+                <TextBox Text="{Binding Call.Address, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" Height="21" Width="170"/>
+
+                <Label Grid.Row="4" Content="Latitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="40" Width="93"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.Latitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Width="0"/>
+
+                <Label Grid.Row="5" Content="Longitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="39" Width="113"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.Longitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Width="0"/>
+
+                <Label Grid.Row="6" Content="StartTime:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="40" Width="146"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.StartTime , Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2"  Width="0"/>
+
+
+                <Label Grid.Row="7" Content="MaxTime:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39" Width="169"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.MaxTime , Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2"  Width="0"/>
+
+
+                <Label Grid.Row="8" Content="Status:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Height="39" Width="151" Margin="0,19,0,0"/>
+                <ComboBox ItemsSource="{Binding Source={StaticResource Status}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding Status, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" Margin="212,0,0,0" Grid.ColumnSpan="1" Height="30" Width="37"/>
+
+                <Button Content="{Binding Call.Id, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Click="btnAddUpdate_Click" Grid.Row="0" VerticalAlignment="Center" Margin="39,0,39,0" Height="36" Grid.ColumnSpan="2" Grid.Column="1" Background="#FF2871BD">
+                    <Button.BorderBrush>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="Black"/>
+                            <GradientStop Color="White" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.BorderBrush>
+                </Button>
                 <Button Content="{Binding ButtonText}" Click="btnAddUpdate_Click" Grid.Row="17" VerticalAlignment="Center" Margin="39,0,39,0" Height="36" Grid.ColumnSpan="2" Grid.Column="1"/>
+
+
             </Grid>
         </Border>
     </Grid>
 </Window>
+
+
+
+<!--                <CheckBox IsChecked="{Binding Volunteer.IsActive, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="10" VerticalAlignment="Center" Height="15" Width="16" Grid.Column="2"/>
+               
+                <ComboBox IsEnabled="False" ItemsSource="{Binding Source={StaticResource DistanceType}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding DistanceType, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="12" VerticalAlignment="Center" Grid.Column="1" Margin="212,0,0,0" Grid.ColumnSpan="2" Height="30" Width="37"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CompletedCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="13" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Width="0"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CanceledCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="14" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Width="0"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.OverDatedCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="15" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Width="0"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CurrentCall, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="16" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Width="0"/>-->
+
+<!--<Label Content="Id:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="172,0,0,0" Height="39" Width="34"/>
+                <Label Content="{Binding IdLabel}" FontSize="22" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="10" Width="10"/>
+                <Label Grid.Row="2" Content="Name:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39" Width="73"/>
+                <Label Grid.Row="3" Content="Phone:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" Width="76"/>
+                <Label Grid.Row="4" Content="Type of Call:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39" Width="127"/>
+                <Label Grid.Row="5" Content="Description:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39" Width="125"/>
+                <Label Grid.Row="6" Content="Address:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39" Width="93"/>
+                <Label Grid.Row="7" Content="Latitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="40" Width="93"/>
+                <Label Grid.Row="8" Content="Longitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="39" Width="113"/>
+                <Label Grid.Row="8" Content="Role:" FontSize="22" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,42,176,0" Grid.RowSpan="2"/>
+                <Label Grid.Row="9" Content="Active:" FontSize="22" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,41,176,0" Grid.RowSpan="2"/>
+                <Label Grid.Row="11" Content="Max distance:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="39" Width="142"/>
+                <Label Grid.Row="12" Content="Distance type:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="40" Width="146"/>
+                <Label Grid.Row="13" Content="Completed calls:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39" Width="169"/>
+                <Label Grid.Row="14" Content="Canceled calls:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39" Width="151"/>
+                <Label Grid.Row="15" Content="Over dated calls:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39" Width="171"/>
+                <Label Grid.Row="16" Content="Current call:" FontSize="22" Grid.Column="1" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" Width="126"/>
+                <Button Grid.Column="1" Content="ID:" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="141,0,0,0" VerticalAlignment="Center" Width="117" Height="31" Background="#FFA1A376"/>-->

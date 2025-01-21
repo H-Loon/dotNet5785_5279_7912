@@ -1,5 +1,5 @@
 ﻿using DO;
-using PL.Admin.Volunteer;
+using PL.Admin.Call;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,6 +27,8 @@ namespace PL.Admin.Call
         public string ButtonText { get; set; }
         public string IdLabel { get; set; } = "ID: ";
         public BO.BoCallType CallType { get; set; }
+        public BO.BoCallStatus Status { get; set; }
+
 
         public BO.Call Call
         {
@@ -36,7 +38,7 @@ namespace PL.Admin.Call
 
         // Using a DependencyProperty as the backing store for Volunteer.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CallProperty =
-            DependencyProperty.Register("CallW", typeof(BO.Volunteer), typeof(AddUpdateVolunteerWindow), new PropertyMetadata(null));
+            DependencyProperty.Register("Call", typeof(BO.Call), typeof(AddUpdateCallWindow), new PropertyMetadata(null));
 
 
         public AddUpdateCallWindow(int id = 0)
@@ -51,6 +53,8 @@ namespace PL.Admin.Call
                 CallType = BO.BoCallType.Other    
             };
             else Call = s_bl.Call.GetCall(id);
+            CallType = Call.CallType;
+            Status = Call.Status;
             InitializeComponent();
         }
 
@@ -112,4 +116,5 @@ namespace PL.Admin.Call
             throw new NotImplementedException();
         }
     }
+
 }
