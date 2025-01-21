@@ -34,7 +34,7 @@
                     <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Ordered By:" VerticalAlignment="Center" Foreground="White" FontSize="32" FontWeight="SemiBold"/>
                 </Viewbox>
 
-                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource VolunteerField}}"
+                <ComboBox ItemContainerStyle="{DynamicResource ComboBoxItemContainerStyle1}" Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource VolunteerField}}"
                      SelectedValue="{Binding VolunteerInListField, Mode=TwoWay}"
                      SelectionChanged="QueryVolunteerList"                        
                      Margin="10,0,0,0"
@@ -53,7 +53,7 @@
                        Grid.Column="4"
                        Cursor="Hand"
                        HorizontalAlignment="Center" VerticalAlignment="Center" Height="30" MinWidth="80"/>
-                <ListView ItemsSource="{Binding VolunteerInList}" Style="{StaticResource ListViewStyle1}" ItemContainerStyle="{StaticResource ListViewItemVisual1}" SelectedItem="{Binding SelectedVolunteer}" MouseDoubleClick="lsvVolunteersList_MouseDoubleClick" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.Row="1" Grid.ColumnSpan="6" Grid.Column="1">
+                <ListView ItemsSource="{Binding VolunteerInList}" Style="{StaticResource ListViewStyle1}" ItemContainerStyle="{StaticResource ListViewItemVisual1}" SelectedItem="{Binding SelectedVolunteer}" MouseDoubleClick="lsvVolunteersList_MouseDoubleClick" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" Grid.Row="1" Grid.ColumnSpan="6" Grid.Column="1">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}">
@@ -69,9 +69,9 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox IsEnabled="False" 
-                               IsChecked="{Binding IsActive}" 
-                               HorizontalAlignment="Center" 
-                               VerticalAlignment="Center"/>
+                                            IsChecked="{Binding IsActive}" 
+                                            HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

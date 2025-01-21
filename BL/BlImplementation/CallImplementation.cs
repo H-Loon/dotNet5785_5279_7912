@@ -69,7 +69,7 @@ internal class CallImplementation : ICall
         {
                 throw new BO.BlNotExistException("Call not found.");
             }
-            if (CallManager.GetCallStatus(call.Id) != BO.BoCallStatus.Open || _dal.Assignment.Read(a => a.CallId == call.Id) != null)
+            if (!IsDeletable(call.Id))
             {
                 throw new BO.BlNotAllowedException("Cannot delete call. The call is either not open or has been assigned to a volunteer.");
             }
@@ -233,27 +233,27 @@ internal class CallImplementation : ICall
         }
     }
 
-    public IEnumerable<BO.CallInList> GetCallsInList(BO.CallInListField? field1, object? obj, BO.CallInListField? field2) // filter by field1 and sort by field2
+    public IEnumerable<BO.CallInList> GetCallsInList(BO.CallInListField? filterField, object? obj, BO.CallInListField? sortedField) // filter by filterField and sort by sortedField
     {
         var assignments = _dal.Assignment.ReadAll();
         var calls = _dal.Call.ReadAll();
 
         IEnumerable<BO.CallInList> callInList = CallManager.GetCallInList();
             
-        callInList = field1 switch
+        callInList = filterField switch
         {
-            BO.CallInListField.AssignmentId => callInList.Where(c => c.AssignmentId.ToString().Contains((string)obj!)),
-            BO.CallInListField.CallId => callInList.Where(c => c.CallId.ToString().Contains((string)obj!)),
-            BO.CallInListField.CallType => callInList.Where(c => c.CallType == (BO.BoCallType)obj!),
-            BO.CallInListField.StartTime => callInList.Where(c => c.StartTime == (DateTime)obj!),
-            BO.CallInListField.TimeLeft => callInList.Where(c => c.TimeLeft == (TimeSpan)obj!),
-            BO.CallInListField.LastVolunteerName => callInList.Where(c => c.LastVolunteerName.Contains((string)obj!)),
-            BO.CallInListField.TimeOpen => callInList.Where(c => c.TimeOpen == (TimeSpan)obj!),
-            BO.CallInListField.CallStatus => callInList.Where(c => c.CallStatus == (BO.BoCallStatus)obj!),
-            BO.CallInListField.AssignCount => callInList.Where(c => c.AssignCount == int.Parse((string)obj!)),
+            BO.CallInListField.AssignmentId => callInList.Where(c => obj == null || c.AssignmentId.ToString().Contains((string)obj!)),
+            BO.CallInListField.CallId => callInList.Where(c => obj == null || c.CallId.ToString().Contains((string)obj!)),
+            BO.CallInListField.CallType => callInList.Where(c => obj == null || ((BO.BoCallType)obj! == BO.BoCallType.None || c.CallType == (BO.BoCallType)obj!)),
+            BO.CallInListField.StartTime => callInList.Where(c => obj == null || c.StartTime >= (DateTime)obj!),
+            BO.CallInListField.TimeLeft => callInList.Where(c => obj == null || c.TimeLeft >= (TimeSpan)obj!),
+            BO.CallInListField.LastVolunteerName => callInList.Where(c => { if (obj == null) return true; if(c.LastVolunteerName is null) return false; return c.LastVolunteerName.Contains((string)obj!); }),
+            BO.CallInListField.TimeOpen => callInList.Where(c => obj == null || c.TimeOpen >= (TimeSpan)obj!),
+            BO.CallInListField.CallStatus => callInList.Where(c => obj == null || ((BO.BoCallStatus)obj == BO.BoCallStatus.None || c.CallStatus == (BO.BoCallStatus)obj)),
+            BO.CallInListField.AssignCount => callInList.Where(c => obj == null || c.AssignCount == (int)obj!),
             _ => callInList
         };
-        callInList = field2 switch
+        callInList = sortedField switch
         {
             BO.CallInListField.AssignmentId => callInList.OrderBy(c => c.AssignmentId),
             BO.CallInListField.CallId => callInList.OrderBy(c => c.CallId),
@@ -380,5 +380,8 @@ internal class CallImplementation : ICall
             throw new Exception("An error occurred while trying to update the call.", ex);
         }
     }
-
+    public bool IsDeletable(int callId) 
+    { 
+        return _dal.Assignment.Read(a => a.CallId == callId) == null && CallManager.GetCallStatus(callId) == BO.BoCallStatus.Open;
+    }
 }

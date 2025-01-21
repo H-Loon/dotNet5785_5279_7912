@@ -1,20 +1,10 @@
 ﻿using PL.Admin.Volunteer;
-using System;
+using System.CodeDom;
 using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PL.Admin.Call
 {
@@ -23,12 +13,124 @@ namespace PL.Admin.Call
     /// </summary>
     public partial class CallInListView : UserControl
     {
-        /// <summary>
-        /// Interaction logic for VolunteerInListView.xaml
-        /// </summary>
-    
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private int Id = -1;
+        private object? filterValue = null;
+        private bool flag2 = true;
+        public CallInListView()
+        {
+            InitializeComponent();
+        }
+
+        //public IEnumerable EnumSource { get; private set; }
+
+        public IEnumerable EnumSource
+        {
+            get { return (IEnumerable)GetValue(EnumSourceProperty); }
+            set { SetValue(EnumSourceProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for EnumSource.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty EnumSourceProperty =
+            DependencyProperty.Register("EnumSource", typeof(IEnumerable), typeof(CallInListView));
+
+        public void SetEnumSource(Type enumType)
+        {
+            if (enumType.FullName is "BO.BoCallType")
+                filterValue = BO.BoCallType.None;
+            else if (enumType.FullName is "BO.BoCallStatus")
+                filterValue = BO.BoCallStatus.None;
+            EnumSource = new EnumItemSource(enumType);
+        }
+
+        public int Days { get; set; }
+        private DateTime _selectedTime = default;
+        public DateTime SelectedTime
+        {
+            get => _selectedTime;
+            set
+            {
+                _selectedTime = value;
+                filterValue = _selectedDate.Add(new TimeSpan(SelectedTime.Hour, SelectedTime.Minute, 0));
+            }
+        }
+        private DateTime _selectedDate = s_bl.Admin.GetConfigClock();
+        public DateTime SelectedDate
+        {
+            get => _selectedDate;
+            set
+            {
+                _selectedDate = value;
+                filterValue = _selectedDate.Add(new TimeSpan(SelectedTime.Hour, SelectedTime.Minute, 0));
+            }
+        }
+
+        public Visibility DaysTimeSpanVisibility
+        {
+            get { return (Visibility)GetValue(DaysTimeSpanVisibilityProperty); }
+            set { SetValue(DaysTimeSpanVisibilityProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for DaysTimeSpanVisibility.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DaysTimeSpanVisibilityProperty =
+            DependencyProperty.Register("DaysTimeSpanVisibility", typeof(Visibility), typeof(CallInListView), new PropertyMetadata(Visibility.Hidden));
+
+
+        public Visibility TimeSpanVisibility
+        {
+            get { return (Visibility)GetValue(TimeSpanVisibilityProperty); }
+            set { SetValue(TimeSpanVisibilityProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for TimeSpanVisibility.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TimeSpanVisibilityProperty =
+            DependencyProperty.Register("TimeSpanVisibility", typeof(Visibility), typeof(CallInListView), new PropertyMetadata(Visibility.Hidden));
+
+
+        public Visibility NumericUpDownVisibility
+        {
+            get { return (Visibility)GetValue(NumericUpDownVisibilityProperty); }
+            set { SetValue(NumericUpDownVisibilityProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for NumericUpDownVisibility.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty NumericUpDownVisibilityProperty =
+            DependencyProperty.Register("NumericUpDownVisibility", typeof(Visibility), typeof(CallInListView), new PropertyMetadata(Visibility.Hidden));
+
+
+        public Visibility DateTimeVisibility
+        {
+            get { return (Visibility)GetValue(DateTimeVisibilityProperty); }
+            set { SetValue(DateTimeVisibilityProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for DateTimeVisibility.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DateTimeVisibilityProperty =
+            DependencyProperty.Register("DateTimeVisibility", typeof(Visibility), typeof(CallInListView), new PropertyMetadata(Visibility.Hidden));
+
+
+        public Visibility ComboBoxVisibility
+        {
+            get { return (Visibility)GetValue(ComboBoxVisibilityProperty); }
+            set { SetValue(ComboBoxVisibilityProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ComboBoxVisibility.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ComboBoxVisibilityProperty =
+            DependencyProperty.Register("ComboBoxVisibility", typeof(Visibility), typeof(CallInListView), new PropertyMetadata(Visibility.Hidden));
+
+
+
+        public Visibility TextBoxVisibility
+        {
+            get { return (Visibility)GetValue(TextBoxVisibilityProperty); }
+            set { SetValue(TextBoxVisibilityProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for  TextBoxVisibility.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TextBoxVisibilityProperty =
+            DependencyProperty.Register("TextBoxVisibility", typeof(Visibility), typeof(CallInListView), new PropertyMetadata(Visibility.Hidden));
+
 
         public CallInfoView CallInfo
         {
@@ -38,7 +140,7 @@ namespace PL.Admin.Call
 
         // Using a DependencyProperty as the backing store for CallInfoView.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CallInfoViewProperty =
-            DependencyProperty.Register("CallInfoV", typeof(CallInfoView), typeof(CallInListView), new PropertyMetadata(null));
+            DependencyProperty.Register("CallInfoV", typeof(CallInfoView), typeof(CallInListView), new PropertyMetadata(default(UserControl)));
 
         private BO.CallInList? _selectedCall;
         public BO.CallInList? SelectedCall
@@ -47,67 +149,160 @@ namespace PL.Admin.Call
             set
             {
                 _selectedCall = value;
-                if (value != null)
-                    CallInfo = new CallInfoView(value.CallId);
+                //if (value != null)
+                //    CallInfo = new CallInfoView(value.CallId);
             }
         }
-
-        public BO.CallInListField CallInListFieldFiltred { get; set; } = BO.CallInListField.None;
+        private BO.CallInListField _callInListFieldFiltred = BO.CallInListField.None;
+        public BO.CallInListField CallInListFieldFiltred
+        {
+            get { return _callInListFieldFiltred; }
+            set
+            {
+                _callInListFieldFiltred = value;
+                FilterVisibilitySwitch();
+            }
+        }
         public BO.CallInListField CallInListFieldSorted { get; set; } = BO.CallInListField.CallId;
         public IEnumerable<BO.CallInList> CallInList
         {
-            get { return (IEnumerable<BO.CallInList>)GetValue(CallInlistProperty); }
-            set { SetValue(CallInlistProperty, value); }
+            get { return (IEnumerable<BO.CallInList>)GetValue(CallInListProperty); }
+            set { SetValue(CallInListProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for CallInList.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty CallInlistProperty =
+        public static readonly DependencyProperty CallInListProperty =
             DependencyProperty.Register("CallInList", typeof(IEnumerable<BO.CallInList>), typeof(CallInListView));
-        public CallInListView()
+
+        private void FilterVisibilitySwitch()
         {
-            InitializeComponent();
-        }
-        private void QueryCallList(object sender, RoutedEventArgs e)
-        {
-            if(sender is TextBox tb)
-                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred,tb.Text,CallInListFieldSorted);
-            if (sender is DatePicker dp)
-                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, DateTime.Parse(dp.Text), CallInListFieldSorted);
-            if (sender is ComboBox cb)
-                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, cb.SelectedItem, CallInListFieldSorted);
-        }
-        public void VolunteerListObserver()
-        {
-            switch (VActiveField)
+            flag2 = true;
+            ComboBoxVisibility = Visibility.Hidden;
+            TextBoxVisibility = Visibility.Hidden;
+            DateTimeVisibility = Visibility.Hidden;
+            NumericUpDownVisibility = Visibility.Hidden;
+            TimeSpanVisibility = Visibility.Hidden;
+            DaysTimeSpanVisibility = Visibility.Hidden;
+
+            switch (CallInListFieldFiltred)
             {
-                case ActiveField.All:
-                    CallInList = s_bl.Volunteer.GetVolunteerInList(null, CallInListField);
+                case BO.CallInListField.AssignmentId:
+                    TextBoxVisibility = Visibility.Visible;
                     break;
-                case ActiveField.Active:
-                    CallInList = s_bl.Volunteer.GetVolunteerInList(true, CallInListField);
+                case BO.CallInListField.CallId:
+                    TextBoxVisibility = Visibility.Visible;
                     break;
-                case ActiveField.Inactive:
-                    CallInList = s_bl.Volunteer.GetVolunteerInList(false, CallInListField);
+                case BO.CallInListField.CallType:
+                    SetEnumSource(typeof(BO.BoCallType));
+                    ComboBoxVisibility = Visibility.Visible;
+                    break;
+                case BO.CallInListField.StartTime:
+                    DateTimeVisibility = Visibility.Visible;
+                    TimeSpanVisibility = Visibility.Visible;
+                    break;
+                case BO.CallInListField.TimeLeft:
+                    TimeSpanVisibility = Visibility.Visible;
+                    DaysTimeSpanVisibility = Visibility.Visible;
+                    break;
+                case BO.CallInListField.TimeOpen:
+                    TimeSpanVisibility = Visibility.Visible;
+                    DaysTimeSpanVisibility = Visibility.Visible;
+                    break;
+                case BO.CallInListField.LastVolunteerName:
+                    TextBoxVisibility = Visibility.Visible;
+                    break;
+                case BO.CallInListField.CallStatus:
+                    SetEnumSource(typeof(BO.BoCallStatus));
+                    ComboBoxVisibility = Visibility.Visible;
+                    break;
+                case BO.CallInListField.AssignCount:
+                    NumericUpDownVisibility = Visibility.Visible;
+                    break;
+                default:
                     break;
             }
         }
-
-        private void VolunteerVAdd(object sender, RoutedEventArgs e)
+        private void SortCallList(object sender, RoutedEventArgs e)
         {
-            new AddUpdateVolunteerWindow().Show();
+            if (flag2)
+            {
+                CallInList = s_bl.Call.GetCallsInList(null, null, CallInListFieldSorted);
+                flag2 = false;
+            }
+            else
+                CallListObserver();
         }
-        private void lsvVolunteersList_MouseDoubleClick(object sender, RoutedEventArgs e)
+        private void QueryCallList(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, tb.Text, CallInListFieldSorted);
+                filterValue = tb.Text;
+            }
+            else if (sender is ComboBox cb)
+            {
+                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, cb.SelectedItem, CallInListFieldSorted);
+                filterValue = cb.SelectedItem;
+            }
+            else if (sender is MaterialDesignThemes.Wpf.NumericUpDown n1 && CallInListFieldFiltred == BO.CallInListField.AssignCount)
+            {
+                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, n1.Value, CallInListFieldSorted);
+                filterValue = n1.Value;
+            }
+            else if (CallInListFieldFiltred == BO.CallInListField.TimeLeft || CallInListFieldFiltred == BO.CallInListField.TimeOpen)
+            {
+                TimeSpan time = new TimeSpan(Days, SelectedTime.Hour, SelectedTime.Minute, 0);
+                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, time, CallInListFieldSorted);
+                filterValue = time;
+            }
+            else
+            {
+                CallListObserver();
+            }
+        }
+        public void CallListObserver()
+        {
+            if (filterValue != null && filterValue.GetType() != GetFilterType(CallInListFieldFiltred))
+            {
+                filterValue = null;
+            }
+
+            CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, filterValue, CallInListFieldSorted);
+        }
+
+        private Type GetFilterType(BO.CallInListField field)
+        {
+            return field switch
+            {
+                BO.CallInListField.AssignmentId => typeof(string),
+                BO.CallInListField.CallId => typeof(string),
+                BO.CallInListField.CallType => typeof(BO.BoCallType),
+                BO.CallInListField.StartTime => typeof(DateTime),
+                BO.CallInListField.TimeLeft => typeof(TimeSpan),
+                BO.CallInListField.LastVolunteerName => typeof(string),
+                BO.CallInListField.TimeOpen => typeof(TimeSpan),
+                BO.CallInListField.CallStatus => typeof(BO.BoCallStatus),
+                BO.CallInListField.AssignCount => typeof(int),
+                _ => typeof(object),
+            };
+        }
+
+        private void CallViewAdd(object sender, RoutedEventArgs e)
+        {
+            new AddUpdateCallWindow().Show();
+        }
+        private void lsvCallsList_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
             // Check if the window is already open
             foreach (Window window in Application.Current.Windows)
             {
-                if (window is VolunteerInfoView)
+                if (window is CallInfoView)
                 {
-                    if (Id != SelectedCall!.Id)
+                    if (Id != SelectedCall!.CallId)
                     {
                         window.Close();
-                        Id = SelectedCall!.Id;
-                        new AddUpdateVolunteerWindow(Id).Show();
+                        Id = SelectedCall!.CallId;
+                        new AddUpdateCallWindow(Id).Show();
                         return;
                     }
                     // Bring the existing window to the front
@@ -115,14 +310,14 @@ namespace PL.Admin.Call
                     return; // Exit the method
                 }
             }
-            Id = SelectedCall!.Id;
-            new AddUpdateVolunteerWindow(SelectedCall!.Id).Show();
+            Id = SelectedCall!.CallId;
+            new AddUpdateCallWindow(SelectedCall!.CallId).Show();
         }
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.CommandParameter is BO.VolunteerInList volunteer)
-                if (MessageBox.Show($"Are you sure you want to delete {volunteer.Name}?", "Delete Volunteer", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    s_bl.Volunteer.DeleteVolunteer(volunteer.Id);
+            if (sender is Button button && button.CommandParameter is BO.CallInList call)
+                if (MessageBox.Show($"Are you sure you want to delete {call.CallId}?", "Delete Call", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    s_bl.Call.DeleteCall(call.CallId);
         }
 
     }
@@ -131,7 +326,7 @@ namespace PL.Admin.Call
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return s_bl.Volunteer.IsDeletable((int)value);
+            return s_bl.Call.IsDeletable((int)value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -139,18 +334,25 @@ namespace PL.Admin.Call
             throw new NotImplementedException();
         }
     }
-    internal class VolunteerField : IEnumerable
+    internal class CallInListField : IEnumerable
     {
-        static readonly IEnumerable<BO.VolunteerInListField> s_enums =
-        (Enum.GetValues(typeof(BO.VolunteerInListField)) as IEnumerable<BO.VolunteerInListField>)!;
+        static readonly IEnumerable<BO.CallInListField> s_enums =
+        (Enum.GetValues(typeof(BO.CallInListField)) as IEnumerable<BO.CallInListField>)!;
 
         public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
     }
-    internal class VolunteerActiveField : IEnumerable
+    public class EnumItemSource : IEnumerable
     {
-        static readonly IEnumerable<ActiveField> s_enums =
-        (Enum.GetValues(typeof(ActiveField)) as IEnumerable<ActiveField>)!;
+        private readonly IEnumerable _enumValues;
 
-        public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
+        public EnumItemSource(Type enumType)
+        {
+            if (!enumType.IsEnum)
+                throw new ArgumentException("Type must be an enum");
+
+            _enumValues = Enum.GetValues(enumType);
+        }
+
+        public IEnumerator GetEnumerator() => _enumValues.GetEnumerator();
     }
 }

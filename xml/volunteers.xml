@@ -210,18 +210,4 @@
     <MaxDistance>99</MaxDistance>
     <DistanceType>Area</DistanceType>
   </Volunteer>
-  <Volunteer>
-    <Id>340623912</Id>
-    <Name>Hila Shalev</Name>
-    <Phone>0522345678</Phone>
-    <Email>hila.shalev@example.com</Email>
-    <Password>9bf1415f54c8fec050e39b49bee864f847e2915cc248e306357f5f23d65243be</Password>
-    <Address>17 Frishman St, Tel Aviv</Address>
-    <Latitude>32.078</Latitude>
-    <Longitude>34.786</Longitude>
-    <IsActive>true</IsActive>
-    <Role>Volunteer</Role>
-    <MaxDistance>78</MaxDistance>
-    <DistanceType>Area</DistanceType>
-  </Volunteer>
 </ArrayOfVolunteer>

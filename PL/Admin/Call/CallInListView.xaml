@@ -3,86 +3,113 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:PL.Admin.Call"
              DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
              mc:Ignorable="d" 
              d:DesignHeight="970" d:DesignWidth="1920">
     <UserControl.Resources>
-        <!--<local:VolunteerField x:Key="VolunteerField"/>
+        <local:CallInListField x:Key="CallInListField"/>
         <local:IsDeletable x:Key="IsDeletable"/>
-        <local:VolunteerActiveField x:Key="VolunteerActiveField"/>-->
     </UserControl.Resources>
     <Grid>
         <Border Margin="125,79,695,75" Grid.Row="1" Background="#FF284151" CornerRadius="16,16,16,16">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="39*"/>
-                    <ColumnDefinition Width="170*"/>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition MinWidth="55" Width="300*"/>
+                    <ColumnDefinition MinWidth="55" Width="300*"/>
+                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="205*"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="164*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="475*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="39*"/>
+                    <ColumnDefinition Width="30"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="80*"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="50"/>
                     <RowDefinition Height="690*"/>
                     <RowDefinition Height="30*"/>
                 </Grid.RowDefinitions>
-                <Viewbox Grid.Column="1" Height="42">
-                    <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Ordered By:" VerticalAlignment="Center" Foreground="White" FontSize="32" FontWeight="SemiBold"/>
+                <Viewbox Grid.Column="1" MaxWidth="200" MinWidth="0">
+                    <TextBlock Text="Ordered by:" VerticalAlignment="Center" Foreground="White" FontSize="36" FontWeight="SemiBold" Margin="0,5,0,0" HorizontalAlignment="Center"/>
                 </Viewbox>
 
-                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource VolunteerField}}"
-                 SelectedValue="{Binding VolunteerInListField, Mode=TwoWay}"
-                 SelectionChanged="QueryVolunteerList"                        
-                 Margin="10,0,0,0"
-                 Width="80"
-                 Grid.Column="2"
-                 Cursor="Hand"
-                 HorizontalAlignment="Left" VerticalAlignment="Center" Height="30" MinWidth="80"/>
-                <Viewbox Grid.Column="3" Height="42" Margin="10,0,0,0">
-                    <TextBlock TextWrapping="Wrap" Text="Filtred By:" VerticalAlignment="Center" Foreground="White" FontSize="32" FontWeight="SemiBold" Grid.Column="3" Height="42" Margin="10,0,0,0" />
+                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource CallInListField}}"
+                     SelectedValue="{Binding CallInListFieldSorted, Mode=TwoWay}"
+                     SelectionChanged="SortCallList"
+                     Cursor="Hand" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                <Viewbox >
                 </Viewbox>
-                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource VolunteerActiveField}}"
-                   SelectedValue="{Binding VActiveField, Mode=TwoWay}"
-                   SelectionChanged="QueryVolunteerList"
-                   Width="80"
-                   Margin="10,0,0,0"
-                   Grid.Column="4"
-                   Cursor="Hand"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" Height="30" MinWidth="80"/>
-                <ListView ItemsSource="{Binding VolunteerInList}" Style="{StaticResource ListViewStyle1}" ItemContainerStyle="{StaticResource ListViewItemVisual1}" SelectedItem="{Binding SelectedVolunteer}" MouseDoubleClick="lsvVolunteersList_MouseDoubleClick" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.Row="1" Grid.ColumnSpan="6" Grid.Column="1">
+
+                <Viewbox Grid.Column="2" MaxWidth="200" MinWidth="0" Margin="10,0,0,0">
+                    <TextBlock Text="Filtred by:" VerticalAlignment="Center" Foreground="White" FontSize="32" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,5,0,0" />
+                </Viewbox>
+
+                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource CallInListField}}"
+                        SelectedValue="{Binding CallInListFieldFiltred, Mode=TwoWay}"
+                        SelectionChanged="SortCallList"
+                        Cursor="Hand" VerticalAlignment="Center" MinWidth="80" Grid.Column="2" Grid.Row="1" Margin="10,0,0,10"/>
+                <Viewbox Grid.Column="2" Grid.Row="1" Margin="10,0,0,10">
+                </Viewbox>
+
+                <Viewbox Grid.Column="3" MaxWidth="150" MinWidth="00" Margin="10,0,0,0">
+                    <TextBlock Text="Value:" VerticalAlignment="Center" Foreground="White" FontSize="32" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,5,0,0" />
+                </Viewbox>
+
+                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding EnumSource, Mode=OneWay}" Grid.Column="3" Height="30" Visibility="{Binding ComboBoxVisibility}" SelectionChanged="QueryCallList" VerticalAlignment="Center" Grid.Row="1" Margin="10,0,0,10"/>
+
+                <TextBox Visibility="{Binding TextBoxVisibility}" 
+                         TextChanged="QueryCallList" Grid.Column="3" 
+                         Foreground="white" FontSize="26" 
+                         VerticalAlignment="Center" 
+                         Style="{StaticResource MaterialDesignFilledTextBox}"
+                         MaxHeight="47" Grid.Row="1" Margin="10,0,0,10"/>
+
+                <materialDesign:NumericUpDown Minimum="0" MaxHeight="47" Visibility="{Binding NumericUpDownVisibility}" VerticalAlignment="Center" Grid.Column="3" ValueChanged="QueryCallList" Foreground="White" Style="{StaticResource MaterialDesignFilledNumericUpDown}" MaxWidth="40" Grid.Row="1" Margin="10,0,0,10"/>
+
+                <DatePicker
+                    Grid.Column="3"
+                    Foreground="White"
+                    SelectedDateChanged="QueryCallList"
+                    SelectedDate="{Binding SelectedDate}"
+                    Visibility="{Binding DateTimeVisibility}"
+                    Style="{StaticResource MaterialDesignOutlinedDatePicker}" MaxHeight="47" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,10" Width="80" Padding="16,16,12,10"
+                    />
+
+                <materialDesign:TimePicker
+                    Grid.Column="3"
+                    Foreground="White"
+                    Is24Hours="True"
+                    SelectedTimeChanged="QueryCallList"
+                    SelectedTime="{Binding SelectedTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Visibility="{Binding TimeSpanVisibility}"
+                    Style="{StaticResource MaterialDesignOutlinedTimePicker}" MaxHeight="47" Grid.Row="1" HorizontalAlignment="Right" Grid.ColumnSpan="1" Margin="0,0,0,10" Width="80" Padding="16,10,12,10"
+                    />
+                <materialDesign:NumericUpDown materialDesign:HintAssist.Hint="days" MaxHeight="47" Minimum="0" Value="{Binding Days, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding DaysTimeSpanVisibility}" VerticalAlignment="Center" Grid.Column="3" ValueChanged="QueryCallList" Foreground="White" Style="{StaticResource MaterialDesignFilledNumericUpDown}" Grid.Row="1" HorizontalAlignment="Left" MinWidth="0" MaxWidth="100" Margin="10,0,0,10" Padding="6,10,0,10" Width="80"/>
+
+                <ListView ItemsSource="{Binding CallInList}" Style="{StaticResource ListViewStyle1}" ItemContainerStyle="{StaticResource ListViewItemVisual1}" SelectedItem="{Binding SelectedCall}" MouseDoubleClick="lsvCallsList_MouseDoubleClick" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Auto" Grid.Row="2" Grid.ColumnSpan="5" Grid.Column="1" HorizontalAlignment="Left">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="Delete" Click="btnDelete_Click" CommandParameter="{Binding}" Style="{StaticResource ListViewButton}" MinWidth="100" IsEnabled="{Binding Id, Converter={StaticResource IsDeletable}}"/>
+                                        <Button Content="Delete" Click="btnDelete_Click" CommandParameter="{Binding}" Style="{StaticResource ListViewButton}" MinWidth="100" IsEnabled="{Binding CallId, Converter={StaticResource IsDeletable}}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
-                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
-                            <GridViewColumn Header="Is Active" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox IsEnabled="False" 
-                           IsChecked="{Binding IsActive}" 
-                           HorizontalAlignment="Center" 
-                           VerticalAlignment="Center"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Completed" DisplayMemberBinding="{Binding CompletedCalls}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
-                            <GridViewColumn Header="Canceled" DisplayMemberBinding="{Binding CanceledCalls}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
-                            <GridViewColumn Header="In treatment" DisplayMemberBinding="{Binding CallInTreatment}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
-                            <GridViewColumn Header="Call Type" DisplayMemberBinding="{Binding CurrentCallType}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Call Id" DisplayMemberBinding="{Binding CallId}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Assignment Id" DisplayMemberBinding="{Binding AssignmentId}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Call Type" DisplayMemberBinding="{Binding CallType}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Start Time" DisplayMemberBinding="{Binding StartTime, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Time Left" DisplayMemberBinding="{Binding TimeLeft}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Time Open" DisplayMemberBinding="{Binding TimeOpen}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Status" DisplayMemberBinding="{Binding CallStatus}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Assign count" DisplayMemberBinding="{Binding AssignCount}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Last Volunteer Name" DisplayMemberBinding="{Binding LastVolunteerName}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <Button Margin="2,0,0,0" VerticalAlignment="Center" Height="40" Grid.Column="6" HorizontalAlignment="Left" Width="40" Click="VolunteerVAdd">
+                <Button VerticalAlignment="Center" Height="40" Grid.Column="5" HorizontalAlignment="Center" Width="40" Click="CallViewAdd" Grid.RowSpan="2">
                     <Button.Content>
                         <Grid Height="30">
                             <Grid.RowDefinitions>
@@ -90,19 +117,19 @@
                                 <RowDefinition Height="13*"/>
                             </Grid.RowDefinitions>
                             <Line 
-               Stroke="White"
-               StrokeThickness="3"
-               RenderSize="16,16"
-               StrokeLineJoin="Round"
-               Fill="White"
-               Width="30" Height="30"  StrokeEndLineCap="Round" StrokeStartLineCap="Round" X1="25" X2="5" Y1="15" Y2="15" Grid.RowSpan="2"/>
+                                Stroke="White"
+                                StrokeThickness="3"
+                                RenderSize="16,16"
+                                StrokeLineJoin="Round"
+                                Fill="White"
+                                Width="30" Height="30"  StrokeEndLineCap="Round" StrokeStartLineCap="Round" X1="25" X2="5" Y1="15" Y2="15" Grid.RowSpan="2"/>
                             <Line 
-               Stroke="White"
-               StrokeThickness="3"
-               RenderSize="16,16"
-               StrokeLineJoin="Round"
-               Fill="White"
-               Width="30" Height="30" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Y1="25" Y2="5" X1="15" X2="15" Grid.RowSpan="2"/>
+                               Stroke="White"
+                               StrokeThickness="3"
+                               RenderSize="16,16"
+                               StrokeLineJoin="Round"
+                               Fill="White"
+                               Width="30" Height="30" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Y1="25" Y2="5" X1="15" X2="15" Grid.RowSpan="2"/>
                         </Grid>
                     </Button.Content>
                 </Button>
@@ -111,10 +138,10 @@
         <Border Margin="0,79,120,75" Grid.Row="1" Background="#FF284151" CornerRadius="16,16,16,16" HorizontalAlignment="Right" Width="500">
             <Grid>
                 <ScrollViewer VerticalScrollBarVisibility="Hidden" Margin="27,27,27,27" Panel.ZIndex="1">
-                    <ContentControl  Content="{Binding VolunteerInfo}" Panel.ZIndex="1"/>
+                    <ContentControl  Content="{Binding CallInfo}" Panel.ZIndex="1"/>
                 </ScrollViewer>
                 <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Margin="100,0,100,0">
-                    <TextBlock HorizontalAlignment="Center" Text="Select a volunteer" VerticalAlignment="Center" Foreground="#99FFFFFF" FontSize="28" TextWrapping="Wrap"/>
+                    <TextBlock HorizontalAlignment="Center" Text="Select a call" VerticalAlignment="Center" Foreground="#99FFFFFF" FontSize="28" TextWrapping="Wrap"/>
                 </Viewbox>
             </Grid>
         </Border>

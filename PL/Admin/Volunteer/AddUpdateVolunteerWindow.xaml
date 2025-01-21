@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:PL.Admin.Volunteer"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
@@ -31,35 +32,24 @@
             <Setter Property="TextBlock.FontSize" Value="10"/>
         </Style>-->
 
-        <Style TargetType="TextBox">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="White" Offset="1"/>
-                        <GradientStop Color="Transparent" Offset="0.933"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Height" Value="Auto"/>
             <Setter Property="Width" Value="170"/>
-            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="BorderBrush" Value="#99ffffff"/>
             <Setter Property="CaretBrush" Value="White"/>
             <Style.Triggers>
                 <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="{x:Null}"/>
-                    <Setter Property="Background" Value="#96ACBC"/>
-                    <Setter Property="FontSize" Value="18"/>
+                    <Setter Property="BorderBrush" Value="White"/>
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="{x:Null}"/>
-                    <Setter Property="Background" Value="#96ACBC"/>
-                    <Setter Property="FontSize" Value="18"/>
+                    <Setter Property="BorderBrush" Value="White"/>
                 </Trigger>
                 <Trigger Property="IsReadOnly" Value="True">
-                    <Setter Property="BorderBrush" Value="{x:Null}"/>
-                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -113,7 +103,7 @@
                 <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.Latitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
                 <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.Longitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
                 <ComboBox ItemsSource="{Binding Source={StaticResource VolunteerRole}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding Role, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" Margin="-4,0,0,0"/>
-                <CheckBox IsChecked="{Binding Volunteer.IsActive, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="10" VerticalAlignment="Center" Height="15" Width="16" Grid.Column="2"/>
+                <CheckBox IsChecked="{Binding Volunteer.IsActive, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="10" VerticalAlignment="Center" Height="16" Width="16" Grid.Column="2" Style="{StaticResource MaterialDesignLightCheckBox}"/>
                 <TextBox Text="{Binding Volunteer.MaxDistance, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2"/>
                 <ComboBox IsEnabled="False" ItemsSource="{Binding Source={StaticResource DistanceType}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding DistanceType, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="12" VerticalAlignment="Center" Grid.Column="2" Margin="-4,0,0,0"/>
                 <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CompletedCalls, Mode = OneTime}" HorizontalAlignment="Left" Grid.Row="13" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>

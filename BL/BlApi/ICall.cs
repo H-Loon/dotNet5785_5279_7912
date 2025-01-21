@@ -70,4 +70,10 @@ public interface ICall : IObservable //stage 5
     /// <param name="volunteerId">The ID of the volunteer to assign the call to.</param>
     /// <param name="callId">The ID of the call to be assigned.</param>
     void AssignCall(int volunteerId, int callId);
+    /// <summary>
+    /// Checks if a call is deletable.
+    /// </summary>
+    /// <param name="callId"></param>
+    /// <returns></returns>
+    bool IsDeletable(int callId);
 }

@@ -40,7 +40,7 @@
             <Border Background="#FF7690A3" Grid.Column="3" CornerRadius="16" MinWidth="300" MaxWidth="500" MaxHeight="55">
                 <Grid>
                     <RadioButton Content="Volunteers" GroupName="A" Style="{StaticResource HeaderRadioButtonStyle}" Click="CurrentViewToVolunteerInList" HorizontalAlignment="Left" Width="140" Margin="50,0,0,0" Height="40"/>
-                    <RadioButton Content="Calls" GroupName="A" Style="{StaticResource HeaderRadioButtonStyle}" Height="40" Margin="0,7,50,7" HorizontalAlignment="Right" Width="64"/>
+                    <RadioButton Content="Calls" GroupName="A" Style="{StaticResource HeaderRadioButtonStyle}" Click="CurrentViewToCallInList" Height="40" Margin="0,7,50,7" HorizontalAlignment="Right" Width="64"/>
                 </Grid>
             </Border>
             <Grid Grid.Column="7">

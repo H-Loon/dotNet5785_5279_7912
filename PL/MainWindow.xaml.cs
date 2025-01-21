@@ -10,7 +10,6 @@ namespace PL;
 public partial class MainWindow : Window
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-    bool flag = false;
     int count = 0;
     private List<TabItem> _tabItems;
     private TabItem _tabAdd;

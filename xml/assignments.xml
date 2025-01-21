@@ -405,7 +405,7 @@
     <VolunteerId>0</VolunteerId>
     <CallId>1000</CallId>
     <StartTime>2025-01-14T22:26:11</StartTime>
-    <EndTime>2025-01-14T22:26:11</EndTime>
+    <EndTime>2025-01-14T22:26:12</EndTime>
     <AssignmentEndReason>OverDated</AssignmentEndReason>
   </Assignment>
   <Assignment>
@@ -413,7 +413,7 @@
     <VolunteerId>0</VolunteerId>
     <CallId>1001</CallId>
     <StartTime>2025-01-14T22:26:11</StartTime>
-    <EndTime>2025-01-14T22:26:11</EndTime>
+    <EndTime>2025-01-14T22:26:12</EndTime>
     <AssignmentEndReason>OverDated</AssignmentEndReason>
   </Assignment>
   <Assignment>
@@ -421,7 +421,7 @@
     <VolunteerId>0</VolunteerId>
     <CallId>1002</CallId>
     <StartTime>2025-01-14T22:26:11</StartTime>
-    <EndTime>2025-01-14T22:26:11</EndTime>
+    <EndTime>2025-01-14T22:26:12</EndTime>
     <AssignmentEndReason>OverDated</AssignmentEndReason>
   </Assignment>
   <Assignment>
@@ -429,7 +429,7 @@
     <VolunteerId>0</VolunteerId>
     <CallId>1003</CallId>
     <StartTime>2025-01-14T22:26:11</StartTime>
-    <EndTime>2025-01-14T22:26:11</EndTime>
+    <EndTime>2025-01-14T22:26:12</EndTime>
     <AssignmentEndReason>OverDated</AssignmentEndReason>
   </Assignment>
   <Assignment>
@@ -437,7 +437,7 @@
     <VolunteerId>0</VolunteerId>
     <CallId>1004</CallId>
     <StartTime>2025-01-14T22:26:11</StartTime>
-    <EndTime>2025-01-14T22:26:11</EndTime>
+    <EndTime>2025-01-14T22:26:12</EndTime>
     <AssignmentEndReason>OverDated</AssignmentEndReason>
   </Assignment>
 </ArrayOfAssignment>

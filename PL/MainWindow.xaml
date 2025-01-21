@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         WindowStartupLocation="CenterScreen"
-       
         Title="WeirdAid" MinWidth="1350" MinHeight="850">
 
     <Grid>
@@ -18,7 +18,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        
+
         <Grid.Background>
             <RadialGradientBrush Center="0.5,0" GradientOrigin="0.5,0">
                 <GradientStop Color="#87A6BC" Offset="0"/>
@@ -26,27 +26,28 @@
                 <GradientStop Color="#FF87A6BC" Offset="0.062"/>
             </RadialGradientBrush>
         </Grid.Background>
-        <!--<Image Source="Images/6938830_3417324.jpg" Stretch="UniformToFill" Margin="-5">
-            <Image.Effect>
-                <BlurEffect Radius="20"/>
-            </Image.Effect>
-        </Image>-->
-        <Border Background="#284151" VerticalAlignment="Top" Height="22">
+        
+        <!--<Border Background="#284151" VerticalAlignment="Top" Height="22">
             <Border.Effect>
                 <DropShadowEffect Opacity="0.25" BlurRadius="10" ShadowDepth="7.3" Direction="-75"/>
             </Border.Effect>
-        </Border>
-        <TabControl Style="{DynamicResource TabControlStyle1}" Name="tabDynamic" ItemsSource="{Binding}" 
+        </Border>-->
+        
+        <TabControl 
+            HorizontalContentAlignment="Left"
+            materialDesign:ColorZoneAssist.Mode="SecondaryMid"
+            Style="{DynamicResource MaterialDesignFilledTabControl}" Name="tabDynamic" ItemsSource="{Binding}" 
                     SelectionChanged="tabDynamic_SelectionChanged" BorderBrush="{x:Null}" Background="{x:Null}" Padding="-1">
             <TabControl.Resources>
                 <DataTemplate x:Key="TabHeader" DataType="TabItem">
                     <DockPanel>
                         <Button Name="btnDelete" DockPanel.Dock="Right"
                                 Style="{StaticResource TabButton}"
-                                Content="X"
-                                Margin="5,0,0,0" Padding="0" Click="btnDelete_Click" 
+                                Margin="20,1,-15,0" Padding="0" Click="btnDelete_Click" 
                                 CommandParameter="{Binding RelativeSource=
-                                {RelativeSource AncestorType={x:Type TabItem}}, Path=Name}" Height="15" Width="15" FontSize="8"/>
+                                {RelativeSource AncestorType={x:Type TabItem}}, Path=Name}" FontSize="8">
+                            <materialDesign:PackIcon Height="15" Width="15" Kind="Close"/>
+                        </Button>
 
                         <TextBlock Text="{Binding RelativeSource=
                                         {RelativeSource AncestorType={x:Type TabItem}}, Path=Header}" />
