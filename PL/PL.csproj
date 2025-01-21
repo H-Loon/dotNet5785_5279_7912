@@ -11,11 +11,32 @@
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 	<UseCommonOutputDirectory>true</UseCommonOutputDirectory>
+	  
   </PropertyGroup>
 
+
+	<Target Name="CopyAllReferencedAssemblies" AfterTargets="Build">
+	    <ItemGroup>
+		    <ResolvedFiles Include="@(ReferenceCopyLocalPaths)" />
+	    </ItemGroup>
+	    <Copy SourceFiles="@(ResolvedFiles)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
+    </Target>
+
+
+	<ItemGroup>
+	  <Compile Remove="Components\TimePicker.xaml.cs" />
+	</ItemGroup>
+	
+	                            
   <ItemGroup>
     <None Remove="Images\3643767_key_keys_main_password_privilege_icon.png" />
     <None Remove="Images\6777283_human_id_identification_identity_myaccount_icon.png" />
+  </ItemGroup>
+	
+	                            
+  <ItemGroup>
+    <Page Remove="Components\TimePicker.xaml" />
+    <Page Remove="Components\TimePickerStyle.xaml" />
   </ItemGroup>
 
   <!--<ItemGroup>
@@ -34,6 +55,11 @@
 
   <ItemGroup>
     <Folder Include="Volunteer\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
   </ItemGroup>
 
   <!--<ItemGroup>

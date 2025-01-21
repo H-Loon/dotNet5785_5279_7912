@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿using PL.Admin.Volunteer;
+using System.CodeDom;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,7 +11,6 @@ namespace PL;
 public partial class MainWindow : Window
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-    bool flag = false;
     int count = 0;
     private List<TabItem> _tabItems;
     private TabItem _tabAdd;
@@ -123,5 +123,12 @@ public partial class MainWindow : Window
         }
     }
 
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        VolunteerInListView volunteerInListView = new VolunteerInListView();
+        Admin.Call.CallInListView callInListView = new Admin.Call.CallInListView();
 
+        s_bl.Volunteer.AddObserver(volunteerInListView.VolunteerListObserver);
+        s_bl.Call.AddObserver(callInListView.CallListObserver);
+    }
 }

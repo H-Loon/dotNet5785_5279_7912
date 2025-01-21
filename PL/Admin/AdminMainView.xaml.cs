@@ -1,4 +1,5 @@
 ﻿using BO;
+using PL.Admin.Volunteer;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,8 +26,9 @@ namespace PL.Admin
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public string Initials { get; set; }
-        public Menu.MenuView MenuV { get; set; } = new Menu.MenuView();
-        public Volunteer.VolunteerInListView VolunteerInListV { get; set; } = new Volunteer.VolunteerInListView();
+        public Call.CallInListView CallInListView { get; set; } = new Call.CallInListView();
+        public Menu.MenuView MenuView { get; set; } = new Menu.MenuView();
+        public VolunteerInListView VolunteerInListView { get; set; } = new VolunteerInListView();
 
         public UserControl CurrentView
         {
@@ -41,23 +43,27 @@ namespace PL.Admin
         public AdminMainView(string name)
         {
             Initials = new string(name.Where(char.IsUpper).Take(2).ToArray()); // get the first two capital letters from the name
-            CurrentView = MenuV;
+            CurrentView = MenuView;
             InitializeComponent();
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
-            => s_bl.Volunteer.AddObserver(VolunteerInListV.VolunteerListObserver);
-
-        //private void Window_Closed(object sender, EventArgs e)
-        //        => s_bl.Volunteer.RemoveObserver(VolunteerInListV.VolunteerListObserver);
+        {
+            s_bl.Volunteer.AddObserver(VolunteerInListView.VolunteerListObserver);
+            s_bl.Call.AddObserver(CallInListView.CallListObserver);
+        }
         private void CurrentViewToVolunteerInList(object sender, RoutedEventArgs e)
         {
-
-            CurrentView = VolunteerInListV;
+            CurrentView = VolunteerInListView;
         }
 
         private void CurrentViewToAdmin(object sender, RoutedEventArgs e)
         {
-            CurrentView = MenuV;
+            CurrentView = MenuView;
+        }
+
+        private void CurrentViewToCallInList(object sender, RoutedEventArgs e)
+        {
+            CurrentView = CallInListView;
         }
     }
     public class ConvertReverseTrueKey : IValueConverter
