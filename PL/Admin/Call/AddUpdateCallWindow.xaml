@@ -105,10 +105,10 @@
                 <TextBox Text="{Binding Call.Address, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" Height="21" Width="180"/>
 
                 <Label Grid.Row="4" Content="Latitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="40"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.Latitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Width="0"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.Latitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" />
 
                 <Label Grid.Row="5" Content="Longitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="39"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.Longitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Width="0"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.Longitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}"/>
 
                 <Label Grid.Row="6" Content="StartTime:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="40"/>
                 <TextBlock Style="{StaticResource TB}" Text="{Binding Call.StartTime , Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2"  Width="0"/>
@@ -122,19 +122,19 @@
                 <ToggleButton
                     x:Name="ToggleMT"
                     IsChecked="{Binding ToggleMTbool}"
-  Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                    Style="{StaticResource MaterialDesignSwitchToggleButton}"
                     Background="#FF284151"
-  ToolTip="MaterialDesignSwitchToggleButton with Custom Track Background" Grid.Column="1" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" Margin="0,0,15,0" Content=""
- >
+                    ToolTip="MaterialDesignSwitchToggleButton with Custom Track Background" Grid.Column="1" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" Margin="0,0,15,0" Content=""
+                     >
                     <materialDesign:ToggleButtonAssist.SwitchTrackOnBackground
-   >
+                     >
                         <SolidColorBrush
-      Color="#FF618F8D" />
+                            Color="#FF618F8D" />
                     </materialDesign:ToggleButtonAssist.SwitchTrackOnBackground>
                     <materialDesign:ToggleButtonAssist.SwitchTrackOffBackground
    >
                         <SolidColorBrush
-      Color="#FF284151" />
+                             Color="#FF284151" />
                     </materialDesign:ToggleButtonAssist.SwitchTrackOffBackground>
                 </ToggleButton>
 
@@ -157,13 +157,9 @@
 
 
                 <Label Grid.Row="8" Content="Status:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39"/>
-                <TextBlock Text="{Binding Call.Status, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="8" Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Center" Height="24"  Width="0"/>
-
-
+                <TextBlock Text="{Binding Call.Status, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="8" Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" FontSize="18" Foreground="White"  />
 
                 <Button Content="{Binding ButtonText}" Click="btnAddUpdate_Click" Grid.Row="17" VerticalAlignment="Center" Height="36" Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Center" MinWidth="350"/>
-
-
 
 
             </Grid>
