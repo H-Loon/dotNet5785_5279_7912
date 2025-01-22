@@ -24,11 +24,59 @@ namespace PL.Admin.Call
     public partial class AddUpdateCallWindow : Window
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private bool flag = true;
         public string ButtonText { get; set; }
+
+        public bool ToggleMTbool { get; set; } = false;
         public string IdLabel { get; set; } = "ID: ";
-        public BO.BoCallType CallType { get; set; }
+
+        private BO.BoCallType _callType;
+        public BO.BoCallType CallType
+        {
+            get => _callType;
+            set
+            {
+                if (flag)
+                {
+                    _callType = value;
+                    flag = false;
+                }
+                _callType = value;
+                Call.CallType = value;
+            }
+        }
         public BO.BoCallStatus Status { get; set; }
 
+        private DateTime _selectedTime = default;
+        public DateTime SelectedTime
+        {
+            get => _selectedTime;
+            set
+            {
+                if (flag)
+                {
+                    _selectedTime = value;
+                    flag = false;
+                }
+                _selectedTime = value;
+                Call.MaxTime = new DateTime(_selectedDate.Year,_selectedDate.Month,_selectedDate.Day,_selectedTime.Hour,_selectedTime.Minute,0);
+            }
+        }
+        private DateTime _selectedDate = s_bl.Admin.GetConfigClock();
+        public DateTime SelectedDate
+        {
+            get => _selectedDate;
+            set
+            {
+                if (flag)
+                {
+                    _selectedTime = value;
+                    flag = false;
+                }
+                _selectedDate = value;
+                Call.MaxTime = new DateTime(_selectedDate.Year, _selectedDate.Month, _selectedDate.Day, _selectedTime.Hour, _selectedTime.Minute, 0);
+            }
+        }
 
         public BO.Call Call
         {
@@ -53,27 +101,34 @@ namespace PL.Admin.Call
                 CallType = BO.BoCallType.Other    
             };
             else Call = s_bl.Call.GetCall(id);
+            if (Call.MaxTime != null)
+                ToggleMTbool = true;
             CallType = Call.CallType;
-            Status = Call.Status;
+            SelectedDate = Call.MaxTime ?? s_bl.Admin.GetConfigClock();
+            SelectedTime = Call.MaxTime ?? s_bl.Admin.GetConfigClock();
             InitializeComponent();
         }
 
         void btnAddUpdate_Click(object sender, RoutedEventArgs e)
         {
-            bool flag = true;
+            bool flag = false;
 
             try
             {
+                if (!ToggleMTbool)
+                {
+                    Call.MaxTime = null;
+                }
                 if (ButtonText == "Add") s_bl.Call.AddCall(Call);
                 else s_bl.Call.UpdateCall(Call);
-                flag = false;
+                flag = true;
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error");
             }
 
-            if (flag == false)
+            if (flag)
                 Close();
         }
 

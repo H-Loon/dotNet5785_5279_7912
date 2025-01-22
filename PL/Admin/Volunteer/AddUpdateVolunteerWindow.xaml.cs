@@ -61,20 +61,20 @@ namespace PL.Admin.Volunteer
 
         void btnAddUpdate_Click(object sender, RoutedEventArgs e)
         {
-            bool flag = true;
+            bool flag = false;
 
             try
             {
                 if (ButtonText == "Add") s_bl.Volunteer.AddVolunteer(Volunteer);
                 else s_bl.Volunteer.UpdateVolunteer(Volunteer.Id, Volunteer);
-                flag = false;
+                flag = true;
             }
             catch
             {
                 MessageBox.Show("Invalid data", "Error");
             }
 
-            if (flag == false)
+            if (flag)
                 Close();
         }
 

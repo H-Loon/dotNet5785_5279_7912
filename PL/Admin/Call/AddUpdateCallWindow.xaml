@@ -4,20 +4,33 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL.Admin.Call"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Title="AddUpdateCallWindow" Height="840" Width="500"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <!--<local:CallType x:Key="CallType"/>
-        <local:Status x:Key="Status"/>-->
+        <local:CallType x:Key="CallType"/>
+        <local:Status x:Key="Status"/>
+        <local:ConvertUpdateToTrueKey x:Key="ConvertUpdateToTrueKey"/>
+        <local:ConvertUpdateToVisibleKey x:Key="ConvertUpdateToVisibleKey"/>
 
         <Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxStyle2}"/>
+        
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="Height" Value="Auto"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Label">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="16">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="TextBlock" x:Key="TB">
@@ -25,35 +38,24 @@
             <Setter Property="FontSize" Value="18"/>
         </Style>
 
-        <Style TargetType="TextBox">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="White" Offset="1"/>
-                        <GradientStop Color="Transparent" Offset="0.933"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Height" Value="Auto"/>
-            <Setter Property="Width" Value="170"/>
-            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="BorderBrush" Value="#99ffffff"/>
             <Setter Property="CaretBrush" Value="White"/>
             <Style.Triggers>
                 <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="{x:Null}"/>
-                    <Setter Property="Background" Value="#96ACBC"/>
-                    <Setter Property="FontSize" Value="18"/>
+                    <Setter Property="BorderBrush" Value="White"/>
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="{x:Null}"/>
-                    <Setter Property="Background" Value="#96ACBC"/>
-                    <Setter Property="FontSize" Value="18"/>
+                    <Setter Property="BorderBrush" Value="White"/>
                 </Trigger>
                 <Trigger Property="IsReadOnly" Value="True">
-                    <Setter Property="BorderBrush" Value="{x:Null}"/>
-                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -73,8 +75,8 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="27"/>
-                    <ColumnDefinition Width="221*"/>
-                    <ColumnDefinition Width="181*"/>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="212"/>
                     <ColumnDefinition Width="27"/>
                 </Grid.ColumnDefinitions>
 
@@ -91,41 +93,77 @@
                     <RowDefinition Height="54*"/>
                 </Grid.RowDefinitions>
 
-                <Label Grid.Row="1" Content="Type of Call:" FontSize="22" Grid.ColumnSpan="2" Margin="24,17,3,27" Grid.RowSpan="2"/>
-                <ComboBox ItemsSource="{Binding Source={StaticResource CallType}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding CallType, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="212,0,0,0" Grid.ColumnSpan="1" Height="30" Width="37"/>
+                <Label Content="{Binding IdLabel, Mode=OneTime}" Background="#96ACBC" Grid.Row="0" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="40" FontSize="24" FontWeight="SemiBold"/>
 
-                <Label Grid.Row="2" Content="Description:" FontSize="22" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,25,176,10"/>
-                <TextBox Text="{Binding Call.Description, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" Height="20" Width="170"/>
+                <Label Grid.Row="1" Content="Type of Call:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding Source={StaticResource CallType}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding CallType, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Grid.ColumnSpan="1" Height="30"/>
 
-                <Label Grid.Row="3" Content="Adresse:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="39" Width="142"/>
-                <TextBox Text="{Binding Call.Address, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" Height="21" Width="170"/>
+                <Label Grid.Row="2" Content="Description:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding Call.Description, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Grid.Row="2" TextWrapping="Wrap" Grid.Column="2" VerticalAlignment="Center" Width="180" HorizontalAlignment="Left"/>
 
-                <Label Grid.Row="4" Content="Latitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="40" Width="93"/>
+                <Label Grid.Row="3" Content="Adresse:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="39"/>
+                <TextBox Text="{Binding Call.Address, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" Height="21" Width="180"/>
+
+                <Label Grid.Row="4" Content="Latitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="40"/>
                 <TextBlock Style="{StaticResource TB}" Text="{Binding Call.Latitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Width="0"/>
 
-                <Label Grid.Row="5" Content="Longitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="39" Width="113"/>
+                <Label Grid.Row="5" Content="Longitude:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="39"/>
                 <TextBlock Style="{StaticResource TB}" Text="{Binding Call.Longitude, Mode = TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Width="0"/>
 
-                <Label Grid.Row="6" Content="StartTime:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="40" Width="146"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.StartTime , Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2"  Width="0"/>
+                <Label Grid.Row="6" Content="StartTime:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="40"/>
+                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.StartTime , Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2"  Width="0"/>
+
+                <Label Grid.Row="7" Content="MaxTime:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39"/>
+                <!--<ToggleButton
+                    x:Name="ToggleMT"
+                    IsChecked="False"
+                    Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                    ToolTip="Add max time" Grid.Column="1" Grid.Row="7" Margin="0,0,15,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>-->
+                <ToggleButton
+                    x:Name="ToggleMT"
+                    IsChecked="{Binding ToggleMTbool}"
+  Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                    Background="#FF284151"
+  ToolTip="MaterialDesignSwitchToggleButton with Custom Track Background" Grid.Column="1" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" Margin="0,0,15,0" Content=""
+ >
+                    <materialDesign:ToggleButtonAssist.SwitchTrackOnBackground
+   >
+                        <SolidColorBrush
+      Color="#FF618F8D" />
+                    </materialDesign:ToggleButtonAssist.SwitchTrackOnBackground>
+                    <materialDesign:ToggleButtonAssist.SwitchTrackOffBackground
+   >
+                        <SolidColorBrush
+      Color="#FF284151" />
+                    </materialDesign:ToggleButtonAssist.SwitchTrackOffBackground>
+                </ToggleButton>
+
+                <DatePicker
+                    Grid.Column="2"
+                    Foreground="White"
+                    SelectedDate="{Binding SelectedDate}"
+                    IsEnabled="{Binding ElementName=ToggleMT, Path=IsChecked}"
+                    Style="{StaticResource MaterialDesignOutlinedDatePicker}" Grid.Row="7" HorizontalAlignment="Left" Padding="16,16,12,10" VerticalAlignment="Center" Width="100" MinHeight="50"
+                    />
+
+                <materialDesign:TimePicker
+                    Grid.Column="2"
+                    Foreground="White"
+                    SelectedTime="{Binding SelectedTime}"
+                    IsEnabled="{Binding ElementName=ToggleMT, Path=IsChecked}"
+                    Is24Hours="True"
+                    Style="{StaticResource MaterialDesignOutlinedTimePicker}" Grid.Row="7" HorizontalAlignment="Right" Grid.ColumnSpan="1" Width="100" Padding="16,10,12,10" VerticalAlignment="Center" MinHeight="50"
+                    />
 
 
-                <Label Grid.Row="7" Content="MaxTime:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39" Width="169"/>
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Call.MaxTime , Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2"  Width="0"/>
+                <Label Grid.Row="8" Content="Status:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39"/>
+                <TextBlock Text="{Binding Call.Status, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="8" Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Center" Height="24"  Width="0"/>
 
 
-                <Label Grid.Row="8" Content="Status:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Height="39" Width="151" Margin="0,19,0,0"/>
-                <ComboBox ItemsSource="{Binding Source={StaticResource Status}, NotifyOnValidationError=True, ValidatesOnExceptions=true}" SelectedValue="{Binding Status, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" Margin="212,0,0,0" Grid.ColumnSpan="1" Height="30" Width="37"/>
 
-                <Button Content="{Binding Call.Id, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Click="btnAddUpdate_Click" Grid.Row="0" VerticalAlignment="Center" Margin="39,0,39,0" Height="36" Grid.ColumnSpan="2" Grid.Column="1" Background="#FF2871BD">
-                    <Button.BorderBrush>
-                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                            <GradientStop Color="Black"/>
-                            <GradientStop Color="White" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Button.BorderBrush>
-                </Button>
-                <Button Content="{Binding ButtonText}" Click="btnAddUpdate_Click" Grid.Row="17" VerticalAlignment="Center" Margin="39,0,39,0" Height="36" Grid.ColumnSpan="2" Grid.Column="1"/>
+                <Button Content="{Binding ButtonText}" Click="btnAddUpdate_Click" Grid.Row="17" VerticalAlignment="Center" Height="36" Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Center" MinWidth="350"/>
+
+
 
 
             </Grid>

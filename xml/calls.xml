@@ -1,16 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfCall>
   <Call>
-    <Id>1000</Id>
-    <Type>MyTimeTravelMachineIsLazy</Type>
-    <Address>30 Bialik St, Ramat Gan</Address>
-    <Latitude>32.082</Latitude>
-    <Longitude>34.814</Longitude>
-    <StartTime>2025-01-04T00:00:00</StartTime>
-    <Description>I have an unidentified issue!</Description>
-    <MaxTime>2025-01-17T20:24:21</MaxTime>
-  </Call>
-  <Call>
     <Id>1001</Id>
     <Type>Other</Type>
     <Address>54 Haifa Auditorium, Haifa</Address>
@@ -521,16 +511,6 @@
     <MaxTime>2025-12-03T20:24:21</MaxTime>
   </Call>
   <Call>
-    <Id>1053</Id>
-    <Type>Other</Type>
-    <Address>25 Dizengoff St, Tel Aviv</Address>
-    <Latitude>32.075</Latitude>
-    <Longitude>34.774</Longitude>
-    <StartTime>2023-06-06T00:00:00</StartTime>
-    <Description>Other strange issue!</Description>
-    <MaxTime>2025-02-06T20:24:21</MaxTime>
-  </Call>
-  <Call>
     <Id>1054</Id>
     <Type>MyTimeTravelMachineIsLazy</Type>
     <Address>33 Kaplan St, Tel Aviv</Address>
@@ -639,5 +619,25 @@
     <StartTime>2025-01-18T00:00:00</StartTime>
     <Description>Other strange issue!</Description>
     <MaxTime>2025-06-01T20:24:21</MaxTime>
+  </Call>
+  <Call>
+    <Id>1000</Id>
+    <Type>MyTimeTravelMachineIsLazy</Type>
+    <Address>30 Bialik St, Ramat Gan</Address>
+    <Latitude>32.0817945</Latitude>
+    <Longitude>34.815149</Longitude>
+    <StartTime>2025-01-04T00:00:00</StartTime>
+    <Description>I have an unidentified issue!</Description>
+    <MaxTime>2025-01-17T20:24:21</MaxTime>
+  </Call>
+  <Call>
+    <Id>1065</Id>
+    <Type>TeleporterBlockedOnMachonLev</Type>
+    <Address>18 impasse raphael marseille</Address>
+    <Latitude>43.3219956</Latitude>
+    <Longitude>5.4116488</Longitude>
+    <StartTime>0001-01-01T00:00:00</StartTime>
+    <Description>yes</Description>
+    <MaxTime>2025-01-24T00:00:00</MaxTime>
   </Call>
 </ArrayOfCall>

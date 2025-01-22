@@ -149,8 +149,8 @@ namespace PL.Admin.Call
             set
             {
                 _selectedCall = value;
-                if (value != null)
-                    CallInfo = new CallInfoView(value.CallId);
+                //if (value != null)
+                //    CallInfo = new CallInfoView(value.CallId);
             }
         }
         private BO.CallInListField _callInListFieldFiltred = BO.CallInListField.None;
@@ -296,7 +296,7 @@ namespace PL.Admin.Call
             // Check if the window is already open
             foreach (Window window in Application.Current.Windows)
             {
-                if (window is CallInfoView)
+                if (window is AddUpdateCallWindow)
                 {
                     if (Id != SelectedCall!.CallId)
                     {
