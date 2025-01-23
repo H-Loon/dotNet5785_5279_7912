@@ -640,4 +640,14 @@
     <Description>yes</Description>
     <MaxTime>2025-01-24T00:00:00</MaxTime>
   </Call>
+  <Call>
+    <Id>1066</Id>
+    <Type>MyDishwasherIsInDepression</Type>
+    <Address>26 Rue Francois Mauriac</Address>
+    <Latitude>43.277279</Latitude>
+    <Longitude>5.4158925</Longitude>
+    <StartTime>0001-01-01T00:00:00</StartTime>
+    <Description>On lache rien fr</Description>
+    <MaxTime>2025-01-21T00:00:00</MaxTime>
+  </Call>
 </ArrayOfCall>
