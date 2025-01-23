@@ -15,8 +15,8 @@ namespace PL.Admin.Call
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private int Id = -1;
-        private object? filterValue = null;
-        private bool flag2 = true;
+        public object? FilterValue = null;
+        private bool flag1 = false,flag2 = true;
         public CallInListView()
         {
             InitializeComponent();
@@ -37,13 +37,13 @@ namespace PL.Admin.Call
         public void SetEnumSource(Type enumType)
         {
             if (enumType.FullName is "BO.BoCallType")
-                filterValue = BO.BoCallType.None;
-            else if (enumType.FullName is "BO.BoCallStatus")
-                filterValue = BO.BoCallStatus.None;
+                FilterValue = BO.BoCallType.None;
+            else if (enumType.FullName is "BO.BoCallStatus" && flag1)
+                FilterValue = null;
             EnumSource = new EnumItemSource(enumType);
         }
-
         public int Days { get; set; }
+
         private DateTime _selectedTime = default;
         public DateTime SelectedTime
         {
@@ -51,7 +51,7 @@ namespace PL.Admin.Call
             set
             {
                 _selectedTime = value;
-                filterValue = _selectedDate.Add(new TimeSpan(SelectedTime.Hour, SelectedTime.Minute, 0));
+                FilterValue = _selectedDate.Add(new TimeSpan(SelectedTime.Hour, SelectedTime.Minute, 0));
             }
         }
         private DateTime _selectedDate = s_bl.Admin.GetConfigClock();
@@ -61,7 +61,7 @@ namespace PL.Admin.Call
             set
             {
                 _selectedDate = value;
-                filterValue = _selectedDate.Add(new TimeSpan(SelectedTime.Hour, SelectedTime.Minute, 0));
+                FilterValue = _selectedDate.Add(new TimeSpan(SelectedTime.Hour, SelectedTime.Minute, 0));
             }
         }
 
@@ -153,16 +153,18 @@ namespace PL.Admin.Call
                 //    CallInfo = new CallInfoView(value.CallId);
             }
         }
-        private BO.CallInListField _callInListFieldFiltred = BO.CallInListField.None;
-        public BO.CallInListField CallInListFieldFiltred
+
+
+        public BO.CallInListField CallInListFldFiltred
         {
-            get { return _callInListFieldFiltred; }
-            set
-            {
-                _callInListFieldFiltred = value;
-                FilterVisibilitySwitch();
-            }
+            get { return (BO.CallInListField)GetValue(CallInListFldFiltredProperty); }
+            set { SetValue(CallInListFldFiltredProperty, value); }
         }
+
+        // Using a DependencyProperty as the backing store for CallInListFldFiltred.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CallInListFldFiltredProperty =
+            DependencyProperty.Register("CallInListFldFiltred", typeof(BO.CallInListField), typeof(CallInListView), new PropertyMetadata(BO.CallInListField.None));
+
         public BO.CallInListField CallInListFieldSorted { get; set; } = BO.CallInListField.CallId;
         public IEnumerable<BO.CallInList> CallInList
         {
@@ -176,7 +178,8 @@ namespace PL.Admin.Call
 
         private void FilterVisibilitySwitch()
         {
-            flag2 = true;
+            if (flag1)
+                flag2 = true;
             ComboBoxVisibility = Visibility.Hidden;
             TextBoxVisibility = Visibility.Hidden;
             DateTimeVisibility = Visibility.Hidden;
@@ -184,7 +187,7 @@ namespace PL.Admin.Call
             TimeSpanVisibility = Visibility.Hidden;
             DaysTimeSpanVisibility = Visibility.Hidden;
 
-            switch (CallInListFieldFiltred)
+            switch (CallInListFldFiltred)
             {
                 case BO.CallInListField.AssignmentId:
                     TextBoxVisibility = Visibility.Visible;
@@ -236,38 +239,45 @@ namespace PL.Admin.Call
         {
             if (sender is TextBox tb)
             {
-                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, tb.Text, CallInListFieldSorted);
-                filterValue = tb.Text;
+                CallInList = s_bl.Call.GetCallsInList(CallInListFldFiltred, tb.Text, CallInListFieldSorted);
+                FilterValue = tb.Text;
             }
             else if (sender is ComboBox cb)
             {
-                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, cb.SelectedItem, CallInListFieldSorted);
-                filterValue = cb.SelectedItem;
+                CallInList = s_bl.Call.GetCallsInList(CallInListFldFiltred, cb.SelectedItem, CallInListFieldSorted);
+                FilterValue = cb.SelectedItem;
             }
-            else if (sender is MaterialDesignThemes.Wpf.NumericUpDown n1 && CallInListFieldFiltred == BO.CallInListField.AssignCount)
+            else if (sender is MaterialDesignThemes.Wpf.NumericUpDown n1 && CallInListFldFiltred == BO.CallInListField.AssignCount)
             {
-                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, n1.Value, CallInListFieldSorted);
-                filterValue = n1.Value;
+                CallInList = s_bl.Call.GetCallsInList(CallInListFldFiltred, n1.Value, CallInListFieldSorted);
+                FilterValue = n1.Value;
             }
-            else if (CallInListFieldFiltred == BO.CallInListField.TimeLeft || CallInListFieldFiltred == BO.CallInListField.TimeOpen)
+            else if (CallInListFldFiltred == BO.CallInListField.TimeLeft || CallInListFldFiltred == BO.CallInListField.TimeOpen)
             {
                 TimeSpan time = new TimeSpan(Days, SelectedTime.Hour, SelectedTime.Minute, 0);
-                CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, time, CallInListFieldSorted);
-                filterValue = time;
+                CallInList = s_bl.Call.GetCallsInList(CallInListFldFiltred, time, CallInListFieldSorted);
+                FilterValue = time;
             }
-            else
+            else if (flag2)
             {
                 CallListObserver();
             }
         }
+        public void StatusFilter()
+        {
+            CallInListFldFiltred = BO.CallInListField.CallStatus;
+            cb.SelectedItem = FilterValue;
+            flag1 = true;
+            CallListObserver();
+        }
         public void CallListObserver()
         {
-            if (filterValue != null && filterValue.GetType() != GetFilterType(CallInListFieldFiltred))
+            if (FilterValue != null && FilterValue.GetType() != GetFilterType(CallInListFldFiltred))
             {
-                filterValue = null;
+                FilterValue = null;
             }
-
-            CallInList = s_bl.Call.GetCallsInList(CallInListFieldFiltred, filterValue, CallInListFieldSorted);
+            CallInList = s_bl.Call.GetCallsInList(CallInListFldFiltred, FilterValue, CallInListFieldSorted);
+            FilterVisibilitySwitch();
         }
 
         private Type GetFilterType(BO.CallInListField field)

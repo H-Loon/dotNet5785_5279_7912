@@ -30,8 +30,7 @@ public enum BoCallStatus
     InTreatment,
     InTreatmentAndDanger,
     Closed,
-    OverDated,
-    None
+    OverDated
 }
 
 public enum BoAssignmentEndReason

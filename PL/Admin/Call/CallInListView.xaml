@@ -46,7 +46,7 @@
                 </Viewbox>
 
                 <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource CallInListField}}"
-                        SelectedValue="{Binding CallInListFieldFiltred, Mode=TwoWay}"
+                        SelectedValue="{Binding CallInListFldFiltred, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectionChanged="SortCallList"
                         Cursor="Hand" VerticalAlignment="Center" MinWidth="80" Grid.Column="2" Grid.Row="1" Margin="10,0,0,10"/>
                 <Viewbox Grid.Column="2" Grid.Row="1" Margin="10,0,0,10">
@@ -56,7 +56,7 @@
                     <TextBlock Text="Value:" VerticalAlignment="Center" Foreground="White" FontSize="32" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,5,0,0" />
                 </Viewbox>
 
-                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding EnumSource, Mode=OneWay}" Grid.Column="3" Height="30" Visibility="{Binding ComboBoxVisibility}" SelectionChanged="QueryCallList" VerticalAlignment="Center" Grid.Row="1" Margin="10,0,0,10"/>
+                <ComboBox x:Name="cb" Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding EnumSource, Mode=OneWay}" Grid.Column="3" Height="30" Visibility="{Binding ComboBoxVisibility}" SelectionChanged="QueryCallList" VerticalAlignment="Center" Grid.Row="1" Margin="10,0,0,10"/>
 
                 <TextBox Visibility="{Binding TextBoxVisibility}" 
                          TextChanged="QueryCallList" Grid.Column="3" 

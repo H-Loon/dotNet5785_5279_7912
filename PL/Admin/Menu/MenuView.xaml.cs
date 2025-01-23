@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using PL.Admin.Call;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -34,28 +35,42 @@ namespace PL.Admin.Menu
         // Using a DependencyProperty as the backing store for RiskRangeEditor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RiskRangeViewProperty =
             DependencyProperty.Register("RiskRange", typeof(TimeSpan), typeof(MenuView));
-        public MenuView()
+
+        // Array of call statuses
+        public string[] CallStatuses { get; set; } = { "Open", "Open in danger", "In treatment", "In treatment danger", "Closed", "Over dated" };
+
+        private readonly AdminMainView _adminMainView;
+        private readonly Call.CallInListView _callInListView;
+        public MenuView(AdminMainView adminMainView, Call.CallInListView callInListView)
         {
+            _adminMainView = adminMainView;
+            _callInListView = callInListView;
+            UpdateCallStatuses();
             InitializeComponent();
         }
+
         // Apply Button Click - Update the RiskRangeEditor property
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.UpdateRiskRange(TimeSpan.Parse(RiskRangeEdt.RiskRange));
             RiskRangeEdt.RiskRange = "0.00:00:00";
         }
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             RiskRangeEdt.RiskRange = "0.00:00:00";
         }
+
         private void ClockObserver()
         {
             ConfigTime = s_bl.Admin.GetConfigClock();
         }
+
         private void RiskRangeObserver()
         {
             RiskRange = s_bl.Admin.GetRiskRange();
         }
+
         //private void Window_Closed(object sender, EventArgs e)
         //{
         //    s_bl.Admin.RemoveClockObserver(ClockObserver);
@@ -68,31 +83,39 @@ namespace PL.Admin.Menu
 
             s_bl.Admin.AddClockObserver(ClockObserver);
             s_bl.Admin.AddConfigObserver(RiskRangeObserver);
+            s_bl.Call.AddObserver(UpdateCallStatuses);
         }
+
         private void PlusOneSec(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.ForwardClock(BO.TimeUnit.Seconds);
         }
+
         private void PlusOneMin(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.ForwardClock(BO.TimeUnit.Minutes);
         }
+
         private void PlusOneHour(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.ForwardClock(BO.TimeUnit.Hours);
         }
+
         private void PlusOneDay(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.ForwardClock(BO.TimeUnit.Days);
         }
+
         private void PlusOneMonth(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.ForwardClock(BO.TimeUnit.Months);
         }
+
         private void PlusOneYear(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.ForwardClock(BO.TimeUnit.Years);
         }
+
         private void ResetDB(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.ResetDB();
@@ -101,6 +124,44 @@ namespace PL.Admin.Menu
         private void InitDB(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.InitDB();
+        }
+
+        // Function to retrieve the number of calls of each status and add it to the corresponding string
+        private void UpdateCallStatuses()
+        {
+            int[] callQuantities = s_bl.Call.GetCallsQuantities();
+            for (int i = 0; i < CallStatuses.Length; i++)
+            {
+                CallStatuses[i] = $"{CallStatuses[i]}\n{callQuantities[i]}";
+            }
+        }
+
+        private void Button_Status_Click(object sender, RoutedEventArgs e)
+        {
+            switch
+                ((string)((Button)sender).CommandParameter)
+            {
+                case "0":
+                    _callInListView.FilterValue = BO.BoCallStatus.Open;
+                    break;
+                case "1":
+                    _callInListView.FilterValue = BO.BoCallStatus.OpenAndDanger;
+                    break;
+                case "2":
+                    _callInListView.FilterValue = BO.BoCallStatus.InTreatment;
+                    break;
+                case "3":
+                    _callInListView.FilterValue = BO.BoCallStatus.InTreatmentAndDanger;
+                    break;
+                case "4":
+                    _callInListView.FilterValue = BO.BoCallStatus.Closed;
+                    break;
+                case "5":
+                    _callInListView.FilterValue = BO.BoCallStatus.OverDated;
+                    break;
+            }
+            _callInListView.StatusFilter();
+            _adminMainView.CurrentView = _callInListView;
         }
     }
     public class RiskRangeEditor : INotifyPropertyChanged
@@ -158,7 +219,6 @@ namespace PL.Admin.Menu
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
         }
     }
 }

@@ -27,7 +27,7 @@ namespace PL.Admin
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public string Initials { get; set; }
         public Call.CallInListView CallInListView { get; set; } = new Call.CallInListView();
-        public Menu.MenuView MenuView { get; set; } = new Menu.MenuView();
+        public Menu.MenuView MenuView { get; set; }
         public VolunteerInListView VolunteerInListView { get; set; } = new VolunteerInListView();
 
         public UserControl CurrentView
@@ -43,6 +43,7 @@ namespace PL.Admin
         public AdminMainView(string name)
         {
             Initials = new string(name.Where(char.IsUpper).Take(2).ToArray()); // get the first two capital letters from the name
+            MenuView = new Menu.MenuView(this, CallInListView);
             CurrentView = MenuView;
             InitializeComponent();
         }

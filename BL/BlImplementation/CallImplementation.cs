@@ -248,7 +248,7 @@ internal class CallImplementation : ICall
             BO.CallInListField.TimeLeft => callInList.Where(c => obj == null || c.TimeLeft >= (TimeSpan)obj!),
             BO.CallInListField.LastVolunteerName => callInList.Where(c => { if (obj == null) return true; if(c.LastVolunteerName is null) return false; return c.LastVolunteerName.Contains((string)obj!); }),
             BO.CallInListField.TimeOpen => callInList.Where(c => obj == null || c.TimeOpen >= (TimeSpan)obj!),
-            BO.CallInListField.CallStatus => callInList.Where(c => obj == null || ((BO.BoCallStatus)obj == BO.BoCallStatus.None || c.CallStatus == (BO.BoCallStatus)obj)),
+            BO.CallInListField.CallStatus => callInList.Where(c => obj == null || c.CallStatus == (BO.BoCallStatus)obj),
             BO.CallInListField.AssignCount => callInList.Where(c => obj == null || c.AssignCount == (int)obj!),
             _ => callInList
         };
