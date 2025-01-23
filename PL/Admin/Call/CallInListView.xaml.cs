@@ -149,8 +149,8 @@ namespace PL.Admin.Call
             set
             {
                 _selectedCall = value;
-                //if (value != null)
-                //    CallInfo = new CallInfoView(value.CallId);
+                if (value != null)
+                    CallInfo = new CallInfoView(value.CallId);
             }
         }
 
