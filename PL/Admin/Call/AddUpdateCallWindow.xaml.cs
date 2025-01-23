@@ -88,6 +88,7 @@ namespace PL.Admin.Call
         public static readonly DependencyProperty CallProperty =
             DependencyProperty.Register("Call", typeof(BO.Call), typeof(AddUpdateCallWindow), new PropertyMetadata(null));
 
+        public string AssignList { get; set; }
 
         public AddUpdateCallWindow(int id = 0)
         {
@@ -98,16 +99,33 @@ namespace PL.Admin.Call
                 Id = 0,
                 Description = "",
                 Address = "",
-                CallType = BO.BoCallType.Other   
-                
+                CallType = BO.BoCallType.Other
+
             };
-            else Call = s_bl.Call.GetCall(id);
+            else
+            { 
+                Call = s_bl.Call.GetCall(id);
+                if (Call.AssignInList != null)
+                    AssignList = ListToStr();
+                else
+                    AssignList = "";
+            }
             if (Call.MaxTime != null)
                 ToggleMTbool = true;
             CallType = Call.CallType;
             SelectedDate = Call.MaxTime ?? s_bl.Admin.GetConfigClock();
             SelectedTime = Call.MaxTime ?? s_bl.Admin.GetConfigClock();
             InitializeComponent();
+        }
+
+        private string ListToStr()
+        {
+            string result = "";
+            foreach (var item in Call.AssignInList)
+            {
+                result += $"{item}\n";
+            }
+            return result;
         }
 
         void btnAddUpdate_Click(object sender, RoutedEventArgs e)

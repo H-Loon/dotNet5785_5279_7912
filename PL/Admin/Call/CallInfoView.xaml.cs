@@ -26,6 +26,7 @@ namespace PL.Admin.Call
 
         public BO.BoRoleType Status { get; set; }
         public BO.BoDistanceType CallType { get; set; }
+        public string AssignList { get; set; }
 
         public BO.Call Call
         {
@@ -37,12 +38,27 @@ namespace PL.Admin.Call
         public static readonly DependencyProperty CallProperty =
             DependencyProperty.Register("CallC", typeof(BO.Call), typeof(CallInfoView), new PropertyMetadata(null));
 
+        private string ListToStr()
+        {
+            string result = "";
+            foreach (var item in Call.AssignInList)
+            {
+                result += $"{item}\n";
+            }
+            return result;
+        }
 
         public CallInfoView(int id)
         {
             Call = s_bl.Call.GetCall(id);
             Status = (BO.BoRoleType)Call.Status;
             CallType = (BO.BoDistanceType)Call.CallType;
+
+            if (Call.AssignInList != null)
+                AssignList = ListToStr();
+            else
+                AssignList = "";
+
             InitializeComponent();
         }
     }

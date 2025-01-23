@@ -90,6 +90,7 @@
                     <RowDefinition Height="81*"/>
                     <RowDefinition Height="81*"/>
                     <RowDefinition Height="81*"/>
+                    <RowDefinition Height="81*"/>
                     <RowDefinition Height="54*"/>
                 </Grid.RowDefinitions>
 
@@ -158,6 +159,11 @@
 
                 <Label Grid.Row="8" Content="Status:" FontSize="22" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39"/>
                 <TextBlock Text="{Binding Call.Status, NotifyOnValidationError=True, ValidatesOnExceptions=true}" HorizontalAlignment="Left" Grid.Row="8" Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" FontSize="18" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" Foreground="White" Padding="0,0,0,6" MinHeight="0"  />
+
+                <Label Grid.Row="9" Content="Assign list:" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="39"/>
+                <ScrollViewer Grid.Row="9" Grid.Column="2" Visibility="{Binding ButtonText, Converter={StaticResource ConvertUpdateToVisibleKey}}">
+                    <TextBlock Text="{Binding AssignList, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Foreground="White"/>
+                </ScrollViewer>
 
                 <Button Content="{Binding ButtonText}" Click="btnAddUpdate_Click" Grid.Row="17" VerticalAlignment="Center" Height="36" Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Center" MinWidth="350"/>
 
