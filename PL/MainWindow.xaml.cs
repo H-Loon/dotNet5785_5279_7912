@@ -35,6 +35,18 @@ public partial class MainWindow : Window
 
         tabDynamic.SelectedIndex = 0;
     }
+    public bool IsVolunteerConnected(string name)
+    {
+        foreach (TabItem tab in _tabItems)
+        {
+            if (tab.Content.GetType() == typeof(Volunteer.VolunteerMainView))
+            {
+                if (tab.Header.ToString() == name)
+                    return true;
+            }
+        }
+        return false;
+    }
     private void tabDynamic_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         TabItem tab = tabDynamic.SelectedItem as TabItem;

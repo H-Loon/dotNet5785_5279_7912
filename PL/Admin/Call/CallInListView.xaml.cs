@@ -140,7 +140,7 @@ namespace PL.Admin.Call
 
         // Using a DependencyProperty as the backing store for CallInfoView.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CallInfoViewProperty =
-            DependencyProperty.Register("CallInfoV", typeof(CallInfoView), typeof(CallInListView), new PropertyMetadata(default(UserControl)));
+            DependencyProperty.Register("CallInfo", typeof(CallInfoView), typeof(CallInListView), new PropertyMetadata(null));
 
         private BO.CallInList? _selectedCall;
         public BO.CallInList? SelectedCall

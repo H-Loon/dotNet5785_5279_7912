@@ -67,7 +67,22 @@ namespace PL
                 }
                 else if (s_bl.Volunteer.Login(name, Password) == BO.BoRoleType.Volunteer)
                 {
-                    //MainWindow mainWindow = (MainWindow)Window.GetWindow(this);
+                    MainWindow mainWindow = (MainWindow)Window.GetWindow(this);
+
+                    if (mainWindow.isAdminConnected == true)
+                    {
+                        MessageBox.Show("Admin is already connected");
+                        return;
+                    }
+
+                    var selectedTab = mainWindow.tabDynamic.SelectedItem as TabItem;
+                    if (selectedTab != null)
+                    {
+                        selectedTab.Header = name;
+                        selectedTab.Content = new Admin.AdminMainView(name);
+                    }
+                    mainWindow.isAdminConnected = true;
+
                     //mainWindow.CurrentMainView = mainWindow.VolunteerMainV;
                 }
             }
