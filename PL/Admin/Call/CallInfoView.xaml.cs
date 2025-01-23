@@ -1,4 +1,4 @@
-﻿using PL.Admin.Volunteer;
+﻿using PL.Admin.Call;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,25 +24,25 @@ namespace PL.Admin.Call
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public string ButtonText { get; set; }
 
-        public BO.BoRoleType Role { get; set; }
-        public BO.BoDistanceType DistanceType { get; set; }
+        public BO.BoRoleType Status { get; set; }
+        public BO.BoDistanceType CallType { get; set; }
 
-        public BO.Volunteer Volunteer
+        public BO.Call Call
         {
-            get { return (BO.Volunteer)GetValue(VolunteerProperty); }
-            set { SetValue(VolunteerProperty, value); }
+            get { return (BO.Call)GetValue(CallProperty); }
+            set { SetValue(CallProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Volunteer.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty VolunteerProperty =
-            DependencyProperty.Register("VolunteerV", typeof(BO.Volunteer), typeof(VolunteerInfoView), new PropertyMetadata(null));
+        // Using a DependencyProperty as the backing store for Call.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CallProperty =
+            DependencyProperty.Register("CallC", typeof(BO.Call), typeof(CallInfoView), new PropertyMetadata(null));
 
 
         public CallInfoView(int id)
         {
-            Volunteer = s_bl.Volunteer.GetVolunteer(id);
-            Role = Volunteer.Role;
-            DistanceType = Volunteer.DistanceType;
+            Call = s_bl.Call.GetCall(id);
+            Status = (BO.BoRoleType)Call.Status;
+            CallType = (BO.BoDistanceType)Call.CallType;
             InitializeComponent();
         }
     }

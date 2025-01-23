@@ -84,7 +84,7 @@ namespace PL.Admin.Call
             set { SetValue(CallProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Volunteer.  This enables animation, styling, binding, etc...
+        // Using a DependencyProperty as the backing store for Volunteer.  This enables styling, binding, etc...
         public static readonly DependencyProperty CallProperty =
             DependencyProperty.Register("Call", typeof(BO.Call), typeof(AddUpdateCallWindow), new PropertyMetadata(null));
 
@@ -98,7 +98,8 @@ namespace PL.Admin.Call
                 Id = 0,
                 Description = "",
                 Address = "",
-                CallType = BO.BoCallType.Other    
+                CallType = BO.BoCallType.Other   
+                
             };
             else Call = s_bl.Call.GetCall(id);
             if (Call.MaxTime != null)

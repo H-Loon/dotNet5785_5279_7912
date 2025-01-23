@@ -8,8 +8,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <!--<local:VolunteerRole x:Key="VolunteerRole"/>
-        <local:DistanceType x:Key="DistanceType"/>-->
+        <local:CallType x:Key="CallType"/>
+        <local:Status x:Key="Status"/>
 
         <Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxStyle2}"/>
         <Style TargetType="Label">
@@ -71,58 +71,50 @@
                 <ColumnDefinition Width="27"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="27"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="40*"/>
-                <RowDefinition Height="27"/>
+
+                <RowDefinition Height="27*"/>
+                <RowDefinition Height="25*"/>
+                <RowDefinition Height="25*"/>
+                <RowDefinition Height="25*"/>
+                <RowDefinition Height="25*"/>
+                <RowDefinition Height="25*"/>
+                <RowDefinition Height="25*"/>
+                <RowDefinition Height="25*"/>
+                <RowDefinition Height="25*"/>
+
             </Grid.RowDefinitions>
-            <!--<TextBox Text="{Binding Volunteer.Id, Mode=OneTime}" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Grid.Row="1" Height="20" Width="170"/>
-            <TextBox Text="{Binding Volunteer.Name, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
-            <TextBox Text="{Binding Volunteer.Phone, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="170"/>
-            <TextBox Text="{Binding Volunteer.Email, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
-            <TextBox Text="{Binding Volunteer.Address, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
-            <TextBox Text="{Binding Volunteer.Latitude, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" IsReadOnly="True" Width="170"/>
-            <TextBox Text="{Binding Volunteer.Longitude, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" IsReadOnly="True" Width="170"/>
-            <TextBox Text="{Binding Role, Mode=OneWay}" HorizontalAlignment="Left" Grid.Row="9" Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" IsReadOnly="True" Width="170"/>
-            <CheckBox IsEnabled="False" IsChecked="{Binding Volunteer.IsActive, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="10" VerticalAlignment="Center" Height="15" Width="16" Grid.Column="2"/>
-            <TextBox Text="{Binding Volunteer.MaxDistance, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" Height="21" Width="170" IsReadOnly="True"/>
-            <TextBox Text="{Binding DistanceType, Mode=OneWay}" HorizontalAlignment="Left" Grid.Row="12" VerticalAlignment="Center" Grid.Column="2" Height="24" IsReadOnly="True" Width="170"/>
-            <TextBox Text="{Binding Volunteer.CompletedCalls, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="13" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" IsReadOnly="True" Width="170"/>
-            <TextBox Text="{Binding Volunteer.CanceledCalls, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="14" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" IsReadOnly="True" Width="170"/>
-            <TextBox Text="{Binding Volunteer.OverDatedCalls, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="15" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Column="2" IsReadOnly="True" Width="170"/>
-            <ScrollViewer Grid.Row="16" Grid.Column="1" Margin="135,10,20,0" Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                <TextBlock Style="{StaticResource TB}" Text="{Binding Volunteer.CurrentCall, Mode = OneWay}" TextWrapping="Wrap" FontSize="16" Width="246" ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
-            </ScrollViewer>
-            <Label Content="Id:" FontSize="22" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="34"/>
-            <Label Grid.Row="2" Content="Name:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="73"/>
-            <Label Grid.Row="3" Content="Phone:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="76"/>
-            <Label Grid.Row="4" Content="Email:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="67"/>
-            <Label Grid.Row="5" Content="Password:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="106"/>
-            <Label Grid.Row="6" Content="Address:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="93"/>
-            <Label Grid.Row="7" Content="Latitude:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="38" Width="93"/>
-            <Label Grid.Row="8" Content="Longitude:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="38" Width="113"/>
-            <Label Grid.Row="9" Content="Role:" FontSize="22" Grid.Column="1"  VerticalAlignment="Center" HorizontalAlignment="Left" Height="38"/>
-            <Label Grid.Row="10" Content="Active:" FontSize="22" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Height="38"/>
-            <Label Grid.Row="11" Content="Max distance:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="38" Width="142"/>
-            <Label Grid.Row="12" Content="Distance type:" FontSize="22" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="38" Width="146"/>
-            <Label Grid.Row="13" Content="Completed calls:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="169"/>
-            <Label Grid.Row="14" Content="Canceled calls:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="151"/>
-            <Label Grid.Row="15" Content="Over dated calls:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="171"/>
-            <Label Grid.Row="16" Content="Current call:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" Width="126" VerticalAlignment="Top" Height="39"/>-->
+
+            <Label Grid.Row="1" Content="Type of the Call:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="163"/>
+            <TextBox Text="{Binding Call.CallType, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
+
+
+            <Label Grid.Row="2" Content="Description" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
+            <TextBox Text="{Binding Call.Description, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
+
+
+            <TextBox Text="{Binding Call.Address, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
+            <Label Grid.Row="3" Content="Adress :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
+
+
+            <TextBox Text="{Binding Call.Latitude, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
+            <Label Grid.Row="4" Content="Lattitude :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
+
+
+            <TextBox Text="{Binding Call.Longitude, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
+            <Label Grid.Row="5" Content="Longitude :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
+
+
+            <TextBox Text="{Binding Call.StartTime, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
+            <Label Grid.Row="6" Content="StartTime :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
+
+
+            <TextBox Text="{Binding Call.MaxTime, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
+            <Label Grid.Row="7" Content="MaxTime :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
+
+
+            <TextBox Text="{Binding Call.Status, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
+            <Label Grid.Row="8" Content="Status :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
+
         </Grid>
     </Border>
 </UserControl>
