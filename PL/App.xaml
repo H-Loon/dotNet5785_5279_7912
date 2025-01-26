@@ -10,7 +10,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <materialDesign:CustomColorTheme BaseTheme="Dark" PrimaryColor="#FF7690A3" SecondaryColor="#284151" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
-                <ResourceDictionary Source="Themes/CheckBoxStyles.xaml"/>
                 <ResourceDictionary Source="Themes/ButtonStyles.xaml"/>
                 <ResourceDictionary Source="Themes/ComboBoxStyles.xaml"/>
                 <ResourceDictionary Source="Themes/LabelStyles.xaml"/>

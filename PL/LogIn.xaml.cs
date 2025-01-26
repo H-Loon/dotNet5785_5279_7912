@@ -69,9 +69,9 @@ namespace PL
                 {
                     MainWindow mainWindow = (MainWindow)Window.GetWindow(this);
 
-                    if (mainWindow.isAdminConnected == true)
+                    if (mainWindow.IsVolunteerConnected(name))
                     {
-                        MessageBox.Show("Admin is already connected");
+                        MessageBox.Show($"{name} is already connected");
                         return;
                     }
 
@@ -79,11 +79,8 @@ namespace PL
                     if (selectedTab != null)
                     {
                         selectedTab.Header = name;
-                        selectedTab.Content = new Admin.AdminMainView(name);
+                        selectedTab.Content = new Volunteer.VolunteerMainView(name, int.Parse(IdText.IdTextString));
                     }
-                    mainWindow.isAdminConnected = true;
-
-                    //mainWindow.CurrentMainView = mainWindow.VolunteerMainV;
                 }
             }
             catch (Exception ex)
