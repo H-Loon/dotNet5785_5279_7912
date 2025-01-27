@@ -24,7 +24,7 @@ namespace PL.Admin.Call
     public partial class AddUpdateCallWindow : Window
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        private bool flag = true;
+        //private bool flag = true;
         public string ButtonText { get; set; }
 
         public bool ToggleMTbool { get; set; } = false;
@@ -36,11 +36,11 @@ namespace PL.Admin.Call
             get => _callType;
             set
             {
-                if (flag)
-                {
-                    _callType = value;
-                    flag = false;
-                }
+                //if (flag)
+                //{
+                //    _callType = value;
+                //    flag = false;
+                //}
                 _callType = value;
                 Call.CallType = value;
             }
@@ -53,11 +53,11 @@ namespace PL.Admin.Call
             get => _selectedTime;
             set
             {
-                if (flag)
-                {
-                    _selectedTime = value;
-                    flag = false;
-                }
+                //if (flag)
+                //{
+                //    _selectedTime = value;
+                //    flag = false;
+                //}
                 _selectedTime = value;
                 Call.MaxTime = new DateTime(_selectedDate.Year,_selectedDate.Month,_selectedDate.Day,_selectedTime.Hour,_selectedTime.Minute,0);
             }
@@ -68,11 +68,11 @@ namespace PL.Admin.Call
             get => _selectedDate;
             set
             {
-                if (flag)
-                {
-                    _selectedTime = value;
-                    flag = false;
-                }
+                //if (flag)
+                //{
+                //    _selectedTime = value;
+                //    flag = false;
+                //}
                 _selectedDate = value;
                 Call.MaxTime = new DateTime(_selectedDate.Year, _selectedDate.Month, _selectedDate.Day, _selectedTime.Hour, _selectedTime.Minute, 0);
             }

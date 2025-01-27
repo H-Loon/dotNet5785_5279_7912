@@ -1,6 +1,7 @@
-﻿using PL.Volunteer.OpenCalls;
+﻿using PL.Admin.Call;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,11 @@ namespace PL.Volunteer.Menu
     public partial class MenuView : UserControl
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        public string VolunteerIdLabel { get; set; } = "ID: ";
+        public string CallIdLabel { get; set; } = "ID: ";
+        public string AssignList { get; set; }
 
+        public VolunteerMainView VolunteerMainView { get; set; }
         public Visibility CallVisibility
         {
             get { return (Visibility)GetValue(CallVisibilityProperty); }
@@ -54,32 +59,79 @@ namespace PL.Volunteer.Menu
             DependencyProperty.Register("Call", typeof(BO.Call), typeof(MenuView), new PropertyMetadata(null));
 
 
-        public MenuView(int id)
+        public MenuView(VolunteerMainView volunteerMainView,BO.Volunteer v)
         {
-            Volunteer = s_bl.Volunteer.GetVolunteer(id);
+            VolunteerMainView = volunteerMainView;
+            Volunteer = v;
+            VolunteerIdLabel += Volunteer.Id;
             if (Volunteer.CurrentCall is not null)
             {
                 Call = s_bl.Call.GetCall(Volunteer.CurrentCall.CallId);
+                CallIdLabel += Call.Id;
+                AssignList = ListToStr();
                 CallVisibility = Visibility.Visible;
             }
             InitializeComponent();
+        }
+        private string ListToStr()
+        {
+            string result = "";
+            foreach (var item in Call.AssignInList)
+            {
+                result += $"{item}\n";
+            }
+            return result;
+        }
+        public void VolunteerObserver()
+        {
+            Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
+            Volunteer.Password = "";
+            if (Volunteer.CurrentCall is not null)
+            {
+                Call = s_bl.Call.GetCall(Volunteer.CurrentCall.CallId);
+                CallIdLabel = "ID: " + Call.Id;
+                AssignList = ListToStr();
+                CallVisibility = Visibility.Visible;
+            }
+            else
+            {
+                CallVisibility = Visibility.Hidden;
+            }
         }
         private void UpdateVolunteer(object sender, RoutedEventArgs e)
         {
             s_bl.Volunteer.UpdateVolunteer(Volunteer.Id, Volunteer);
             Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
+            Volunteer.Password = "";
         }
         private void CancelCall(object sender, RoutedEventArgs e)
         {
             s_bl.Call.CancelCall(Volunteer.Id, Call.Id);
             Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
+            Volunteer.Password = "";
             CallVisibility = Visibility.Hidden;
         }
         private void CompleteCall(object sender, RoutedEventArgs e)
         {
             s_bl.Call.CompleteCall(Volunteer.Id, Call.Id);
             Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
+            Volunteer.Password = "";
             CallVisibility = Visibility.Hidden;
+        }
+    }
+    public class BoolToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool boolValue && boolValue)
+            {
+                return Visibility.Hidden;
+            }
+            return Visibility.Visible;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

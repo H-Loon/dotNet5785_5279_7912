@@ -26,8 +26,10 @@ namespace PL.Volunteer
     public partial class VolunteerMainView : UserControl
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private int _id;
         public string Initials { get; set; }
-        public History.HistoryView HistoryView { get; set; } = new History.HistoryView();
+        public bool IsNotCall { get; set; } = true;
+        //public History.HistoryView HistoryView { get; set; } = new History.HistoryView();
         public OpenCalls.OpenCallsInListView OpenCallsInListView { get; set; }
         public Menu.MenuView MenuView { get; set; }
         
@@ -41,10 +43,13 @@ namespace PL.Volunteer
         public static readonly DependencyProperty CurrentViewProperty =
             DependencyProperty.Register("CurrentView", typeof(UserControl), typeof(VolunteerMainView), new PropertyMetadata(null));
 
-        public VolunteerMainView(string name, int id)
+        public VolunteerMainView(int id)
         {
-            Initials = new string(name.Where(char.IsUpper).Take(2).ToArray()); // get the first two capital letters from the name
-            MenuView = new Menu.MenuView(id);
+            _id = id;
+            BO.Volunteer v = s_bl.Volunteer.GetVolunteer(id);
+            if (v.CurrentCall != null) IsNotCall = false;
+            Initials = new string(v.Name.Where(char.IsUpper).Take(2).ToArray()); // get the first two capital letters from the name
+            MenuView = new Menu.MenuView(this,v);
             OpenCallsInListView = new OpenCalls.OpenCallsInListView(MenuView, id);
             CurrentView = MenuView;
             InitializeComponent();
@@ -52,8 +57,8 @@ namespace PL.Volunteer
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            s_bl.Volunteer.AddObserver(VolunteerInListView.VolunteerListObserver);
-            s_bl.Call.AddObserver(CallInListView.CallListObserver);
+            s_bl.Volunteer.AddObserver(OpenCallsInListView.OpenCallListObserver);
+            s_bl.Volunteer.AddObserver(_id,MenuView.VolunteerObserver);
         }
         private void CurrentViewToOpenCallsInList(object sender, RoutedEventArgs e)
         {
@@ -62,7 +67,7 @@ namespace PL.Volunteer
 
         private void CurrentViewToCallHistory(object sender, RoutedEventArgs e)
         {
-            CurrentView = HistoryView;
+            /*CurrentView = HistoryView*/;
         }
 
         private void CurrentViewToMenu(object sender, RoutedEventArgs e)
@@ -70,4 +75,5 @@ namespace PL.Volunteer
             CurrentView = MenuView;
         }
     }
+
 }

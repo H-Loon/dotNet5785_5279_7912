@@ -25,6 +25,8 @@ namespace PL
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public IdText IdText { get; set; } = new IdText();
+        private MainWindow mainWindow;
+        private int _id;
         public string Password
         {
             get { return (string)GetValue(PasswordProperty); }
@@ -36,8 +38,9 @@ namespace PL
             DependencyProperty.Register("Password", typeof(string), typeof(LogIn), new PropertyMetadata(string.Empty));
 
 
-        public LogIn()
+        public LogIn(MainWindow mw)
         {
+            mainWindow = mw;
             InitializeComponent();
         }
 
@@ -45,11 +48,11 @@ namespace PL
         {
             try
             {
-                string name = s_bl.Volunteer.GetVolunteer(int.Parse(IdText.IdTextString)).Name;
+                _id = int.Parse(IdText.IdTextString);
+                string name = s_bl.Volunteer.GetVolunteer(_id).Name;
                 
                 if (s_bl.Volunteer.Login(name, Password) == BO.BoRoleType.Admin)
                 {
-                    MainWindow mainWindow = (MainWindow)Window.GetWindow(this);
 
                     if(mainWindow.isAdminConnected == true)
                     {
@@ -62,12 +65,12 @@ namespace PL
                     {
                         selectedTab.Header = name;
                         selectedTab.Content = new Admin.AdminMainView(name);
+                        s_bl.Volunteer.AddObserver(_id, HeaderUpdate);
                     }
                     mainWindow.isAdminConnected = true;
                 }
                 else if (s_bl.Volunteer.Login(name, Password) == BO.BoRoleType.Volunteer)
                 {
-                    MainWindow mainWindow = (MainWindow)Window.GetWindow(this);
 
                     if (mainWindow.IsVolunteerConnected(name))
                     {
@@ -79,7 +82,8 @@ namespace PL
                     if (selectedTab != null)
                     {
                         selectedTab.Header = name;
-                        selectedTab.Content = new Volunteer.VolunteerMainView(name, int.Parse(IdText.IdTextString));
+                        selectedTab.Content = new Volunteer.VolunteerMainView(int.Parse(IdText.IdTextString));
+                        s_bl.Volunteer.AddObserver(_id, HeaderUpdate);
                     }
                 }
             }
@@ -88,7 +92,16 @@ namespace PL
                 MessageBox.Show(ex.Message);
             }
         }
+        public void HeaderUpdate()
+        {
+            var selectedTab = mainWindow.tabDynamic.SelectedItem as TabItem;
+            if (selectedTab != null)
+            {
+                selectedTab.Header = s_bl.Volunteer.GetVolunteer(_id).Name;
+            }
+        }
     }
+    
     public class IdText : INotifyPropertyChanged
     {
         private string _idText;

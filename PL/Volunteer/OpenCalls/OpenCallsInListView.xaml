@@ -8,7 +8,71 @@
              DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
              mc:Ignorable="d" 
              d:DesignHeight="970" d:DesignWidth="1920">
+    <UserControl.Resources>
+        <local:OpenCallInListField x:Key="OpenCallInListField"/>
+        <local:CallType x:Key="CallType"/>
+    </UserControl.Resources>
     <Grid>
+        <Border Margin="125,75,125,75" Grid.Row="1" Background="#FF284151" CornerRadius="16,16,16,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30*"/>
+                    <ColumnDefinition MinWidth="55" Width="300*"/>
+                    <ColumnDefinition MinWidth="55" Width="300*"/>
+
+                    <ColumnDefinition Width="30*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="690*"/>
+                    <RowDefinition Height="30*"/>
+                </Grid.RowDefinitions>
+                <Viewbox Grid.Column="1" MaxWidth="200" MinWidth="0">
+                    <TextBlock Text="Ordered by:" VerticalAlignment="Center" Foreground="White" FontSize="36" FontWeight="SemiBold" Margin="0,5,0,0" HorizontalAlignment="Center"/>
+                </Viewbox>
+
+                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource OpenCallInListField}}"
+             SelectedValue="{Binding CallInListFieldSorted, Mode=TwoWay}"
             
+             Cursor="Hand" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                <Viewbox >
+                </Viewbox>
+
+                <Viewbox Grid.Column="2" MaxWidth="200" MinWidth="0" Margin="10,0,0,0">
+                    <TextBlock Text="Filtred by:" VerticalAlignment="Center" Foreground="White" FontSize="32" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,5,0,0" />
+                </Viewbox>
+
+                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource CallType}}"
+                SelectedValue="{Binding CallInListFldFiltred, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                
+                Cursor="Hand" VerticalAlignment="Center" MinWidth="80" Grid.Column="2" Grid.Row="1" Margin="10,0,0,10"/>
+                <Viewbox Grid.Column="2" Grid.Row="1" Margin="10,0,0,10">
+                </Viewbox>
+
+                <ListView ItemsSource="{Binding OpenCallInList}" Style="{StaticResource ListViewStyle1}" ItemContainerStyle="{StaticResource ListViewItemVisual1}" SelectedItem="{Binding SelectedCall}"  ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Auto" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="1" SelectedIndex="0">
+                    <!--<ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Delete" Click="btnDelete_Click" CommandParameter="{Binding}" Style="{StaticResource ListViewButton}" MinWidth="100" IsEnabled="{Binding CallId, Converter={StaticResource IsDeletable}}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Call Id" DisplayMemberBinding="{Binding CallId}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Assignment Id" DisplayMemberBinding="{Binding AssignmentId}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Call Type" DisplayMemberBinding="{Binding CallType}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Start Time" DisplayMemberBinding="{Binding StartTime, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Time Left" DisplayMemberBinding="{Binding TimeLeft}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Time Open" DisplayMemberBinding="{Binding TimeOpen}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Status" DisplayMemberBinding="{Binding CallStatus}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Assign count" DisplayMemberBinding="{Binding AssignCount}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="Last Volunteer Name" DisplayMemberBinding="{Binding LastVolunteerName}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                        </GridView>
+                    </ListView.View>-->
+                </ListView>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

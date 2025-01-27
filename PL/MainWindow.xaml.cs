@@ -39,7 +39,7 @@ public partial class MainWindow : Window
     {
         foreach (TabItem tab in _tabItems)
         {
-            if (tab.Content.GetType() == typeof(Volunteer.VolunteerMainView))
+            if (tab.Content != null && tab.Content.GetType() == typeof(Volunteer.VolunteerMainView))
             {
                 if (tab.Header.ToString() == name)
                     return true;
@@ -84,7 +84,7 @@ public partial class MainWindow : Window
         tab.HeaderTemplate = tabDynamic.FindResource("TabHeader") as DataTemplate;
 
         // add controls to tab item, this case I added just a text box
-        UserControl view = new LogIn();
+        UserControl view = new LogIn(this);
         view.Name = "view";
         tab.Content = view;
 
@@ -105,11 +105,11 @@ public partial class MainWindow : Window
         if (tab != null)
         {
             if (_tabItems.Count < 3 && MessageBox.Show(string.Format
-                                            ("Are you sure you want to remove the tab '{0}'? \nIt will close the app.", tab.Header.ToString()),
-                                            "Remove Tab", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                                            {
-                                                Close();
-                                            }
+                                       ("Are you sure you want to remove the tab '{0}'? \nIt will close the app.", tab.Header.ToString()),
+                                       "Remove Tab", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                Close();
+            }
 
             // get selected tab
             TabItem selectedTab = tabDynamic.SelectedItem as TabItem;
@@ -133,14 +133,5 @@ public partial class MainWindow : Window
             }
             tabDynamic.SelectedItem = selectedTab;
         }
-    }
-
-    private void Window_Loaded(object sender, RoutedEventArgs e)
-    {
-        VolunteerInListView volunteerInListView = new VolunteerInListView();
-        Admin.Call.CallInListView callInListView = new Admin.Call.CallInListView();
-
-        s_bl.Volunteer.AddObserver(volunteerInListView.VolunteerListObserver);
-        s_bl.Call.AddObserver(callInListView.CallListObserver);
     }
 }

@@ -49,14 +49,14 @@ internal static class VolunteerManager
     /// Fills the volunteer's latitude and longitude based on their address and hashes their password.
     /// </summary>
     /// <param name="volunteer">The volunteer object to be filled.</param>
-    internal static void DOVolunteerFiller(BO.Volunteer volunteer , bool flag)
+    internal static void DOVolunteerFiller(BO.Volunteer volunteer , bool flag1, bool flag2)
     {
-        if (volunteer.Address is not null) // Ai helped
+        if (flag2 && volunteer.Address is not null) // Ai helped
         {
             (volunteer.Latitude, volunteer.Longitude) = Tools.AddressToCoordinates(volunteer.Address);
         }
 
-        if (flag)
+        if (flag1)
             volunteer.Password = CryptPW(volunteer.Password);
     }
 
@@ -266,9 +266,10 @@ internal static class VolunteerManager
     {
         if (string.IsNullOrWhiteSpace(email))
             return false;
-
+        // Remove all white space
+        email = email.Trim();
         // Pattern to match email addresses (e.g. "abc@abc.abc")
-        string pattern = @"^[^@\s]+@[a-z]+\.[a-z]+$";
+        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
         return Regex.IsMatch(email, pattern);
     }
 

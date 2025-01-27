@@ -36,8 +36,8 @@
 
             <Border Background="#FF7690A3" Grid.Column="3" CornerRadius="16" MinWidth="300" MaxWidth="500" MaxHeight="55">
                 <Grid>
-                    <RadioButton Content="Open calls" GroupName="A" Style="{StaticResource HeaderRadioButtonStyle}" Click="CurrentViewToOpenCallsInList" HorizontalAlignment="Left" Width="140" Margin="50,0,0,0" Height="40" Checked="RadioButton_Checked"/>
-                    <RadioButton Content="History" GroupName="A" Style="{StaticResource HeaderRadioButtonStyle}" Click="CurrentViewToCallHistory" Height="40" Width="140" Margin="0,7,50,7" HorizontalAlignment="Right" Checked="RadioButton_Checked_1" />
+                    <RadioButton Content="Open calls" GroupName="A" Style="{StaticResource HeaderRadioButtonStyle}" Click="CurrentViewToOpenCallsInList" HorizontalAlignment="Left" Width="140" Margin="50,0,0,0" Height="40" IsEnabled="{Binding IsNotCall}"/>
+                    <RadioButton Content="History" GroupName="A" Style="{StaticResource HeaderRadioButtonStyle}" Click="CurrentViewToCallHistory" Height="40" Width="140" Margin="0,7,50,7" HorizontalAlignment="Right"/>
                 </Grid>
             </Border>
             <Grid Grid.Column="7">

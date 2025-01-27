@@ -69,9 +69,9 @@ namespace PL.Admin.Volunteer
                 else s_bl.Volunteer.UpdateVolunteer(Volunteer.Id, Volunteer);
                 flag = true;
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Invalid data", "Error");
+                MessageBox.Show($"Invalid data: {ex.Message}", "Error");
             }
 
             if (flag)

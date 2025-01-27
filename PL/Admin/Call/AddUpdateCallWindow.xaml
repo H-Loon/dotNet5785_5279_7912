@@ -153,7 +153,7 @@
                     SelectedTime="{Binding SelectedTime}"
                     IsEnabled="{Binding ElementName=ToggleMT, Path=IsChecked}"
                     Is24Hours="True"
-                    Style="{StaticResource MaterialDesignOutlinedTimePicker}" Grid.Row="7" HorizontalAlignment="Right" Grid.ColumnSpan="1" Width="100" Padding="16,10,12,10" VerticalAlignment="Center" MinHeight="50"
+                    Style="{StaticResource MaterialDesignOutlinedTimePicker}" Grid.Row="7" HorizontalAlignment="Right" Grid.ColumnSpan="1" Width="100" Padding="16,16,12,10" VerticalAlignment="Center" MinHeight="50"
                     />
 
 

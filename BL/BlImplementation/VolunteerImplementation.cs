@@ -32,8 +32,8 @@ internal class VolunteerImplementation : BlApi.IVolunteer
             if (_dal.Volunteer.Read(volunteer.Id) is not null)
                 throw new BO.BlAlreadyExistsException("Volunteer already exists");
 
-            if (string.IsNullOrEmpty(volunteer.Password)) VolunteerManager.DOVolunteerFiller(volunteer, false);
-            else VolunteerManager.DOVolunteerFiller(volunteer, true);
+            if (string.IsNullOrEmpty(volunteer.Password)) VolunteerManager.DOVolunteerFiller(volunteer, false, true);
+            else VolunteerManager.DOVolunteerFiller(volunteer, true, true);
 
             _dal.Volunteer.Create(VolunteerManager.ConvertToDO(volunteer));
             VolunteerManager.Observers.NotifyListUpdated();  //stage 5
@@ -169,8 +169,8 @@ internal class VolunteerImplementation : BlApi.IVolunteer
                     throw new BO.BlNotAllowedException("You are not allowed to update this volunteer");
             }
 
-            if (string.IsNullOrEmpty(volunteer.Password)) { VolunteerManager.DOVolunteerFiller(volunteer, false); volunteer.Password = asker.Password; }
-            else VolunteerManager.DOVolunteerFiller(volunteer, true);
+            if (string.IsNullOrEmpty(volunteer.Password)) { VolunteerManager.DOVolunteerFiller(volunteer, false, !flag); volunteer.Password = asker.Password; }
+            else VolunteerManager.DOVolunteerFiller(volunteer, true, !flag);
            
             _dal.Volunteer.Update(VolunteerManager.ConvertToDO(volunteer));
 

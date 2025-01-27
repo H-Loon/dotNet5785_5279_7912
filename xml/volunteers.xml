@@ -1,20 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfVolunteer>
   <Volunteer>
-    <Id>238336280</Id>
-    <Name>David Cohen</Name>
-    <Phone>0501234567</Phone>
-    <Email>david.cohen@example.com</Email>
-    <Password>1d707811988069ca760826861d6d63a10e8c3b7f171c4441a6472ea58c11711b</Password>
-    <Address>1 Rothschild Blvd, Tel Aviv</Address>
-    <Latitude>32.065</Latitude>
-    <Longitude>34.774</Longitude>
-    <IsActive>true</IsActive>
-    <Role>Admin</Role>
-    <MaxDistance>130</MaxDistance>
-    <DistanceType>Area</DistanceType>
-  </Volunteer>
-  <Volunteer>
     <Id>256810680</Id>
     <Name>David Locohen</Name>
     <Phone>0501234568</Phone>
@@ -220,6 +206,34 @@
     <Latitude>32.827</Latitude>
     <Longitude>34.997</Longitude>
     <IsActive>false</IsActive>
+    <Role>Volunteer</Role>
+    <MaxDistance>50</MaxDistance>
+    <DistanceType>Area</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>238336280</Id>
+    <Name>David Cohen</Name>
+    <Phone>0501234567</Phone>
+    <Email>david.cohen@example.com</Email>
+    <Password>1d707811988069ca760826861d6d63a10e8c3b7f171c4441a6472ea58c11711b</Password>
+    <Address>1 Rothschild Blvd, Tel Aviv</Address>
+    <Latitude>32.065</Latitude>
+    <Longitude>34.774</Longitude>
+    <IsActive>true</IsActive>
+    <Role>Admin</Role>
+    <MaxDistance>130</MaxDistance>
+    <DistanceType>Area</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>213017833</Id>
+    <Name>Elie Hadad</Name>
+    <Phone>0587707715</Phone>
+    <Email>eliehadad770@gmail.com </Email>
+    <Password>f4198aacfdd27e30082207a189d2dca9afeb84ed519f3b5587fb56ab990b5e7c</Password>
+    <Address>34 rue du relais bruxelles</Address>
+    <Latitude>50.8111875</Latitude>
+    <Longitude>4.3936266</Longitude>
+    <IsActive>true</IsActive>
     <Role>Volunteer</Role>
     <MaxDistance>50</MaxDistance>
     <DistanceType>Area</DistanceType>
