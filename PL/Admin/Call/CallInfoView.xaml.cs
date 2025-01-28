@@ -23,7 +23,7 @@ namespace PL.Admin.Call
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public string ButtonText { get; set; }
-
+        public string IdLabel { get; set; } = "ID: ";
         public BO.BoRoleType Status { get; set; }
         public BO.BoDistanceType CallType { get; set; }
         public string AssignList { get; set; }
@@ -53,7 +53,7 @@ namespace PL.Admin.Call
             Call = s_bl.Call.GetCall(id);
             Status = (BO.BoRoleType)Call.Status;
             CallType = (BO.BoDistanceType)Call.CallType;
-
+            IdLabel += id;
             if (Call.AssignInList != null)
                 AssignList = ListToStr();
             else

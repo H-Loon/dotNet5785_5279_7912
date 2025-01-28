@@ -21,7 +21,7 @@ public static class Initialization
     private static readonly string[] s_emails =
     [
         "david.cohen@example.com", "david.locohen@example.com", "yossi.levi@example.com", "miriam.katz@example.com",
-        "rivka.goldberg@example.com", "moshe.ben-david@example.com", "sara.peretz@example.com",
+        "rivka.goldberg@example.com", "moshe.ben.david@example.com", "sara.peretz@example.com",
         "yaakov.shapiro@example.com", "rachel.mizrahi@example.com", "shlomo.rosen@example.com",
         "esther.friedman@example.com", "noa.bar@example.com", "elior.shalom@example.com",
         "tamar.levi@example.com", "avi.cohen@example.com", "lior.ben-ami@example.com",

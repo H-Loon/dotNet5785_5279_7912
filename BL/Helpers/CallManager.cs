@@ -60,7 +60,8 @@ internal static class CallManager
     internal static BO.BoCallStatus GetCallStatus(int callId)
     {
         DO.Call call = s_dal.Call.Read(callId) ?? throw new BO.BlNotExistException("Call not found");
-        DO.Assignment? assignment = s_dal.Assignment.Read(a => a.CallId == callId);
+        var assignments = s_dal.Assignment.ReadAll(a => a.CallId == callId);
+        DO.Assignment? assignment = assignments.LastOrDefault();
 
         DateTime now = AdminManager.Now;
         DateTime? maxTime = s_dal.Call.Read(callId)!.MaxTime;

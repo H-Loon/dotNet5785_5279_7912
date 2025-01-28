@@ -10,22 +10,24 @@
     <UserControl.Resources>
         <local:CallType x:Key="CallType"/>
         <local:Status x:Key="Status"/>
-
-        <Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxStyle2}"/>
+        
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="Height" Value="Auto"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Label">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="16">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
-        <Style TargetType="TextBlock" x:Key="TB">
+        <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="18"/>
-        </Style>
-
-        <Style TargetType="ComboBoxItem">
-            <Setter Property="TextBlock.Foreground" Value="Black"/>
-            <Setter Property="TextBlock.FontSize" Value="10"/>
         </Style>
 
         <Style TargetType="{x:Type TextBox}">
@@ -74,40 +76,42 @@
 
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="1" Content="Type of the Call:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="163"/>
+            <Label Content="{Binding IdLabel, Mode = OneWay}" Background="#96ACBC" Grid.Row="0"  Grid.ColumnSpan="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="40" FontSize="24" FontWeight="SemiBold" Margin="0.2,5,0,0" />
+
+            <TextBlock Grid.Row="1" Text="Type of the Call:" FontSize="22" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="38" Width="163"/>
             <TextBox Text="{Binding Call.CallType, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
 
 
-            <Label Grid.Row="2" Content="Description" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
+            <TextBlock Grid.Row="2" Text="Description" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
             <TextBox Text="{Binding Call.Description, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
 
 
+            <TextBlock Grid.Row="3" Text="Adress :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
             <TextBox Text="{Binding Call.Address, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
-            <Label Grid.Row="3" Content="Adress :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
 
 
+            <TextBlock Grid.Row="4" Text="Lattitude :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
             <TextBox Text="{Binding Call.Latitude, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
-            <Label Grid.Row="4" Content="Lattitude :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
 
 
+            <TextBlock Grid.Row="5" Text="Longitude :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
             <TextBox Text="{Binding Call.Longitude, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
-            <Label Grid.Row="5" Content="Longitude :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
 
 
+            <TextBlock Grid.Row="6" Text="StartTime :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
             <TextBox Text="{Binding Call.StartTime, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
-            <Label Grid.Row="6" Content="StartTime :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
 
 
+            <TextBlock Grid.Row="7" Text="MaxTime :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
             <TextBox Text="{Binding Call.MaxTime, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
-            <Label Grid.Row="7" Content="MaxTime :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
 
 
+            <TextBlock Grid.Row="8" Text="Status :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
             <TextBox Text="{Binding Call.Status, Mode = OneWay}" HorizontalAlignment="Left" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="2" IsReadOnly="True" Height="20" Width="NaN"/>
-            <Label Grid.Row="8" Content="Status :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="125" HorizontalAlignment="Left"/>
 
-            <Label Grid.Row="9" Content="Assign list :" FontSize="22" Grid.Column="1" VerticalAlignment="Center" Height="38" Width="163" HorizontalAlignment="Left"/>
+            <TextBlock Grid.Row="9" Text="Assign list :" FontSize="22" Grid.Column="1" VerticalAlignment="Top" Height="38" Width="163" HorizontalAlignment="Left"/>
             <ScrollViewer Grid.Row="9" Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" >
-                <TextBox Text="{Binding AssignList, Mode = OneWay}" HorizontalAlignment="Left" />
+                <TextBlock Text="{Binding AssignList, Mode = OneWay}" HorizontalAlignment="Left" FontSize="14"/>
             </ScrollViewer>
         </Grid>
     </Border>

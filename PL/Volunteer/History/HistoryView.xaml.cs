@@ -30,6 +30,7 @@ namespace PL.Volunteer.History
         public HistoryView(int id)
         {
             _Id = id;
+            ClosedListObserver();
             InitializeComponent();
         }
        

@@ -27,7 +27,7 @@ namespace PL.Volunteer.Menu
         public string CallIdLabel { get; set; } = "ID: ";
         public string AssignList { get; set; }
 
-        public VolunteerMainView VolunteerMainView { get; set; }
+        public readonly VolunteerMainView volunteerMainView;
         public Visibility CallVisibility
         {
             get { return (Visibility)GetValue(CallVisibilityProperty); }
@@ -59,9 +59,9 @@ namespace PL.Volunteer.Menu
             DependencyProperty.Register("Call", typeof(BO.Call), typeof(MenuView), new PropertyMetadata(null));
 
 
-        public MenuView(VolunteerMainView volunteerMainView,BO.Volunteer v)
+        public MenuView(VolunteerMainView vMainView,BO.Volunteer v)
         {
-            VolunteerMainView = volunteerMainView;
+            volunteerMainView = vMainView;
             Volunteer = v;
             VolunteerIdLabel += Volunteer.Id;
             if (Volunteer.CurrentCall is not null)
@@ -73,7 +73,7 @@ namespace PL.Volunteer.Menu
             }
             InitializeComponent();
         }
-        private string ListToStr()
+        public string ListToStr()
         {
             string result = "";
             foreach (var item in Call.AssignInList)
@@ -106,32 +106,40 @@ namespace PL.Volunteer.Menu
         }
         private void CancelCall(object sender, RoutedEventArgs e)
         {
-            s_bl.Call.CancelCall(Volunteer.Id, Call.Id);
-            Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
-            Volunteer.Password = "";
-            CallVisibility = Visibility.Hidden;
+            if (MessageBox.Show($"Are you sure you want to Cancel this call, ID: {Call.Id}?", "Cancel Call", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                s_bl.Call.CancelCall(Volunteer.Id, Volunteer.CurrentCall!.AssignmentId);
+                Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
+                Volunteer.Password = "";
+                CallVisibility = Visibility.Hidden;
+                volunteerMainView.IsNotCall = true;
+            }
         }
         private void CompleteCall(object sender, RoutedEventArgs e)
         {
-            s_bl.Call.CompleteCall(Volunteer.Id, Call.Id);
-            Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
-            Volunteer.Password = "";
-            CallVisibility = Visibility.Hidden;
-        }
-    }
-    public class BoolToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is bool boolValue && boolValue)
+            if (MessageBox.Show($"Are you sure you want to complete this call, ID: {Call.Id}?", "Complete Call", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                return Visibility.Hidden;
+                s_bl.Call.CompleteCall(Volunteer.Id, Volunteer.CurrentCall!.AssignmentId);
+                Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
+                Volunteer.Password = "";
+                CallVisibility = Visibility.Hidden;
+                volunteerMainView.IsNotCall = true;
             }
-            return Visibility.Visible;
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
+    //public class BoolToVisibilityConverter : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        if (value is bool boolValue && boolValue)
+    //        {
+    //            return Visibility.Hidden;
+    //        }
+    //        return Visibility.Visible;
+    //    }
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }

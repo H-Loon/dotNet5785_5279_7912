@@ -172,9 +172,9 @@ namespace PL.Admin.Call
             set { SetValue(CallInListProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for OpenCallInList.  This enables animation, styling, binding, etc...
+        // Using a DependencyProperty as the backing store for CallInList.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CallInListProperty =
-            DependencyProperty.Register("OpenCallInList", typeof(IEnumerable<BO.CallInList>), typeof(CallInListView));
+            DependencyProperty.Register("CallInList", typeof(IEnumerable<BO.CallInList>), typeof(CallInListView));
 
         private void FilterVisibilitySwitch()
         {

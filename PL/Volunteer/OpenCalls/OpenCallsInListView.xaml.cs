@@ -28,7 +28,7 @@ namespace PL.Volunteer.OpenCalls
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private Menu.MenuView _menuView;
-        private int _id;
+        private int _Id;
         public bool IsCallSelected = false; 
 
         private BO.OpenCallInList? _selectedCall = null; 
@@ -45,35 +45,49 @@ namespace PL.Volunteer.OpenCalls
             } 
                 
         }
-        public OpenCallsInListView(Menu.MenuView menuView, int id)
-        {
-            _id = id;
-            _menuView = menuView;
-            InitializeComponent();
-        }
         
 
         public BO.OpenCallInListField OpenCallInListFieldSorted { get; set; } = BO.OpenCallInListField.Id;
-        public BO.BoCallType CallTypeFiltered { get; set; }
-        public IEnumerable<BO.OpenCallInList> OpenCallInList
+        public BO.BoCallType CallTypeFiltered { get; set; } = BO.BoCallType.None;
+        public OpenCallsInListView(Menu.MenuView menuView, int id)
+        {
+            _Id = id;
+            _menuView = menuView;
+            OpenCallListObserver();
+            InitializeComponent();
+        }
+        public IEnumerable<BO.OpenCallInList> OpenCallsInList
         {
             get { return (IEnumerable<BO.OpenCallInList>)GetValue(CallInListProperty); }
             set { SetValue(CallInListProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for OpenCallInList.  This enables animation, styling, binding, etc...
+        // Using a DependencyProperty as the backing store for OpenCallsInList.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CallInListProperty =
-            DependencyProperty.Register("OpenCallInList", typeof(IEnumerable<BO.OpenCallInList>), typeof(OpenCallsInListView));
+            DependencyProperty.Register("OpenCallsInList", typeof(IEnumerable<BO.OpenCallInList>), typeof(OpenCallsInListView));
 
+        public void Sort_Filtre_List(object sender, RoutedEventArgs e)
+        {
+            OpenCallsInList = s_bl.Call.GetOpenCallForVolunteer(_Id, CallTypeFiltered == BO.BoCallType.None ? null : CallTypeFiltered, OpenCallInListFieldSorted);
+        }
         public void OpenCallListObserver()
         {    
-            OpenCallInList = s_bl.Call.GetOpenCallForVolunteer(_id, CallTypeFiltered, OpenCallInListFieldSorted);
+            OpenCallsInList = s_bl.Call.GetOpenCallForVolunteer(_Id, CallTypeFiltered == BO.BoCallType.None ? null : CallTypeFiltered, OpenCallInListFieldSorted);
         }
 
         private void AcceptCall(object sender, RoutedEventArgs e)
         {
-            _menuView.CallVisibility = Visibility.Visible;
-            _menuView.Call = s_bl.Call.GetCall(_selectedCall!.Id);
+            int callId = _selectedCall!.Id;
+            if (MessageBox.Show($"Are you sure you want to accept this call, ID: {callId}?", "Accept Call", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                s_bl.Call.AssignCall(_Id, callId);
+                _menuView.Call = s_bl.Call.GetCall(callId);
+                _menuView.volunteerMainView.IsNotCall = false;
+                _menuView.CallIdLabel = "ID: " + callId;
+                _menuView.AssignList = _menuView.ListToStr();
+                _menuView.volunteerMainView.CurrentView = _menuView;
+                _menuView.CallVisibility = Visibility.Visible;
+            }
         }
     }
 

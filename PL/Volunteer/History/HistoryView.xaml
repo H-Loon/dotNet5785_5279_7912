@@ -50,18 +50,18 @@
                     SelectedValue="{Binding TypeClosed, Mode=TwoWay}"
                     SelectionChanged="QueryAndOrderCallList"
                     Grid.Column="2"
-                    Cursor="Hand" MinWidth="80" Margin="10,35,10,35"/>
+                    Cursor="Hand" MinWidth="80" VerticalAlignment="Center" Margin="20,0,0,0"/>
 
-                <ListView ItemsSource="{Binding CallClosedInList}"  Style="{StaticResource ListViewStyle1}" ItemContainerStyle="{StaticResource ListViewItemVisual1}" SelectedItem="{Binding SelectedCall}" Grid.Row="1" Grid.ColumnSpan="6" Grid.Column="1" Margin="0,0,40,0">
+                <ListView ItemsSource="{Binding CallClosedInList}"  Style="{StaticResource ListViewStyle1}" ItemContainerStyle="{StaticResource ListViewItemVisual1}" Grid.Row="1" Grid.ColumnSpan="6" Grid.Column="1" Margin="0,0,40,0">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
                             <GridViewColumn Header="Type of call" DisplayMemberBinding="{Binding CallType}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}" />
-                            <GridViewColumn Header="Adresse" DisplayMemberBinding="{Binding Adresse}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}" />
-                            <GridViewColumn Header="StartTime" DisplayMemberBinding="{Binding StartTime}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}" />
-                            <GridViewColumn Header="MaxTime" DisplayMemberBinding="{Binding MaxTime}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
-                            <GridViewColumn Header="EndTime" DisplayMemberBinding="{Binding EndedTime}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
-                            <GridViewColumn Header="EndType" DisplayMemberBinding="{Binding Endtype}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}" />
+                            <GridViewColumn Header="Adresse" DisplayMemberBinding="{Binding Address}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}" />
+                            <GridViewColumn Header="Start time" DisplayMemberBinding="{Binding StartTime}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}" />
+                            <GridViewColumn Header="Assign time" DisplayMemberBinding="{Binding AssignTime}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="End time" DisplayMemberBinding="{Binding EndedTime}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}"/>
+                            <GridViewColumn Header="End type" DisplayMemberBinding="{Binding EndType}" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -73,7 +73,7 @@
                 <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource CallType}}" SelectedValue="{Binding TypeCall, Mode=TwoWay}"
                     SelectionChanged="QueryAndOrderCallList"
                     Grid.Column="4"
-                    Cursor="Hand" MinWidth="80" Margin="10,35,0,35"/>
+                    Cursor="Hand" MinWidth="80" VerticalAlignment="Center" Margin="10,0,0,0"/>
 
             </Grid>
         </Border>

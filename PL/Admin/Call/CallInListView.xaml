@@ -35,7 +35,7 @@
                 </Viewbox>
 
                 <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Source={StaticResource CallInListField}}"
-                     SelectedValue="{Binding CallInListFieldSorted, Mode=TwoWay}"
+                     SelectedValue="{Binding CallInListFieldSorted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      SelectionChanged="SortCallList"
                      Cursor="Hand" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
                 <Viewbox >
@@ -87,7 +87,7 @@
                     />
                 <materialDesign:NumericUpDown materialDesign:HintAssist.Hint="days" MaxHeight="47" Minimum="0" Value="{Binding Days, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding DaysTimeSpanVisibility}" VerticalAlignment="Center" Grid.Column="3" ValueChanged="QueryCallList" Foreground="White" Style="{StaticResource MaterialDesignFilledNumericUpDown}" Grid.Row="1" HorizontalAlignment="Left" MinWidth="0" MaxWidth="100" Margin="10,0,0,10" Padding="6,10,0,10" Width="80"/>
 
-                <ListView ItemsSource="{Binding CallInList}" Style="{StaticResource ListViewStyle1}" ItemContainerStyle="{StaticResource ListViewItemVisual1}" SelectedItem="{Binding SelectedCall}" MouseDoubleClick="lsvCallsList_MouseDoubleClick" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Auto" Grid.Row="2" Grid.ColumnSpan="5" Grid.Column="1" HorizontalAlignment="Left">
+                <ListView ItemsSource="{Binding CallInList, Mode=OneWay}" Style="{StaticResource ListViewStyle1}" ItemContainerStyle="{StaticResource ListViewItemVisual1}" SelectedItem="{Binding SelectedCall}" MouseDoubleClick="lsvCallsList_MouseDoubleClick" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Auto" Grid.Row="2" Grid.ColumnSpan="5" Grid.Column="1" HorizontalAlignment="Left">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="" Width="Auto" HeaderContainerStyle="{StaticResource GridViewHeaderStyle}">

@@ -173,6 +173,7 @@ internal class CallImplementation : ICall
                 AssignInList = assignments?.Select(a => new BO.CallAssignInList
                 {
                     VolunteerId = a.VolunteerId,
+                    VolunteerName = _dal.Volunteer.Read(a.VolunteerId)?.Name ?? "",
                     AssignTime = a.StartTime,
                     EndedTime = a.EndTime,
                     EndType = (BO.BoAssignmentEndReason?)a.EndReason
@@ -209,22 +210,43 @@ internal class CallImplementation : ICall
             var volunteer = _dal.Volunteer.Read(volunteerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
 
             // Filter calls with status "Open" or "OpenAndDanger"
-            return from openCall in allCalls
-                   let status = CallManager.GetCallStatus(openCall.Id)
-                   let callType = (BO.BoCallType)openCall.Type
-                   where (status == BO.BoCallStatus.Open || status == BO.BoCallStatus.OpenAndDanger) &&
-                         (boCallType is null || callType == boCallType)
-                   orderby openCall.GetType().GetProperty(field.ToString()!)
-                   select new BO.OpenCallInList
-                   {
-                       Id = openCall.Id,
-                       CallType = callType,
-                       Description = openCall.Description,
-                       Address = openCall.Address,
-                       StartTime = openCall.StartTime,
-                       MaxTime = openCall.MaxTime,
-                       CallDistance = Tools.GetCallDistance(openCall.Id, volunteer)
-                   };
+            var openCalls = from openCall in allCalls
+                            let status = CallManager.GetCallStatus(openCall.Id)
+                            let callType = (BO.BoCallType)openCall.Type
+                            let distance = Tools.GetCallDistance(openCall.Id, volunteer)
+                            where (status == BO.BoCallStatus.Open || status == BO.BoCallStatus.OpenAndDanger) &&
+                                  (boCallType is null || callType == boCallType) && distance <= volunteer.MaxDistance
+                            select new BO.OpenCallInList
+                            {
+                                Id = openCall.Id,
+                                CallType = callType,
+                                Description = openCall.Description,
+                                Address = openCall.Address,
+                                StartTime = openCall.StartTime,
+                                MaxTime = openCall.MaxTime,
+                                CallDistance = distance
+                            };
+
+            // Order by the specified field
+            if (field.HasValue)
+            {
+                openCalls = field.Value switch
+                {
+                    BO.OpenCallInListField.CallType => openCalls.OrderBy(c => c.CallType),
+                    BO.OpenCallInListField.Description => openCalls.OrderBy(c => c.Description),
+                    BO.OpenCallInListField.Address => openCalls.OrderBy(c => c.Address),
+                    BO.OpenCallInListField.StartTime => openCalls.OrderBy(c => c.StartTime),
+                    BO.OpenCallInListField.MaxTime => openCalls.OrderBy(c => c.MaxTime),
+                    BO.OpenCallInListField.CallDistance => openCalls.OrderBy(c => c.CallDistance),
+                    _ => openCalls.OrderBy(c => c.Id)
+                };
+            }
+            else
+            {
+                openCalls = openCalls.OrderBy(c => c.Id);
+            }
+
+            return openCalls;
         }
         catch (Exception ex)
         {
@@ -284,7 +306,7 @@ internal class CallImplementation : ICall
                 EndReason = DO.AssignmentEndReason.Completed
             });
             AssignmentManager.Observers.NotifyItemUpdated(assignmentId);  //stage 5
-            AssignmentManager.Observers.NotifyListUpdated();  //stage 5
+            CallManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception ex)
         {
@@ -310,7 +332,7 @@ internal class CallImplementation : ICall
                 EndReason = endReason
             });
             AssignmentManager.Observers.NotifyItemUpdated(assignmentId);  //stage 5
-            AssignmentManager.Observers.NotifyListUpdated();  //stage 5
+            CallManager.Observers.NotifyListUpdated();  //stage 5
             string msg = $"The call has been canceled by {canceler.Name}.";
             string receiver = _dal.Volunteer.Read(assignment.VolunteerId)?.Email ?? throw new BO.BlNotExistException("Volunteer not found.");
             Tools.SendEmail("noreply@weirdaid.com",receiver, $"Call n.{assignment.CallId} has been canceled " , msg);
@@ -346,7 +368,8 @@ internal class CallImplementation : ICall
                 VolunteerId = volunteerId,
                 StartTime = DateTime.Now
             });
-            AssignmentManager.Observers.NotifyListUpdated();  //stage 5
+            CallManager.Observers.NotifyListUpdated();  //stage 5
+            VolunteerManager.Observers.NotifyItemUpdated(volunteerId);
         }
         catch (Exception ex)
         {
