@@ -1,4 +1,6 @@
-﻿namespace Dal;
+﻿using System.Runtime.CompilerServices;
+
+namespace Dal;
 /// <summary>
 /// Static class to manage configuration settings for the application.
 /// </summary>
@@ -25,16 +27,27 @@ internal static class Config
     /// <summary>
     /// Gets or sets the current clock value.
     /// </summary>
-    internal static DateTime Clock { get; set; } = DateTime.Now;
+    
+    internal static DateTime Clock { 
+        [MethodImpl(MethodImplOptions.Synchronized)] 
+        get; 
+        [MethodImpl(MethodImplOptions.Synchronized)] 
+        set; } = DateTime.Now;
 
     /// <summary>
     /// Gets or sets the risk range time span.
     /// </summary>
-    internal static TimeSpan RiskRange { get; set; } = TimeSpan.FromDays(1); // Warns of danger 1 day in advance
+    
+    internal static TimeSpan RiskRange {
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        get;
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        set; } = TimeSpan.FromDays(1); // Warns of danger 1 day in advance
 
     /// <summary>
     /// Resets all configuration values to their default settings.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     internal static void Reset()
     {
         nextCallId = startCallId;

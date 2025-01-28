@@ -1,6 +1,7 @@
 ﻿namespace Dal;
 using DalApi;
 using DO;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Implementation of the IVolunteer interface for managing Volunteer entities.
@@ -12,6 +13,8 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="item">The volunteer to create.</param>
     /// <exception cref="DalAlreadyExistsException">Thrown if a volunteer with the same ID already exists.</exception>
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Volunteer item)
     {
         if (Read(item.Id) is not null)
@@ -24,6 +27,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="id">The ID of the volunteer to delete.</param>
     /// <exception cref="DalNotExistException">Thrown if the volunteer with the specified ID does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         Volunteer volunteer = Read(id) ?? throw new DalDeletionImpossibleException($"Assignment with Id ={id} doesn t exists");
@@ -33,6 +37,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Deletes all volunteers.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         DataSource.Volunteers.Clear();
@@ -43,6 +48,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="id">The ID of the volunteer to read.</param>
     /// <returns>The volunteer with the specified ID, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(int id)
     {
         return DataSource.Volunteers.FirstOrDefault(v => v.Id == id);
@@ -53,6 +59,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="filter">The filter predicate to apply, or null to return all volunteers.</param>
     /// <returns>An enumerable of volunteers.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
     {
         return filter is null ? DataSource.Volunteers : DataSource.Volunteers.Where(filter);
@@ -63,6 +70,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="item">The volunteer to update.</param>
     /// <exception cref="DalNotExistException">Thrown if the volunteer with the specified ID does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Volunteer item)
     {
         var existingVolunteer = Read(item.Id) ?? throw new DalNotExistException($"Volunteer with Id ={item.Id} doesn t exists");
@@ -75,6 +83,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="filter">The filter predicate to apply.</param>
     /// <returns>The volunteer that matches the filter, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         return DataSource.Volunteers.FirstOrDefault(filter);

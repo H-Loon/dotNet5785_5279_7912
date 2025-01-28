@@ -31,6 +31,7 @@ internal class CallImplementation : ICall
     }
     public void AddCall(BO.Call call)
     {
+            AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             CallManager.ValidateCallFormat(call);
@@ -61,6 +62,7 @@ internal class CallImplementation : ICall
 
     public void DeleteCall(int id)
     {
+            AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             // Retrieve the call details
@@ -293,6 +295,7 @@ internal class CallImplementation : ICall
 
     public void CompleteCall(int volunteerId, int assignmentId)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();
         if (_dal.Volunteer.Read(volunteerId) is null) throw new BO.BlNotExistException("Volunteer/Admin not found.");
         DO.Assignment assignment = _dal.Assignment.Read(assignmentId) ?? throw new BO.BlNotExistException("Assignment not found.");
         if (assignment.VolunteerId != volunteerId)
@@ -317,6 +320,7 @@ internal class CallImplementation : ICall
 
     public void CancelCall(int cancelerId, int assignmentId)
     {
+            AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             DO.Assignment assignment = _dal.Assignment.Read(assignmentId) ?? throw new BO.BlNotExistException("Assignment not found.");
@@ -346,6 +350,7 @@ internal class CallImplementation : ICall
 
     public void AssignCall(int volunteerId, int callId)
     {
+            AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             if(_dal.Call.Read(callId) is null) throw new BO.BlNotExistException("Call not found.");
@@ -385,7 +390,7 @@ internal class CallImplementation : ICall
     /// <exception cref="InvalidOperationException">Thrown when the call is not found or an error occurs during the update.</exception>
     public void UpdateCall(BO.Call call)
     {
-
+            AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             CallManager.ValidateCallFormat(call);

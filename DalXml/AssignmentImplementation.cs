@@ -1,6 +1,7 @@
 ﻿namespace Dal;
 using DalApi;
 using DO;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
 internal class AssignmentImplementation : IAssignment
@@ -10,6 +11,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="item">The assignment to create.</param>
     /// <exception cref="DalAlreadyExistsException">Thrown when an assignment with the same ID already exists.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Assignment item)
     {
         var assignmentsXml = XMLTools.LoadListFromXMLElement(Config.Assignments_Xml);
@@ -22,6 +24,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id">The ID of the assignment to delete.</param>
     /// <exception cref="DalNotExistException">Thrown when an assignment with the specified ID does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         var assignmentsXml = XMLTools.LoadListFromXMLElement(Config.Assignments_Xml);
@@ -33,6 +36,7 @@ internal class AssignmentImplementation : IAssignment
     /// <summary>
     /// Deletes all assignments from the XML file.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         var assignmentsXml = XMLTools.LoadListFromXMLElement(Config.Assignments_Xml);
@@ -45,6 +49,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id">The ID of the assignment to read.</param>
     /// <returns>The assignment with the specified ID, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Assignment? Read(int id)
     {
         XElement? assignmentElem = getAssignmentXElementFromId(id);
@@ -57,6 +62,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="filter">The filter predicate to apply.</param>
     /// <returns>The assignment that matches the filter, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Assignment? Read(Func<Assignment, bool> filter)
     {
         var assignments = XMLTools.LoadListFromXMLElement(Config.Assignments_Xml)
@@ -71,6 +77,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="filter">The filter predicate to apply, or null to return all assignments.</param>
     /// <returns>An enumerable of assignments.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null)
     {
         var assignments = from aElem in XMLTools.LoadListFromXMLElement(Config.Assignments_Xml).Elements()
@@ -84,6 +91,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="item">The assignment to update.</param>
     /// <exception cref="DalNotExistException">Thrown when an assignment with the specified ID does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Assignment item)
     {
         Delete(item.Id);
@@ -99,6 +107,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="assignmentElem">The XElement representing the assignment.</param>
     /// <returns>The Assignment object.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private Assignment getAssignmentFromXElement(XElement assignmentElem)
     {
         DateTime? endDate = null;
@@ -129,6 +138,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id">The ID of the assignment.</param>
     /// <returns>The XElement representing the assignment, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private XElement? getAssignmentXElementFromId(int id)
     {
         return XMLTools.LoadListFromXMLElement(Config.Assignments_Xml)
@@ -140,6 +150,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="item">The Assignment object.</param>
     /// <returns>The XElement representing the assignment.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private XElement AssignmentToXElement(Assignment item)
     {
         return new XElement("Assignment",

@@ -1,6 +1,7 @@
 ﻿namespace Dal;
 using DalApi;
 using DO;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
 internal class VolunteerImplementation : IVolunteer
@@ -10,6 +11,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="item">The volunteer to create.</param>
     /// <exception cref="DalAlreadyExistsException">Thrown when a volunteer with the same ID already exists.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Volunteer item)
     {
         if (Read(item.Id) is not null)
@@ -25,6 +27,7 @@ internal class VolunteerImplementation : IVolunteer
     /// Deletes a volunteer from the XML file by ID.
     /// </summary>
     /// <param name="id">The ID of the volunteer to delete.</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)  // AI helped me here
     {
         var volunteersXml = XMLTools.LoadListFromXMLElement(Config.Volunteers_Xml);
@@ -40,6 +43,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Deletes all volunteers from the XML file.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         var volunteersXml = XMLTools.LoadListFromXMLElement(Config.Volunteers_Xml);
@@ -52,6 +56,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="id">The ID of the volunteer to read.</param>
     /// <returns>The volunteer with the specified ID, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(int id)
     {
         XElement? volunteerElem = getVolunteerXElementFromId(id);
@@ -64,6 +69,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="filter">The filter predicate to apply.</param>
     /// <returns>The volunteer that matches the filter, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         var volunteers = ReadAll();
@@ -76,6 +82,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="filter">The filter predicate to apply, or null to return all volunteers.</param>
     /// <returns>An enumerable of volunteers.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
     {
         var volunteers = from vElem in XMLTools.LoadListFromXMLElement(Config.Volunteers_Xml).Elements()
@@ -89,6 +96,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="item">The volunteer to update.</param>
     /// <exception cref="DalNotExistException">Thrown when the volunteer does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Volunteer item)
     {
         Delete(item.Id);
@@ -104,6 +112,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="volunteerElem">The XElement representing the volunteer.</param>
     /// <returns>The Volunteer object.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private Volunteer getVolunteerFromXElement(XElement volunteerElem)
     {
         return new Volunteer
@@ -128,6 +137,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="id">The ID of the volunteer.</param>
     /// <returns>The XElement representing the volunteer, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private XElement? getVolunteerXElementFromId(int id)
     {
         return XMLTools.LoadListFromXMLElement(Config.Volunteers_Xml)
@@ -139,6 +149,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="item">The Volunteer object.</param>
     /// <returns>The XElement representing the volunteer.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private XElement VolunteerToXElement(Volunteer item)
     {
         return new XElement("Volunteer",

@@ -65,6 +65,7 @@ internal static class VolunteerManager
     /// </summary>
     internal static void PasswordFillerForInit()
     {
+        AdminManager.ThrowOnSimulatorIsRunning();
         var volunteers = s_dal.Volunteer.ReadAll();
 
         foreach (var v in volunteers) // Encrypt all passwords of initialized volunteers

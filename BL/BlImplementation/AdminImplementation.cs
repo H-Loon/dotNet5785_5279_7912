@@ -8,6 +8,7 @@ internal class AdminImplementation : IAdmin
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
     public void ForwardClock(BO.TimeUnit type)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();
         switch (type)
         {
             case BO.TimeUnit.Seconds:
@@ -50,7 +51,8 @@ internal class AdminImplementation : IAdmin
 
     public void InitDB()
     {
-        DalTest.Initialization.Do();
+        AdminManager.ThrowOnSimulatorIsRunning(); //stage 7
+        AdminManager.InitializeDB(); //stage 7
         VolunteerManager.PasswordFillerForInit();
         AdminManager.UpdateClock(AdminManager.Now);
         AdminManager.RiskRange = AdminManager.RiskRange;
@@ -61,7 +63,8 @@ internal class AdminImplementation : IAdmin
 
     public void ResetDB()
     {
-        _dal.ResetDB();
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        AdminManager.ResetDB(); //stage 7
         AdminManager.UpdateClock(AdminManager.Now);
         AdminManager.RiskRange = AdminManager.RiskRange;
         VolunteerManager.Observers.NotifyListUpdated();
@@ -71,6 +74,7 @@ internal class AdminImplementation : IAdmin
 
     public void UpdateRiskRange(TimeSpan riskRange)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();
         AdminManager.RiskRange = riskRange;
     }
 
@@ -84,4 +88,12 @@ internal class AdminImplementation : IAdmin
     public void RemoveConfigObserver(Action configObserver) =>
         AdminManager.ConfigUpdatedObservers -= configObserver;
     #endregion Stage 5
+
+    public void StartSimulator(int interval)  //stage 7
+    {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        AdminManager.Start(interval); //stage 7
+    }
+    public void StopSimulator()
+    => AdminManager.Stop(); //stage 7
 }

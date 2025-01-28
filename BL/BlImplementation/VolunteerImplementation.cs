@@ -25,6 +25,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     /// <exception cref="ArgumentException">Thrown when the volunteer is not valid or already exists.</exception>  
     public void AddVolunteer(BO.Volunteer volunteer)
     {
+            AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             VolunteerManager.BOVolunteerCheck(volunteer, true, true);     
@@ -51,6 +52,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     /// <exception cref="ArgumentException">Thrown when the volunteer is in treatment or has no completed calls.</exception>  
     public void DeleteVolunteer(int id)
     {
+            AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             var boVolunteer = VolunteerManager.ConvertToBO(id);
@@ -158,6 +160,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     {
         try
         {
+            AdminManager.ThrowOnSimulatorIsRunning();
             var asker = _dal.Volunteer.Read(id) ?? throw new BO.BlNotExistException("Volunteer not found");
             bool flag = asker.Address.Equals(volunteer.Address);
             VolunteerManager.BOVolunteerCheck(volunteer, false, flag);

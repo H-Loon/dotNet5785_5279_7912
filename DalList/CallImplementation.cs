@@ -1,6 +1,7 @@
 ﻿namespace Dal;
 using DalApi;
 using DO;
+using System.Runtime.CompilerServices;
 
 internal class CallImplementation : ICall
 {
@@ -9,6 +10,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="item">The call to create.</param>
     /// <exception cref="DalAlreadyExistsException">Thrown when a call with the same Id already exists.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Call item)
     {
         if (Read(item.Id) is not null)
@@ -21,6 +23,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id">The Id of the call to delete.</param>
     /// <exception cref="DalNotExistException">Thrown when the call with the specified Id does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         var call = Read(id);
@@ -32,6 +35,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Deletes all calls.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         DataSource.Calls.Clear();
@@ -42,6 +46,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id">The Id of the call to read.</param>
     /// <returns>The call with the specified Id, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(int id)
     {
         return DataSource.Calls.FirstOrDefault(c => c.Id == id);
@@ -52,6 +57,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="filter">The filter predicate to apply, or null to return all calls.</param>
     /// <returns>An enumerable of calls.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
     {
         return filter == null ? DataSource.Calls : DataSource.Calls.Where(filter);
@@ -62,6 +68,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="item">The call to update.</param>
     /// <exception cref="DalNotExistException">Thrown when the call with the specified Id does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Call item)
     {
         var existingCall = Read(item.Id);
@@ -76,6 +83,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="filter">The filter predicate to apply.</param>
     /// <returns>The call that matches the filter, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(Func<Call, bool> filter)
     {
         return DataSource.Calls.FirstOrDefault(filter);
