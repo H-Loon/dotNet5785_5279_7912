@@ -24,8 +24,32 @@ namespace PL.Volunteer.Menu
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public string VolunteerIdLabel { get; set; } = "ID: ";
-        public string CallIdLabel { get; set; } = "ID: ";
-        public string AssignList { get; set; }
+
+
+        public string CallIdLabel
+        {
+            get { return (string)GetValue(CallIdLabelProperty); }
+            set { SetValue(CallIdLabelProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for CallIdLabel.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CallIdLabelProperty =
+            DependencyProperty.Register("CallIdLabel", typeof(string), typeof(MenuView), new PropertyMetadata(string.Empty));
+
+
+
+
+        public string AssignList
+        {
+            get { return (string)GetValue(AssignListProperty); }
+            set { SetValue(AssignListProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for AssignList.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AssignListProperty =
+            DependencyProperty.Register("AssignList", typeof(string), typeof(MenuView), new PropertyMetadata(string.Empty));
+
+
 
         public readonly VolunteerMainView volunteerMainView;
         public Visibility CallVisibility
@@ -67,7 +91,7 @@ namespace PL.Volunteer.Menu
             if (Volunteer.CurrentCall is not null)
             {
                 Call = s_bl.Call.GetCall(Volunteer.CurrentCall.CallId);
-                CallIdLabel += Call.Id;
+                CallIdLabel = "ID: " + Call.Id;
                 AssignList = ListToStr();
                 CallVisibility = Visibility.Visible;
             }

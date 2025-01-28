@@ -29,7 +29,19 @@ namespace PL.Volunteer.OpenCalls
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private Menu.MenuView _menuView;
         private int _Id;
-        public bool IsCallSelected = false; 
+
+
+        public bool IsCallSelected
+        {
+            get { return (bool)GetValue(IsCallSelectedProperty); }
+            set { SetValue(IsCallSelectedProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsCallSelected.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsCallSelectedProperty =
+            DependencyProperty.Register("IsCallSelected", typeof(bool), typeof(OpenCallsInListView), new PropertyMetadata(false));
+
+
 
         private BO.OpenCallInList? _selectedCall = null; 
         public BO.OpenCallInList? SelectedCall
@@ -41,6 +53,10 @@ namespace PL.Volunteer.OpenCalls
                 if (_selectedCall != null)
                 {
                     IsCallSelected = true;
+                }
+                else
+                {
+                    IsCallSelected = false;
                 }
             } 
                 

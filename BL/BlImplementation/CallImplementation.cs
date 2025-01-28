@@ -121,6 +121,7 @@ internal class CallImplementation : ICall
                     BO.ClosedCallInListField.CallType => closedCalls.OrderBy(c => c.CallType),
                     BO.ClosedCallInListField.Address => closedCalls.OrderBy(c => c.Address),
                     BO.ClosedCallInListField.StartTime => closedCalls.OrderBy(c => c.StartTime),
+                    BO.ClosedCallInListField.AssignTime => closedCalls.OrderBy(c => c.AssignTime),
                     BO.ClosedCallInListField.EndedTime => closedCalls.OrderBy(c => c.EndedTime),
                     BO.ClosedCallInListField.EndType => closedCalls.OrderBy(c => c.EndType),
                     _ => closedCalls.OrderBy(c => c.Id)
@@ -131,7 +132,7 @@ internal class CallImplementation : ICall
                 closedCalls = closedCalls.OrderBy(c => c.Id);
             }
 
-            return closedCalls.ToList();
+            return closedCalls;
         }
         catch (DO.DalNotExistException ex)
         {

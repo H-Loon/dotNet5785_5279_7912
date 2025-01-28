@@ -46,7 +46,7 @@
                         SelectionChanged="Sort_Filtre_List"
                         Cursor="Hand" VerticalAlignment="Center" Grid.Column="2" Grid.Row="1" Margin="10,0,0,10"/>
 
-                <Button Content="Accept" Click="AcceptCall" MinWidth="100" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="10,0,0,10" IsEnabled="{Binding IsCallSelected}"/>
+                <Button Content="Accept" Click="AcceptCall" MinWidth="100" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="10,0,0,10" IsEnabled="{Binding IsCallSelected, Mode=OneWay}"/>
 
                 <ListView ItemsSource="{Binding OpenCallsInList}" Style="{StaticResource ListViewStyle1}" ItemContainerStyle="{StaticResource ListViewItemVisual1}" SelectedItem="{Binding SelectedCall}"  ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Auto" Grid.Row="2" Grid.ColumnSpan="3" Grid.Column="1" SelectedIndex="0">
                     <ListView.View>
