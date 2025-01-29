@@ -28,15 +28,16 @@ internal class VolunteerImplementation : BlApi.IVolunteer
             AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
-            VolunteerManager.BOVolunteerCheck(volunteer, true, true);     
-
-            if (_dal.Volunteer.Read(volunteer.Id) is not null)
+            VolunteerManager.BOVolunteerCheck(volunteer, true, true);
+            lock (AdminManager.BlMutex)//stage 7
+                if (_dal.Volunteer.Read(volunteer.Id) is not null)
                 throw new BO.BlAlreadyExistsException("Volunteer already exists");
 
             if (string.IsNullOrEmpty(volunteer.Password)) VolunteerManager.DOVolunteerFiller(volunteer, false, true);
             else VolunteerManager.DOVolunteerFiller(volunteer, true, true);
 
-            _dal.Volunteer.Create(VolunteerManager.ConvertToDO(volunteer));
+            lock (AdminManager.BlMutex)//stage 7
+                _dal.Volunteer.Create(VolunteerManager.ConvertToDO(volunteer));
             VolunteerManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception e)
@@ -62,8 +63,9 @@ internal class VolunteerImplementation : BlApi.IVolunteer
 
             if (boVolunteer.CompletedCalls is 0)
                 throw new BO.BlDeletionImpossibleException("Volunteer has no completed calls");
- 
-            _dal.Volunteer.Delete(id);
+
+            lock (AdminManager.BlMutex)//stage 7
+                _dal.Volunteer.Delete(id);
             VolunteerManager.Observers.NotifyListUpdated();  //stage 5
 
         }
@@ -100,20 +102,23 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     {
         try
         {
-            IEnumerable<DO.Assignment> assignments = _dal.Assignment.ReadAll();
-            IEnumerable<DO.Call> calls = _dal.Call.ReadAll();
-            IEnumerable<BO.VolunteerInList> volunteers = VolunteerManager.GetVolunteerInLists(active);
+            lock (AdminManager.BlMutex)//stage 7
+            { 
+                IEnumerable<DO.Assignment> assignments = _dal.Assignment.ReadAll();
+                IEnumerable<DO.Call> calls = _dal.Call.ReadAll();
+                IEnumerable<BO.VolunteerInList> volunteers = VolunteerManager.GetVolunteerInLists(active);
 
-            return field switch
-            {
-                BO.VolunteerInListField.Name => volunteers.OrderBy(v => v.Name),
-                BO.VolunteerInListField.Active => volunteers.OrderBy(v => v.IsActive),
-                BO.VolunteerInListField.CompletedCalls => volunteers.OrderBy(v => v.CompletedCalls),
-                BO.VolunteerInListField.CanceledCalls => volunteers.OrderBy(v => v.CanceledCalls),
-                BO.VolunteerInListField.CallInTreatment => volunteers.OrderBy(v => v.CallInTreatment),
-                BO.VolunteerInListField.CurrentCallType => volunteers.OrderBy(v => v.CurrentCallType),
-                _ => volunteers.OrderBy(v => v.Id),
-            };
+                return field switch
+                {
+                    BO.VolunteerInListField.Name => volunteers.OrderBy(v => v.Name),
+                    BO.VolunteerInListField.Active => volunteers.OrderBy(v => v.IsActive),
+                    BO.VolunteerInListField.CompletedCalls => volunteers.OrderBy(v => v.CompletedCalls),
+                    BO.VolunteerInListField.CanceledCalls => volunteers.OrderBy(v => v.CanceledCalls),
+                    BO.VolunteerInListField.CallInTreatment => volunteers.OrderBy(v => v.CallInTreatment),
+                    BO.VolunteerInListField.CurrentCallType => volunteers.OrderBy(v => v.CurrentCallType),
+                    _ => volunteers.OrderBy(v => v.Id),
+                };
+            }
         }
         catch (Exception e)
         {
@@ -133,16 +138,18 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     {
         try
         {
-            DO.Volunteer? volunteer = _dal.Volunteer.Read(v => v.Name == name) ?? throw new BO.BlNotExistException("Volunteer name not found");
+            lock (AdminManager.BlMutex)//stage 7
+            { 
+                DO.Volunteer? volunteer = _dal.Volunteer.Read(v => v.Name == name) ?? throw new BO.BlNotExistException("Volunteer name not found");
+                if (volunteer.Password is null)
+                    return (BO.BoRoleType)volunteer.Role;
 
-            if (volunteer.Password is null)
-                return (BO.BoRoleType)volunteer.Role;
+                if (VolunteerManager.CryptPW(password) != volunteer.Password)
+                    throw new BO.BlIncorrectPasswordException("Password is incorrect");
 
-            if (VolunteerManager.CryptPW(password) != volunteer.Password)
-                throw new BO.BlIncorrectPasswordException("Password is incorrect");
-
-            else
-                return (BO.BoRoleType)volunteer.Role;
+                else
+                    return (BO.BoRoleType)volunteer.Role;
+            }
         }
         catch (Exception e)
         {
@@ -174,7 +181,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
 
             if (string.IsNullOrEmpty(volunteer.Password)) { VolunteerManager.DOVolunteerFiller(volunteer, false, !flag); volunteer.Password = asker.Password; }
             else VolunteerManager.DOVolunteerFiller(volunteer, true, !flag);
-           
+           lock (AdminManager.BlMutex)//stage 7
             _dal.Volunteer.Update(VolunteerManager.ConvertToDO(volunteer));
 
             VolunteerManager.Observers.NotifyItemUpdated(volunteer.Id);  //stage 5

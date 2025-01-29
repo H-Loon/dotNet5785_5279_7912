@@ -19,25 +19,28 @@ internal static class VolunteerManager
     {
         try
         {
-            IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll();
-            IEnumerable<DO.Call> calls = s_dal.Call.ReadAll();
+            lock (AdminManager.BlMutex) //stage 7
+            { 
+                IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll();
+                IEnumerable<DO.Call> calls = s_dal.Call.ReadAll();
 
-            return from v in s_dal.Volunteer.ReadAll() // create a list of BO.Volunteers
-                   where active == null || v.IsActive == active
-                   let complCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed)
-                   let canceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer)
-                   let callInTreatmentId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId
-                   let callInTreatmentType = calls.FirstOrDefault(c => c.Id == callInTreatmentId)?.Type
-                   select new BO.VolunteerInList
-                   {
-                       Id = v.Id,
-                       Name = v.Name,
-                       IsActive = v.IsActive,
-                       CompletedCalls = complCalls,
-                       CanceledCalls = canceledCalls,
-                       CallInTreatment = callInTreatmentId,
-                       CurrentCallType = callInTreatmentType.HasValue ? (BO.BoCallType)callInTreatmentType : BO.BoCallType.None
-                   };
+                return from v in s_dal.Volunteer.ReadAll() // create a list of BO.Volunteers
+                       where active == null || v.IsActive == active
+                       let complCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed)
+                       let canceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer)
+                       let callInTreatmentId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId
+                       let callInTreatmentType = calls.FirstOrDefault(c => c.Id == callInTreatmentId)?.Type
+                       select new BO.VolunteerInList
+                       {
+                           Id = v.Id,
+                           Name = v.Name,
+                           IsActive = v.IsActive,
+                           CompletedCalls = complCalls,
+                           CanceledCalls = canceledCalls,
+                           CallInTreatment = callInTreatmentId,
+                           CurrentCallType = callInTreatmentType.HasValue ? (BO.BoCallType)callInTreatmentType : BO.BoCallType.None
+                       };
+            }
         }
         catch (Exception e)
         {
@@ -65,28 +68,31 @@ internal static class VolunteerManager
     /// </summary>
     internal static void PasswordFillerForInit()
     {
-        AdminManager.ThrowOnSimulatorIsRunning();
-        var volunteers = s_dal.Volunteer.ReadAll();
+        lock (AdminManager.BlMutex) //stage 7
+        { 
+                AdminManager.ThrowOnSimulatorIsRunning();
+            var volunteers = s_dal.Volunteer.ReadAll();
 
-        foreach (var v in volunteers) // Encrypt all passwords of initialized volunteers
-        {
-            var password = CryptPW(v.Password);
-            s_dal.Volunteer.Update(new DO.Volunteer
+            foreach (var v in volunteers) // Encrypt all passwords of initialized volunteers
             {
-                Id = v.Id,
-                Name = v.Name,
-                Phone = v.Phone,
-                Email = v.Email,
-                Password = password,
-                Address = v.Address,
-                Latitude = v.Latitude,
-                Longitude = v.Longitude,
-                Role = v.Role,
-                IsActive = v.IsActive,
-                MaxDistance = v.MaxDistance,
-                DistanceType = v.DistanceType
-            });
-            Observers.NotifyItemUpdated(v.Id); //stage 5
+                var password = CryptPW(v.Password);
+                s_dal.Volunteer.Update(new DO.Volunteer
+                {
+                    Id = v.Id,
+                    Name = v.Name,
+                    Phone = v.Phone,
+                    Email = v.Email,
+                    Password = password,
+                    Address = v.Address,
+                    Latitude = v.Latitude,
+                    Longitude = v.Longitude,
+                    Role = v.Role,
+                    IsActive = v.IsActive,
+                    MaxDistance = v.MaxDistance,
+                    DistanceType = v.DistanceType
+                });
+                Observers.NotifyItemUpdated(v.Id); //stage 5
+            }
         }
     }
 
@@ -97,52 +103,55 @@ internal static class VolunteerManager
     /// <returns>The converted BO.Volunteer object.</returns>
     internal static BO.Volunteer ConvertToBO(int id)
     {
-        IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll();
+        lock (AdminManager.BlMutex) //stage 7
+            { 
+                IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll();
 
-        DO.Volunteer v = s_dal.Volunteer.Read(id) ?? throw new BO.BlNotExistException($"No volunteer with ID = {id} found");
+            DO.Volunteer v = s_dal.Volunteer.Read(id) ?? throw new BO.BlNotExistException($"No volunteer with ID = {id} found");
 
-        BO.CallInProgress? callInProgress = null;
+            BO.CallInProgress? callInProgress = null;
 
-        int openCallId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId ?? 0;
+            int openCallId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId ?? 0;
 
-        if (openCallId is not 0) // If the volunteer has an open call in progress 
-        {
-            var assignment = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null);
-            var call = s_dal.Call.Read(c => c.Id == openCallId);
-            callInProgress = new BO.CallInProgress
+            if (openCallId is not 0) // If the volunteer has an open call in progress 
             {
-                AssignmentId = assignment!.Id,
-                CallId = openCallId,
-                CallType = (BO.BoCallType)call!.Type,
-                Description = call.Description,
-                Address = call.Address,
-                StartTime = call.StartTime,
-                MaxTime = call.MaxTime,
-                AssignTime = assignment.StartTime,
-                CallDistance = Tools.GetCallDistance(openCallId, v),
-                Status = CallManager.GetCallStatus(openCallId)
+                var assignment = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null);
+                var call = s_dal.Call.Read(c => c.Id == openCallId);
+                callInProgress = new BO.CallInProgress
+                {
+                    AssignmentId = assignment!.Id,
+                    CallId = openCallId,
+                    CallType = (BO.BoCallType)call!.Type,
+                    Description = call.Description,
+                    Address = call.Address,
+                    StartTime = call.StartTime,
+                    MaxTime = call.MaxTime,
+                    AssignTime = assignment.StartTime,
+                    CallDistance = Tools.GetCallDistance(openCallId, v),
+                    Status = CallManager.GetCallStatus(openCallId)
+                };
+            }
+
+            return new BO.Volunteer 
+            {
+                Id = v.Id,
+                Name = v.Name,
+                Phone = v.Phone,
+                Email = v.Email,
+                Password = v.Password,
+                Address = v.Address,
+                Latitude = v.Latitude,
+                Longitude = v.Longitude,
+                Role = (BO.BoRoleType)v.Role,
+                IsActive = v.IsActive,
+                MaxDistance = v.MaxDistance,
+                DistanceType = (BO.BoDistanceType)v.DistanceType,
+                CompletedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed),
+                CanceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer),
+                OverDatedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.OverDated),
+                CurrentCall = callInProgress
             };
         }
-
-        return new BO.Volunteer 
-        {
-            Id = v.Id,
-            Name = v.Name,
-            Phone = v.Phone,
-            Email = v.Email,
-            Password = v.Password,
-            Address = v.Address,
-            Latitude = v.Latitude,
-            Longitude = v.Longitude,
-            Role = (BO.BoRoleType)v.Role,
-            IsActive = v.IsActive,
-            MaxDistance = v.MaxDistance,
-            DistanceType = (BO.BoDistanceType)v.DistanceType,
-            CompletedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed),
-            CanceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer),
-            OverDatedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.OverDated),
-            CurrentCall = callInProgress
-        };
     }
 
     /// <summary>
@@ -162,21 +171,24 @@ internal static class VolunteerManager
     /// <returns>The converted DO.Volunteer object.</returns>
     internal static DO.Volunteer ConvertToDO(BO.Volunteer volunteer)
     {
-        return new DO.Volunteer
-        {
-            Id = volunteer.Id,
-            Name = volunteer.Name,
-            Phone = volunteer.Phone,
-            Email = volunteer.Email,
-            Password = volunteer.Password,
-            Address = volunteer.Address,
-            Latitude = volunteer.Latitude,
-            Longitude = volunteer.Longitude,
-            Role = (DO.RoleType)volunteer.Role,
-            IsActive = volunteer.IsActive,
-            MaxDistance = volunteer.MaxDistance,
-            DistanceType = (DO.DistanceType)volunteer.DistanceType
-        };
+        lock (AdminManager.BlMutex) //stage 7
+        { 
+                return new DO.Volunteer
+            {
+                Id = volunteer.Id,
+                Name = volunteer.Name,
+                Phone = volunteer.Phone,
+                Email = volunteer.Email,
+                Password = volunteer.Password,
+                Address = volunteer.Address,
+                Latitude = volunteer.Latitude,
+                Longitude = volunteer.Longitude,
+                Role = (DO.RoleType)volunteer.Role,
+                IsActive = volunteer.IsActive,
+                MaxDistance = volunteer.MaxDistance,
+                DistanceType = (DO.DistanceType)volunteer.DistanceType
+            };
+        }
     }
 
     /// <summary>
