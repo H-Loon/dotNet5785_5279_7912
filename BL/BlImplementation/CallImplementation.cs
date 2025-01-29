@@ -80,7 +80,6 @@ internal class CallImplementation : ICall
                 {
                     throw new BO.BlNotAllowedException("Cannot delete call. The call is either not open or has been assigned to a volunteer.");
                 }
-
                 _dal.Call.Delete(id);
             }
             CallManager.Observers.NotifyListUpdated();  //stage 5
@@ -324,11 +323,14 @@ internal class CallImplementation : ICall
             throw new BO.BlNotAllowedException("This call has already been ended.");
         try
         {
-            _dal.Assignment.Update(assignment with
+            lock (AdminManager.BlMutex) //stage 7
             {
-                EndTime = DateTime.Now,
-                EndReason = DO.AssignmentEndReason.Completed
-            });
+                _dal.Assignment.Update(assignment with
+                {
+                    EndTime = DateTime.Now,
+                    EndReason = DO.AssignmentEndReason.Completed
+                });
+            }
             AssignmentManager.Observers.NotifyItemUpdated(assignmentId);  //stage 5
             CallManager.Observers.NotifyListUpdated();  //stage 5
         }
@@ -343,19 +345,22 @@ internal class CallImplementation : ICall
             AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
-            DO.Assignment assignment = _dal.Assignment.Read(assignmentId) ?? throw new BO.BlNotExistException("Assignment not found.");
-            var canceler = _dal.Volunteer.Read(cancelerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
-
-            if (assignment.VolunteerId != cancelerId && canceler.Role is not DO.RoleType.Admin)
-                throw new BO.BlNotAllowedException("You are not authorized to cancel this call.");
-            if (assignment.EndTime is not null)
-                throw new BO.BlNotAllowedException("This call has already been ended.");
-            var endReason = canceler.Role is DO.RoleType.Admin ? DO.AssignmentEndReason.CanceledByAdmin : DO.AssignmentEndReason.CanceledByVolunteer;
-            _dal.Assignment.Update(assignment with
+            lock (AdminManager.BlMutex) //stage 7
             {
-                EndTime = DateTime.Now,
-                EndReason = endReason
-            });
+                DO.Assignment assignment = _dal.Assignment.Read(assignmentId) ?? throw new BO.BlNotExistException("Assignment not found.");
+                var canceler = _dal.Volunteer.Read(cancelerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
+
+                if (assignment.VolunteerId != cancelerId && canceler.Role is not DO.RoleType.Admin)
+                    throw new BO.BlNotAllowedException("You are not authorized to cancel this call.");
+                if (assignment.EndTime is not null)
+                    throw new BO.BlNotAllowedException("This call has already been ended.");
+                var endReason = canceler.Role is DO.RoleType.Admin ? DO.AssignmentEndReason.CanceledByAdmin : DO.AssignmentEndReason.CanceledByVolunteer;
+                _dal.Assignment.Update(assignment with
+                {
+                    EndTime = DateTime.Now,
+                    EndReason = endReason
+                });
+            }
             AssignmentManager.Observers.NotifyItemUpdated(assignmentId);  //stage 5
             CallManager.Observers.NotifyListUpdated();  //stage 5
             string msg = $"The call has been canceled by {canceler.Name}.";
