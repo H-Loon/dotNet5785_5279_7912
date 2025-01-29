@@ -26,7 +26,6 @@ internal static class CallManager
 
     internal static DO.Call ConvertToDoCall(BO.Call call)
     {
-
         return new DO.Call
         {
             Id = call.Id,
@@ -62,48 +61,55 @@ internal static class CallManager
     /// <exception cref="BO.BlNotExistException">Thrown when the call is not found.</exception>
     internal static BO.BoCallStatus GetCallStatus(int callId)
     {
+        DO.Call call;
+        IEnumerable<DO.Assignment>? assignments;
         lock (AdminManager.BlMutex) //stage 7
         {
-            DO.Call call = s_dal.Call.Read(callId) ?? throw new BO.BlNotExistException("Call not found");
-            var assignments = s_dal.Assignment.ReadAll(a => a.CallId == callId);
-            DO.Assignment? assignment = assignments.LastOrDefault();
+            call = s_dal.Call.Read(callId) ?? throw new BO.BlNotExistException("Call not found");
+            assignments = s_dal.Assignment.ReadAll(a => a.CallId == callId);
+        }
+        DO.Assignment? assignment = assignments.LastOrDefault();
 
-            DateTime now = AdminManager.Now;
-            DateTime? maxTime = s_dal.Call.Read(callId)!.MaxTime;
+        DateTime now = AdminManager.Now;
+        DateTime? maxTime;
+        lock (AdminManager.BlMutex) //stage 7
+            maxTime = s_dal.Call.Read(callId)!.MaxTime;
 
-            if (maxTime is not null && now > maxTime) // call is overdue
-                return BO.BoCallStatus.OverDated;
+        if (maxTime is not null && now > maxTime) // call is overdue
+            return BO.BoCallStatus.OverDated;
 
-            else if (assignment is not null) // call is assigned
-            {
-                if (assignment.EndReason is DO.AssignmentEndReason.Completed) // call is closed
-                    return BO.BoCallStatus.Closed;
+        else if (assignment is not null) // call is assigned
+        {
+            if (assignment.EndReason is DO.AssignmentEndReason.Completed) // call is closed
+                return BO.BoCallStatus.Closed;
 
+            lock (AdminManager.BlMutex) //stage 7
                 if (assignment.EndReason is (DO.AssignmentEndReason.CanceledByAdmin or DO.AssignmentEndReason.CanceledByVolunteer) && now > maxTime - s_dal.Config.RiskRange) // call is open and in danger because no in treatment and is in the risk range
                     return BO.BoCallStatus.OpenAndDanger;
 
-                if (assignment.EndReason is DO.AssignmentEndReason.CanceledByAdmin or DO.AssignmentEndReason.CanceledByVolunteer) // call is open because no in treatment
-                    return BO.BoCallStatus.Open;
+            if (assignment.EndReason is DO.AssignmentEndReason.CanceledByAdmin or DO.AssignmentEndReason.CanceledByVolunteer) // call is open because no in treatment
+                return BO.BoCallStatus.Open;
 
-                else if (call.MaxTime is null) // call has no MaxTime
-                    return BO.BoCallStatus.InTreatment;
+            if (call.MaxTime is null) // call has no MaxTime
+                return BO.BoCallStatus.InTreatment;
 
-                else if (now > maxTime - s_dal.Config.RiskRange) // call is in treatment and not overdue but in the risk range
+            lock (AdminManager.BlMutex) //stage 7
+                if (now > maxTime - s_dal.Config.RiskRange) // call is in treatment and not overdue but in the risk range
                     return BO.BoCallStatus.InTreatmentAndDanger;
 
-                else // call is in treatment and not overdue
-                    return BO.BoCallStatus.InTreatment;
-            }
+            else // call is in treatment and not overdue
+                return BO.BoCallStatus.InTreatment;
+        }
 
-            if (call.MaxTime is null) // call is open and has no MaxTime
-                return BO.BoCallStatus.Open;
+        if (call.MaxTime is null) // call is open and has no MaxTime
+            return BO.BoCallStatus.Open;
 
-            else if (now > maxTime - s_dal.Config.RiskRange) // call is open and not overdue but in the risk range
+        lock (AdminManager.BlMutex) //stage 7
+            if (now > maxTime - s_dal.Config.RiskRange) // call is open and not overdue but in the risk range
                 return BO.BoCallStatus.OpenAndDanger;
 
-            else // call is open and not overdue
-                return BO.BoCallStatus.Open;
-        }
+        else // call is open and not overdue
+            return BO.BoCallStatus.Open;
     }
 
     /// <summary>
@@ -113,16 +119,18 @@ internal static class CallManager
     /// </summary>
     internal static void UpdateCallStatus()
     {
-        AdminManager.ThrowOnSimulatorIsRunning();
+        bool flag = false;
+        int aId = 0;
+        IEnumerable<IGrouping<bool, DO.Call>>? overDatedCalls;
+        var clock = AdminManager.Now;
+
         lock (AdminManager.BlMutex) //stage 7
         {
-            var clock = AdminManager.Now;
-            var overDatedCalls = from call in s_dal.Call.ReadAll()
-                                 let assign = s_dal.Assignment.Read(a => a.CallId == call.Id)
-                                 where call.MaxTime is not null && clock > call.MaxTime
-                                 group call by (assign == null) into g
-                                 select g;
-
+            overDatedCalls = from call in s_dal.Call.ReadAll()
+                             let assign = s_dal.Assignment.Read(a => a.CallId == call.Id)
+                             where call.MaxTime is not null && clock > call.MaxTime
+                             group call by (assign == null) into g
+                             select g;
             foreach (var callGroup in overDatedCalls)
             {
                 foreach (var call in callGroup)
@@ -137,7 +145,6 @@ internal static class CallManager
                             EndTime = clock,
                             EndReason = DO.AssignmentEndReason.OverDated
                         });
-                        Observers.NotifyListUpdated(); //stage 5
                     }
                     else if (callGroup.Key is false) // call has an assignment
                     {
@@ -151,11 +158,15 @@ internal static class CallManager
                             EndTime = clock,
                             EndReason = DO.AssignmentEndReason.OverDated
                         });
-                        Observers.NotifyItemUpdated(assignment.Id); //stage 5
+                        aId = assignment.Id;
+                        flag = true;
                     }
                 }
             }
         }
+        if(flag)
+            Observers.NotifyItemUpdated(aId); //stage 5
+        Observers.NotifyListUpdated(); //stage 5
     }
 
     internal static TimeSpan? TimeLeft(DO.Call call)
@@ -178,30 +189,37 @@ internal static class CallManager
 
     internal static IEnumerable<BO.CallInList> GetCallInList()
     {
+        IEnumerable<DO.Call> calls;
+        IEnumerable<DO.Assignment> assignments;
+        lock (AdminManager.BlMutex) //stage 7
+            calls = s_dal.Call.ReadAll();
+        lock (AdminManager.BlMutex) //stage 7
+            assignments = s_dal.Assignment.ReadAll();
+
+        IEnumerable<BO.CallInList> callInList;
         lock (AdminManager.BlMutex) //stage 7
         {
-            var calls = s_dal.Call.ReadAll();
-            var assignments = s_dal.Assignment.ReadAll();
-
-            return from call in calls
-                   let assignment = assignments.LastOrDefault(a => a.CallId == call.Id)
-                   let assignmentId = assignment?.Id ?? 0
-                   let volunteerId = assignment?.VolunteerId ?? 0
-                   let EndedTime = assignment?.EndTime
-                   let assignCount = assignments.Count(a => a.CallId == call.Id)
-                   select new BO.CallInList
-                   {
-                       AssignmentId = assignmentId is 0 ? null : assignmentId,
-                       CallId = call.Id,
-                       CallType = (BO.BoCallType)call.Type,
-                       StartTime = call.StartTime,
-                       TimeLeft = CallManager.TimeLeft(call),
-                       LastVolunteerName = s_dal.Volunteer.Read(volunteerId)?.Name ?? null,
-                       TimeOpen = CallManager.TimeOpen(call),
-                       CallStatus = CallManager.GetCallStatus(call.Id),
-                       AssignCount = assignCount
-                   };
+            callInList = from call in calls
+            let assignment = assignments.LastOrDefault(a => a.CallId == call.Id)
+            let assignmentId = assignment?.Id ?? 0
+            let volunteerId = assignment?.VolunteerId ?? 0
+            let EndedTime = assignment?.EndTime
+            let assignCount = assignments.Count(a => a.CallId == call.Id)
+            select new BO.CallInList
+            {
+                AssignmentId = assignmentId is 0 ? null : assignmentId,
+                CallId = call.Id,
+                CallType = (BO.BoCallType)call.Type,
+                StartTime = call.StartTime,
+                TimeLeft = CallManager.TimeLeft(call),
+                LastVolunteerName = s_dal.Volunteer.Read(volunteerId)?.Name ?? null,
+                TimeOpen = CallManager.TimeOpen(call),
+                CallStatus = CallManager.GetCallStatus(call.Id),
+                AssignCount = assignCount
+            };
+            callInList = callInList.ToList();
         }
+        return callInList;
     }
 }
 

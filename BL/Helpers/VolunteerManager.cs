@@ -19,12 +19,13 @@ internal static class VolunteerManager
     {
         try
         {
+            IEnumerable<BO.VolunteerInList>? volunteers;
             lock (AdminManager.BlMutex) //stage 7
             { 
                 IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll();
                 IEnumerable<DO.Call> calls = s_dal.Call.ReadAll();
 
-                return from v in s_dal.Volunteer.ReadAll() // create a list of BO.Volunteers
+                volunteers = from v in s_dal.Volunteer.ReadAll() // create a list of BO.Volunteers
                        where active == null || v.IsActive == active
                        let complCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed)
                        let canceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer)
@@ -40,7 +41,9 @@ internal static class VolunteerManager
                            CallInTreatment = callInTreatmentId,
                            CurrentCallType = callInTreatmentType.HasValue ? (BO.BoCallType)callInTreatmentType : BO.BoCallType.None
                        };
+                volunteers = volunteers.ToList();
             }
+            return volunteers;
         }
         catch (Exception e)
         {
@@ -68,14 +71,16 @@ internal static class VolunteerManager
     /// </summary>
     internal static void PasswordFillerForInit()
     {
-        lock (AdminManager.BlMutex) //stage 7
-        { 
-                AdminManager.ThrowOnSimulatorIsRunning();
-            var volunteers = s_dal.Volunteer.ReadAll();
+        AdminManager.ThrowOnSimulatorIsRunning();
+        IEnumerable<DO.Volunteer> volunteers;
+        lock (AdminManager.BlMutex) //stage 7 
+            volunteers = s_dal.Volunteer.ReadAll();
 
-            foreach (var v in volunteers) // Encrypt all passwords of initialized volunteers
-            {
-                var password = CryptPW(v.Password);
+        foreach (var v in volunteers) // Encrypt all passwords of initialized volunteers
+        {
+            var password = CryptPW(v.Password);
+
+            lock (AdminManager.BlMutex) //stage 7
                 s_dal.Volunteer.Update(new DO.Volunteer
                 {
                     Id = v.Id,
@@ -91,9 +96,9 @@ internal static class VolunteerManager
                     MaxDistance = v.MaxDistance,
                     DistanceType = v.DistanceType
                 });
-                Observers.NotifyItemUpdated(v.Id); //stage 5
-            }
+
         }
+        Observers.NotifyListUpdated(); //stage 5
     }
 
     /// <summary>
@@ -103,55 +108,60 @@ internal static class VolunteerManager
     /// <returns>The converted BO.Volunteer object.</returns>
     internal static BO.Volunteer ConvertToBO(int id)
     {
+        IEnumerable<DO.Assignment> assignments;
         lock (AdminManager.BlMutex) //stage 7
-            { 
-                IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll();
+            assignments = s_dal.Assignment.ReadAll();
 
-            DO.Volunteer v = s_dal.Volunteer.Read(id) ?? throw new BO.BlNotExistException($"No volunteer with ID = {id} found");
+        DO.Volunteer v;
+        lock (AdminManager.BlMutex) //stage 7
+            v = s_dal.Volunteer.Read(id) ?? throw new BO.BlNotExistException($"No volunteer with ID = {id} found");
 
-            BO.CallInProgress? callInProgress = null;
+        BO.CallInProgress? callInProgress = null;
 
-            int openCallId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId ?? 0;
+        int openCallId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId ?? 0;
 
-            if (openCallId is not 0) // If the volunteer has an open call in progress 
+        if (openCallId is not 0) // If the volunteer has an open call in progress 
+        {
+            var assignment = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null);
+
+            DO.Call? call;
+            lock (AdminManager.BlMutex) //stage 7
+                call = s_dal.Call.Read(c => c.Id == openCallId);
+
+            callInProgress = new BO.CallInProgress
             {
-                var assignment = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null);
-                var call = s_dal.Call.Read(c => c.Id == openCallId);
-                callInProgress = new BO.CallInProgress
-                {
-                    AssignmentId = assignment!.Id,
-                    CallId = openCallId,
-                    CallType = (BO.BoCallType)call!.Type,
-                    Description = call.Description,
-                    Address = call.Address,
-                    StartTime = call.StartTime,
-                    MaxTime = call.MaxTime,
-                    AssignTime = assignment.StartTime,
-                    CallDistance = Tools.GetCallDistance(openCallId, v),
-                    Status = CallManager.GetCallStatus(openCallId)
-                };
-            }
-
-            return new BO.Volunteer 
-            {
-                Id = v.Id,
-                Name = v.Name,
-                Phone = v.Phone,
-                Email = v.Email,
-                Password = v.Password,
-                Address = v.Address,
-                Latitude = v.Latitude,
-                Longitude = v.Longitude,
-                Role = (BO.BoRoleType)v.Role,
-                IsActive = v.IsActive,
-                MaxDistance = v.MaxDistance,
-                DistanceType = (BO.BoDistanceType)v.DistanceType,
-                CompletedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed),
-                CanceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer),
-                OverDatedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.OverDated),
-                CurrentCall = callInProgress
+                AssignmentId = assignment!.Id,
+                CallId = openCallId,
+                CallType = (BO.BoCallType)call!.Type,
+                Description = call.Description,
+                Address = call.Address,
+                StartTime = call.StartTime,
+                MaxTime = call.MaxTime,
+                AssignTime = assignment.StartTime,
+                CallDistance = Tools.GetCallDistance(openCallId, v),
+                Status = CallManager.GetCallStatus(openCallId)
             };
         }
+
+        return new BO.Volunteer 
+        {
+            Id = v.Id,
+            Name = v.Name,
+            Phone = v.Phone,
+            Email = v.Email,
+            Password = v.Password,
+            Address = v.Address,
+            Latitude = v.Latitude,
+            Longitude = v.Longitude,
+            Role = (BO.BoRoleType)v.Role,
+            IsActive = v.IsActive,
+            MaxDistance = v.MaxDistance,
+            DistanceType = (BO.BoDistanceType)v.DistanceType,
+            CompletedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed),
+            CanceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer),
+            OverDatedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.OverDated),
+            CurrentCall = callInProgress
+        };
     }
 
     /// <summary>
@@ -170,25 +180,22 @@ internal static class VolunteerManager
     /// <param name="volunteer">The BO.Volunteer object to be converted.</param>
     /// <returns>The converted DO.Volunteer object.</returns>
     internal static DO.Volunteer ConvertToDO(BO.Volunteer volunteer)
-    {
-        lock (AdminManager.BlMutex) //stage 7
-        { 
-                return new DO.Volunteer
-            {
-                Id = volunteer.Id,
-                Name = volunteer.Name,
-                Phone = volunteer.Phone,
-                Email = volunteer.Email,
-                Password = volunteer.Password,
-                Address = volunteer.Address,
-                Latitude = volunteer.Latitude,
-                Longitude = volunteer.Longitude,
-                Role = (DO.RoleType)volunteer.Role,
-                IsActive = volunteer.IsActive,
-                MaxDistance = volunteer.MaxDistance,
-                DistanceType = (DO.DistanceType)volunteer.DistanceType
-            };
-        }
+    { 
+        return new DO.Volunteer
+        {
+            Id = volunteer.Id,
+            Name = volunteer.Name,
+            Phone = volunteer.Phone,
+            Email = volunteer.Email,
+            Password = volunteer.Password,
+            Address = volunteer.Address,
+            Latitude = volunteer.Latitude,
+            Longitude = volunteer.Longitude,
+            Role = (DO.RoleType)volunteer.Role,
+            IsActive = volunteer.IsActive,
+            MaxDistance = volunteer.MaxDistance,
+            DistanceType = (DO.DistanceType)volunteer.DistanceType
+        };
     }
 
     /// <summary>
@@ -221,23 +228,21 @@ internal static class VolunteerManager
     /// <returns>True if the ID is valid, otherwise false.</returns>
     internal static bool IdCheck(int id) // AI helped
     {
+        string idString = id.ToString();
+
+        if (idString.Length != 9)
+            return false;
+
+        int sum = 0;
+
+        for (int i = 0; i < 9; i++)
         {
-            string idString = id.ToString();
-
-            if (idString.Length != 9)
-                return false;
-
-            int sum = 0;
-
-            for (int i = 0; i < 9; i++)
-            {
-                int digit = int.Parse(idString[i].ToString()); // Get the digit at the current index
-                int product = digit * (i % 2 == 0 ? 1 : 2); // Multiply the digit by 1 if the index is even, otherwise multiply it by 2
-                sum += product > 9 ? product - 9 : product; // If the product is greater than 9, subtract 9 from it to get the sum of its digits (e.g. 12 - 9 = 1 + 2)
-            }
-
-            return sum % 10 == 0; // The ID is valid if the sum is divisible by 10
+            int digit = int.Parse(idString[i].ToString()); // Get the digit at the current index
+            int product = digit * (i % 2 == 0 ? 1 : 2); // Multiply the digit by 1 if the index is even, otherwise multiply it by 2
+            sum += product > 9 ? product - 9 : product; // If the product is greater than 9, subtract 9 from it to get the sum of its digits (e.g. 12 - 9 = 1 + 2)
         }
+
+        return sum % 10 == 0; // The ID is valid if the sum is divisible by 10
     }
 
     /// <summary>

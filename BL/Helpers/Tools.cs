@@ -14,7 +14,10 @@ internal static class Tools
     {
         if (v.Address is not null)
         {
-            var call = s_dal.Call.Read(callId);
+            DO.Call? call;
+            lock (AdminManager.BlMutex) //stage 7 
+                call = s_dal.Call.Read(callId);
+
             return Haversine(call!.Latitude, call!.Longitude, v.Latitude!.Value, v.Longitude!.Value);
         }
         else
