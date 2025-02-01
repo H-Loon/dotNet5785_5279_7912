@@ -22,7 +22,7 @@ namespace PL.Admin.Volunteer
     public partial class VolunteerInfoView : UserControl
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        public string ButtonText { get; set; }
+
         private int _id;
         public BO.BoRoleType Role { get; set; }
         public BO.BoDistanceType DistanceType { get; set; }

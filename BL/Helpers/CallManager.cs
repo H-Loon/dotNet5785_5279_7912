@@ -130,13 +130,15 @@ internal static class CallManager
         {
             var overDatedCalls = from call in s_dal.Call.ReadAll().ToList()
                                  let assign = s_dal.Assignment.Read(a => a.CallId == call.Id)
-                             where call.MaxTime is not null && clock > call.MaxTime
-                             group call by (assign == null) into g
+                                 let status = GetCallStatus(call.Id)
+                                 where call.MaxTime is not null && (status != BO.BoCallStatus.Closed || status != BO.BoCallStatus.OverDated) && clock > call.MaxTime
+                                 group call by (assign == null) into g
                              select g;
             foreach (var callGroup in overDatedCalls)
             {
                 foreach (var call in callGroup)
                 {
+                    var status = GetCallStatus(call.Id);
                     if (callGroup.Key is true) // call has no assignment
                     {
                         s_dal.Assignment.Create(new DO.Assignment
@@ -148,7 +150,7 @@ internal static class CallManager
                             EndReason = DO.AssignmentEndReason.OverDated
                         });
                     }
-                    else if (callGroup.Key is false) // call has an assignment
+                    else if (callGroup.Key is false && (status != BO.BoCallStatus.Closed || status != BO.BoCallStatus.OverDated)) // call has an assignment
                     {
                         DO.Assignment assignment = s_dal.Assignment.Read(a => a.CallId == call.Id)!;
                         s_dal.Assignment.Update(new DO.Assignment
@@ -173,20 +175,26 @@ internal static class CallManager
 
     internal static TimeSpan? TimeLeft(DO.Call call)
     {
+        var status = GetCallStatus(call.Id);
         if (call.MaxTime is null)
             return null;
-        TimeSpan timeZero = new TimeSpan(0, 0, 0);
-        TimeSpan timeLeft = call.MaxTime.Value - AdminManager.Now;
-        return ( timeLeft > timeZero) ? timeLeft : timeZero;
+        if (status == BO.BoCallStatus.Closed || status == BO.BoCallStatus.OverDated)
+        {
+            return TimeSpan.Zero;
+        }
+        return call.MaxTime.Value - AdminManager.Now;
     }
     internal static TimeSpan? TimeOpen(DO.Call call)
     {
-        if (call.MaxTime is null)
-            return null;
-        if( GetCallStatus(call.Id) != BO.BoCallStatus.Closed && GetCallStatus(call.Id) != BO.BoCallStatus.OverDated)
-            return null;
-        TimeSpan timeOpen = AdminManager.Now - call.StartTime;
-        return timeOpen;
+        var status = GetCallStatus(call.Id);
+
+        if(status == BO.BoCallStatus.Closed || status == BO.BoCallStatus.OverDated)
+        {
+            var assignment = s_dal.Assignment.ReadAll(a=> a.CallId == call.Id).ToList().Last();
+            return assignment.EndTime - call.StartTime;
+        }
+
+        return AdminManager.Now - call.StartTime;
     }
 
     internal static IEnumerable<BO.CallInList> GetCallInList()
@@ -207,6 +215,7 @@ internal static class CallManager
             let volunteerId = assignment?.VolunteerId ?? 0
             let EndedTime = assignment?.EndTime
             let assignCount = assignments.Count(a => a.CallId == call.Id)
+            let callStatus = GetCallStatus(call.Id)
             select new BO.CallInList
             {
                 AssignmentId = assignmentId is 0 ? null : assignmentId,
@@ -216,7 +225,7 @@ internal static class CallManager
                 TimeLeft = CallManager.TimeLeft(call),
                 LastVolunteerName = s_dal.Volunteer.Read(volunteerId)?.Name ?? null,
                 TimeOpen = CallManager.TimeOpen(call),
-                CallStatus = CallManager.GetCallStatus(call.Id),
+                CallStatus = callStatus,
                 AssignCount = assignCount
             };
             callInList = callInList.ToList();

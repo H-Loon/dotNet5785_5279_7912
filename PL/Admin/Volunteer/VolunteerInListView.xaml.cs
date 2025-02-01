@@ -88,17 +88,17 @@ namespace PL.Admin.Volunteer
                 _observerOperation = Dispatcher.BeginInvoke(() =>
                 {
                     switch (VActiveField)
-                                {
-                                    case ActiveField.All:
-                                        VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
-                                        break;
-                                    case ActiveField.Active:
-                                        VolunteerInList = s_bl.Volunteer.GetVolunteerInList(true, VolunteerInListField);
-                                        break;
-                                    case ActiveField.Inactive:
-                                        VolunteerInList = s_bl.Volunteer.GetVolunteerInList(false, VolunteerInListField);
-                                        break;
-                                }
+                    {
+                        case ActiveField.All:
+                            VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
+                            break;
+                        case ActiveField.Active:
+                            VolunteerInList = s_bl.Volunteer.GetVolunteerInList(true, VolunteerInListField);
+                            break;
+                        case ActiveField.Inactive:
+                            VolunteerInList = s_bl.Volunteer.GetVolunteerInList(false, VolunteerInListField);
+                            break;
+                    }
                 });
         }
 

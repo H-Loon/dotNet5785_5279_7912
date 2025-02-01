@@ -14,8 +14,6 @@ namespace PL.Admin.Menu
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
-
-
         public int Interval
         {
             get { return (int)GetValue(IntervalProperty); }
@@ -76,8 +74,15 @@ namespace PL.Admin.Menu
         // Apply Button Click - Update the RiskRangeEditor property
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.UpdateRiskRange(TimeSpan.Parse(RiskRangeEdt.RiskRange));
-            RiskRangeEdt.RiskRange = "0.00:00:00";
+            try
+            {
+                s_bl.Admin.UpdateRiskRange(TimeSpan.Parse(RiskRangeEdt.RiskRange));
+                RiskRangeEdt.RiskRange = "0.00:00:00";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Start_Stop_Simulation(object sender, RoutedEventArgs e)
@@ -132,42 +137,99 @@ namespace PL.Admin.Menu
 
         private void PlusOneSec(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.ForwardClock(BO.TimeUnit.Seconds);
+            try
+            {
+                s_bl.Admin.ForwardClock(BO.TimeUnit.Seconds);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void PlusOneMin(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.ForwardClock(BO.TimeUnit.Minutes);
+            try
+            {
+                s_bl.Admin.ForwardClock(BO.TimeUnit.Minutes);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void PlusOneHour(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.ForwardClock(BO.TimeUnit.Hours);
+            try
+            {
+                s_bl.Admin.ForwardClock(BO.TimeUnit.Hours);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void PlusOneDay(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.ForwardClock(BO.TimeUnit.Days);
+            try
+            {
+                s_bl.Admin.ForwardClock(BO.TimeUnit.Days);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void PlusOneMonth(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.ForwardClock(BO.TimeUnit.Months);
+            try
+            {
+                s_bl.Admin.ForwardClock(BO.TimeUnit.Months);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void PlusOneYear(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.ForwardClock(BO.TimeUnit.Years);
+            try
+            {
+                s_bl.Admin.ForwardClock(BO.TimeUnit.Years);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ResetDB(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.ResetDB();
+            try
+            {
+                s_bl.Admin.ResetDB();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void InitDB(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.InitDB();
+            try
+            {
+                s_bl.Admin.InitDB();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         // Function to retrieve the number of calls of each status and add it to the corresponding string

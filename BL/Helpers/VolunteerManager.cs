@@ -367,45 +367,47 @@ internal static class VolunteerManager
         }
     }
 
-    internal static void SimulFucntion()
+    internal static void SimulFunction()
     {
-        IEnumerable<BO.Volunteer> volunteers;
-        CallImplementation callImplementation = new();
-        TimeSpan minTime = new(0, 5, 0, 0);
-        lock (AdminManager.BlMutex) //stage 7
-            volunteers = from v in s_dal.Volunteer.ReadAll().ToList()
-                         where v.IsActive
-                         select ConvertToBo(v);
+        //IEnumerable<BO.Volunteer> volunteers;
+        //CallImplementation callImplementation = new();
+        //TimeSpan minTime = new(0, 5, 0, 0);
+        //lock (AdminManager.BlMutex) //stage 7
+        //{   volunteers = from v in s_dal.Volunteer.ReadAll().ToList()
+        //                 where v.IsActive
+        //                 select ConvertToBo(v);
+        //    volunteers = volunteers.ToList();
+        //}
 
-        foreach (var v in volunteers)
-        {
-            if (v.CurrentCall is not null)
-            {
+        //foreach (var v in volunteers)
+        //{
+        //    if (v.CurrentCall is not null)
+        //    {
 
-                lock (AdminManager.BlMutex) //stage 7
-                {
-                    if (AdminManager.Now - v.CurrentCall.AssignTime >= minTime)
-                    {
-                        callImplementation.CompleteCall(v.Id, v.CurrentCall.AssignmentId);
-                    }
-                    else if (s_rand.Next(0, 10) == 0)
-                    {
-                        callImplementation.CancelCall(v.Id, v.CurrentCall.AssignmentId);
-                    }
-                }
-            }
-            else
-            {
-                lock (AdminManager.BlMutex) //stage 7
-                {
-                    if (s_rand.Next(0, 5) == 0)
-                    {
-                        List<OpenCallInList> list = callImplementation.GetOpenCallsForVolunteer(v.Id, null, null).ToList();
-                        callImplementation.AssignCall(v.Id, list[s_rand.Next(0, list.Count)].Id);
-                    }
-                }
-            }
-        }
+        //        lock (AdminManager.BlMutex) //stage 7
+        //        {
+        //            if (AdminManager.Now - v.CurrentCall.AssignTime >= minTime)
+        //            {
+        //                callImplementation.CompleteCall(v.Id, v.CurrentCall.AssignmentId);
+        //            }
+        //            else if (s_rand.Next(0, 10) == 0)
+        //            {
+        //                callImplementation.CancelCall(v.Id, v.CurrentCall.AssignmentId);
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        lock (AdminManager.BlMutex) //stage 7
+        //        {
+        //            if (s_rand.Next(0, 5) == 0)
+        //            {
+        //                List<OpenCallInList> list = callImplementation.GetOpenCallsForVolunteer(v.Id, null, null).ToList();
+        //                callImplementation.AssignCall(v.Id, list[s_rand.Next(0, list.Count)].Id);
+        //            }
+        //        }
+        //    }
+        //}
     }
 
   
