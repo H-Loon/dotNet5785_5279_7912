@@ -31,7 +31,7 @@ internal class CallImplementation : ICall
     }
     public void AddCall(BO.Call call)
     {
-            AdminManager.ThrowOnSimulatorIsRunning();
+        AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             CallManager.ValidateCallFormat(call);
@@ -114,19 +114,19 @@ internal class CallImplementation : ICall
 
                 // Filter only the closed calls associated
                 closedCalls = from assignment in assignments
-                          let call = _dal.Call.Read(assignment.CallId)!
-                                  let callType = (BO.BoCallType)call!.Type
-                                  where boCallType is null || callType == boCallType
-                                  select new BO.ClosedCallInList
-                                  {
-                                      Id = assignment.CallId,
-                                      CallType = callType,
-                                      Address = call.Address,
-                                      StartTime = call.StartTime,
-                                      AssignTime = assignment.StartTime,
-                                      EndedTime = assignment.EndTime ?? default,
-                                      EndType = (BO.BoAssignmentEndReason)assignment.EndReason!
-                                  };
+                            let call = _dal.Call.Read(assignment.CallId)!
+                            let callType = (BO.BoCallType)call!.Type
+                            where boCallType is null || callType == boCallType
+                            select new BO.ClosedCallInList
+                            {
+                                Id = assignment.CallId,
+                                CallType = callType,
+                                Address = call.Address,
+                                StartTime = call.StartTime,
+                                AssignTime = assignment.StartTime,
+                                EndedTime = assignment.EndTime ?? default,
+                                EndType = (BO.BoAssignmentEndReason)assignment.EndReason!
+                            };
                 closedCalls = closedCalls.ToList();
             }
 

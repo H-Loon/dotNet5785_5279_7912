@@ -62,18 +62,24 @@ internal static class CallManager
     internal static BO.BoCallStatus GetCallStatus(int callId)
     {
         DO.Call call;
+        lock (AdminManager.BlMutex) //stage 7
+            call = s_dal.Call.Read(callId) ?? throw new BO.BlNotExistException("Call not found");
+
         IEnumerable<DO.Assignment>? assignments;
         lock (AdminManager.BlMutex) //stage 7
-        {
-            call = s_dal.Call.Read(callId) ?? throw new BO.BlNotExistException("Call not found");
-            assignments = s_dal.Assignment.ReadAll(a => a.CallId == callId).ToList();
-        }
+            assignments = s_dal.Assignment.ReadAll(a => a.CallId == callId);
+
         DO.Assignment? assignment = assignments.LastOrDefault();
 
         DateTime now = AdminManager.Now;
+
         DateTime? maxTime;
         lock (AdminManager.BlMutex) //stage 7
-            maxTime = s_dal.Call.Read(callId)!.MaxTime;
+            maxTime = s_dal.Call.Read(callId).MaxTime;
+
+        TimeSpan riskRange;
+        lock (AdminManager.BlMutex) //stage 7
+            riskRange = s_dal.Config.RiskRange;
 
         if (maxTime is not null && now > maxTime) // call is overdue
             return BO.BoCallStatus.OverDated;
@@ -82,10 +88,9 @@ internal static class CallManager
         {
             if (assignment.EndReason is DO.AssignmentEndReason.Completed) // call is closed
                 return BO.BoCallStatus.Closed;
-
-            lock (AdminManager.BlMutex) //stage 7
-                if (assignment.EndReason is (DO.AssignmentEndReason.CanceledByAdmin or DO.AssignmentEndReason.CanceledByVolunteer) && now > maxTime - s_dal.Config.RiskRange) // call is open and in danger because no in treatment and is in the risk range
-                    return BO.BoCallStatus.OpenAndDanger;
+            
+            if (assignment.EndReason is (DO.AssignmentEndReason.CanceledByAdmin or DO.AssignmentEndReason.CanceledByVolunteer) && now > maxTime - riskRange) // call is open and in danger because no in treatment and is in the risk range
+                return BO.BoCallStatus.OpenAndDanger;
 
             if (assignment.EndReason is DO.AssignmentEndReason.CanceledByAdmin or DO.AssignmentEndReason.CanceledByVolunteer) // call is open because no in treatment
                 return BO.BoCallStatus.Open;
@@ -93,9 +98,8 @@ internal static class CallManager
             if (call.MaxTime is null) // call has no MaxTime
                 return BO.BoCallStatus.InTreatment;
 
-            lock (AdminManager.BlMutex) //stage 7
-                if (now > maxTime - s_dal.Config.RiskRange) // call is in treatment and not overdue but in the risk range
-                    return BO.BoCallStatus.InTreatmentAndDanger;
+            if (now > maxTime - riskRange) // call is in treatment and not overdue but in the risk range
+                return BO.BoCallStatus.InTreatmentAndDanger;
 
             else // call is in treatment and not overdue
                 return BO.BoCallStatus.InTreatment;
@@ -104,9 +108,8 @@ internal static class CallManager
         if (call.MaxTime is null) // call is open and has no MaxTime
             return BO.BoCallStatus.Open;
 
-        lock (AdminManager.BlMutex) //stage 7
-            if (now > maxTime - s_dal.Config.RiskRange) // call is open and not overdue but in the risk range
-                return BO.BoCallStatus.OpenAndDanger;
+        if (now > maxTime - riskRange) // call is open and not overdue but in the risk range
+            return BO.BoCallStatus.OpenAndDanger;
 
         else // call is open and not overdue
             return BO.BoCallStatus.Open;
@@ -121,13 +124,12 @@ internal static class CallManager
     {
         bool flag = false;
         int aId = 0;
-        IEnumerable<IGrouping<bool, DO.Call>>? overDatedCalls;
         var clock = AdminManager.Now;
 
         lock (AdminManager.BlMutex) //stage 7
         {
-            overDatedCalls = from call in s_dal.Call.ReadAll().ToList()
-                             let assign = s_dal.Assignment.Read(a => a.CallId == call.Id)
+            var overDatedCalls = from call in s_dal.Call.ReadAll().ToList()
+                                 let assign = s_dal.Assignment.Read(a => a.CallId == call.Id)
                              where call.MaxTime is not null && clock > call.MaxTime
                              group call by (assign == null) into g
                              select g;
