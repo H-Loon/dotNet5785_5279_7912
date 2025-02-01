@@ -33,6 +33,10 @@ public class BlAddressNotValidException : Exception
 {
     public BlAddressNotValidException(string? message) : base(message) { }
 }
+public class BLTemporaryNotAvailableException : Exception 
+{
+    public BLTemporaryNotAvailableException(string? message) : base(message) { }
+}
 
 [Serializable]
 public class BlCoordinatesNotFoundException : Exception

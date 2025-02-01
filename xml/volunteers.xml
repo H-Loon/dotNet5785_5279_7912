@@ -29,20 +29,6 @@
     <DistanceType>Area</DistanceType>
   </Volunteer>
   <Volunteer>
-    <Id>343075088</Id>
-    <Name>Yossi Levi</Name>
-    <Phone>0571098765</Phone>
-    <Email>yossi.levi@example.com</Email>
-    <Password>4e9c175dbda3c4adffc0ef981aed03cb6815e8807b72285bccadae3619351a90</Password>
-    <Address>53 Haifa Cinematheque, Haifa</Address>
-    <Latitude>32.83</Latitude>
-    <Longitude>35</Longitude>
-    <IsActive>false</IsActive>
-    <Role>Volunteer</Role>
-    <MaxDistance>1</MaxDistance>
-    <DistanceType>Area</DistanceType>
-  </Volunteer>
-  <Volunteer>
     <Id>363321052</Id>
     <Name>Miriam Katz</Name>
     <Phone>0565678901</Phone>
@@ -236,6 +222,20 @@
     <IsActive>false</IsActive>
     <Role>Volunteer</Role>
     <MaxDistance>74</MaxDistance>
+    <DistanceType>Area</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>343075088</Id>
+    <Name>Yossi Cohen</Name>
+    <Phone>0571098765</Phone>
+    <Email>yossi.levi@example.com</Email>
+    <Password>4e9c175dbda3c4adffc0ef981aed03cb6815e8807b72285bccadae3619351a90</Password>
+    <Address>53 Haifa Cinematheque, Haifa</Address>
+    <Latitude>32.83</Latitude>
+    <Longitude>35</Longitude>
+    <IsActive>false</IsActive>
+    <Role>Volunteer</Role>
+    <MaxDistance>1</MaxDistance>
     <DistanceType>Area</DistanceType>
   </Volunteer>
 </ArrayOfVolunteer>
