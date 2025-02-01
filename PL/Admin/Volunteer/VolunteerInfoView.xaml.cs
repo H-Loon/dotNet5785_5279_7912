@@ -41,7 +41,9 @@ namespace PL.Admin.Volunteer
         public VolunteerInfoView(int id)
         {
             _id = id;
-            FetchVolunteerInfo();
+            Volunteer = s_bl.Volunteer.GetVolunteer(_id);
+            Role = Volunteer.Role;
+            DistanceType = Volunteer.DistanceType;
             s_bl.Volunteer.AddObserver(FetchVolunteerInfo);
             InitializeComponent();
         }
@@ -53,8 +55,8 @@ namespace PL.Admin.Volunteer
                 _observerOperation = Dispatcher.BeginInvoke(() =>
                 {
                     Volunteer = s_bl.Volunteer.GetVolunteer(_id);
-                                Role = Volunteer.Role;
-                                DistanceType = Volunteer.DistanceType;
+                    Role = Volunteer.Role;
+                    DistanceType = Volunteer.DistanceType;
                 });
         }
     }

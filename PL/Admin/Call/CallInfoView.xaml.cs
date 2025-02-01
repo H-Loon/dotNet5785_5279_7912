@@ -50,7 +50,11 @@ namespace PL.Admin.Call
         {
             _id = id;
             IdLabel += id;
-            FetchCallInfo();
+            Call = s_bl.Call.GetCall(_id);
+            if (Call.AssignInList != null)
+                AssignList = ListToStr();
+            else
+                AssignList = "";
             s_bl.Call.AddObserver(FetchCallInfo);
             InitializeComponent();
         }
