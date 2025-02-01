@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PL.Admin.Call
 {
@@ -22,12 +23,9 @@ namespace PL.Admin.Call
     public partial class CallInfoView : UserControl
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        public string ButtonText { get; set; }
         public string IdLabel { get; set; } = "ID: ";
-        public BO.BoRoleType Status { get; set; }
-        public BO.BoDistanceType CallType { get; set; }
         public string AssignList { get; set; }
-
+        private int _id;
         public BO.Call Call
         {
             get { return (BO.Call)GetValue(CallProperty); }
@@ -50,16 +48,24 @@ namespace PL.Admin.Call
 
         public CallInfoView(int id)
         {
-            Call = s_bl.Call.GetCall(id);
-            Status = (BO.BoRoleType)Call.Status;
-            CallType = (BO.BoDistanceType)Call.CallType;
+            _id = id;
             IdLabel += id;
-            if (Call.AssignInList != null)
-                AssignList = ListToStr();
-            else
-                AssignList = "";
-
+            FetchCallInfo();
+            s_bl.Call.AddObserver(FetchCallInfo);
             InitializeComponent();
+        }
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
+        public void FetchCallInfo()
+        {
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    Call = s_bl.Call.GetCall(_id);
+                    if (Call.AssignInList != null)
+                        AssignList = ListToStr();
+                    else
+                        AssignList = "";
+                });
         }
     }
 }

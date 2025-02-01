@@ -1,4 +1,6 @@
-﻿using DalApi;
+﻿using BlImplementation;
+using BO;
+using DalApi;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7,6 +9,8 @@ namespace Helpers;
 internal static class VolunteerManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
+
+    private static readonly Random s_rand = new();
 
     internal static ObserverManager Observers = new(); //stage 5
 
@@ -22,11 +26,11 @@ internal static class VolunteerManager
             IEnumerable<BO.VolunteerInList>? volunteers;
             lock (AdminManager.BlMutex) //stage 7
             { 
-                IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll();
-                IEnumerable<DO.Call> calls = s_dal.Call.ReadAll();
+                IEnumerable<DO.Assignment> assignments = s_dal.Assignment.ReadAll().ToList();
+                IEnumerable<DO.Call> calls = s_dal.Call.ReadAll().ToList();
 
-                volunteers = from v in s_dal.Volunteer.ReadAll() // create a list of BO.Volunteers
-                       where active == null || v.IsActive == active
+                volunteers = from v in s_dal.Volunteer.ReadAll().ToList() // create a list of BO.Volunteers
+                             where active == null || v.IsActive == active
                        let complCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed)
                        let canceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer)
                        let callInTreatmentId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId
@@ -55,15 +59,17 @@ internal static class VolunteerManager
     /// Fills the volunteer's latitude and longitude based on their address and hashes their password.
     /// </summary>
     /// <param name="volunteer">The volunteer object to be filled.</param>
-    internal static void DOVolunteerFiller(BO.Volunteer volunteer , bool flag1, bool flag2)
+    internal static async Task DOVolunteerFiller(BO.Volunteer volunteer , bool flag1, bool flag2)
     {
+        volunteer.Password = null;// Default value for password
+
         if (flag2 && volunteer.Address is not null) // Ai helped
         {
-            (volunteer.Latitude, volunteer.Longitude) = Tools.AddressToCoordinates(volunteer.Address);
+            (volunteer.Latitude, volunteer.Longitude) = await Tools.AddressToCoordinatesAsync(volunteer.Address); // Get the coordinates of the address
         }
 
         if (flag1)
-            volunteer.Password = CryptPW(volunteer.Password);
+            volunteer.Password = CryptPW(volunteer.Password); // Hash the password
     }
 
     /// <summary>
@@ -74,7 +80,7 @@ internal static class VolunteerManager
         AdminManager.ThrowOnSimulatorIsRunning();
         IEnumerable<DO.Volunteer> volunteers;
         lock (AdminManager.BlMutex) //stage 7 
-            volunteers = s_dal.Volunteer.ReadAll();
+            volunteers = s_dal.Volunteer.ReadAll().ToList();
 
         foreach (var v in volunteers) // Encrypt all passwords of initialized volunteers
         {
@@ -110,7 +116,7 @@ internal static class VolunteerManager
     {
         IEnumerable<DO.Assignment> assignments;
         lock (AdminManager.BlMutex) //stage 7
-            assignments = s_dal.Assignment.ReadAll();
+            assignments = s_dal.Assignment.ReadAll().ToList();
 
         DO.Volunteer v;
         lock (AdminManager.BlMutex) //stage 7
@@ -169,7 +175,7 @@ internal static class VolunteerManager
     /// </summary>
     /// <param name="v">The BO.Volunteer object to be converted.</param>
     /// <returns>The converted BO.Volunteer object.</returns>
-    internal static BO.Volunteer ConvertToBo(BO.Volunteer v)
+    private static BO.Volunteer ConvertToBo(DO.Volunteer v)
     {
         return ConvertToBO(v.Id);
     }
@@ -360,4 +366,48 @@ internal static class VolunteerManager
             return builder.ToString();
         }
     }
+
+    internal static void SimulFucntion()
+    {
+        IEnumerable<BO.Volunteer> volunteers;
+        CallImplementation callImplementation = new();
+        TimeSpan minTime = new(0, 5, 0, 0);
+        lock (AdminManager.BlMutex) //stage 7
+            volunteers = from v in s_dal.Volunteer.ReadAll().ToList()
+                         where v.IsActive
+                         select ConvertToBo(v);
+
+        foreach (var v in volunteers)
+        {
+            if (v.CurrentCall is not null)
+            {
+
+                lock (AdminManager.BlMutex) //stage 7
+                {
+                    if (AdminManager.Now - v.CurrentCall.AssignTime >= minTime)
+                    {
+                        callImplementation.CompleteCall(v.Id, v.CurrentCall.AssignmentId);
+                    }
+                    else if (s_rand.Next(0, 10) == 0)
+                    {
+                        callImplementation.CancelCall(v.Id, v.CurrentCall.AssignmentId);
+                    }
+                }
+            }
+            else
+            {
+                lock (AdminManager.BlMutex) //stage 7
+                {
+                    if (s_rand.Next(0, 5) == 0)
+                    {
+                        List<OpenCallInList> list = callImplementation.GetOpenCallsForVolunteer(v.Id, null, null).ToList();
+                        callImplementation.AssignCall(v.Id, list[s_rand.Next(0, list.Count)].Id);
+                    }
+                }
+            }
+        }
+    }
+
+  
 }
+

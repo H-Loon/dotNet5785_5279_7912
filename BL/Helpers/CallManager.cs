@@ -66,7 +66,7 @@ internal static class CallManager
         lock (AdminManager.BlMutex) //stage 7
         {
             call = s_dal.Call.Read(callId) ?? throw new BO.BlNotExistException("Call not found");
-            assignments = s_dal.Assignment.ReadAll(a => a.CallId == callId);
+            assignments = s_dal.Assignment.ReadAll(a => a.CallId == callId).ToList();
         }
         DO.Assignment? assignment = assignments.LastOrDefault();
 
@@ -126,7 +126,7 @@ internal static class CallManager
 
         lock (AdminManager.BlMutex) //stage 7
         {
-            overDatedCalls = from call in s_dal.Call.ReadAll()
+            overDatedCalls = from call in s_dal.Call.ReadAll().ToList()
                              let assign = s_dal.Assignment.Read(a => a.CallId == call.Id)
                              where call.MaxTime is not null && clock > call.MaxTime
                              group call by (assign == null) into g
@@ -192,9 +192,9 @@ internal static class CallManager
         IEnumerable<DO.Call> calls;
         IEnumerable<DO.Assignment> assignments;
         lock (AdminManager.BlMutex) //stage 7
-            calls = s_dal.Call.ReadAll();
+            calls = s_dal.Call.ReadAll().ToList();
         lock (AdminManager.BlMutex) //stage 7
-            assignments = s_dal.Assignment.ReadAll();
+            assignments = s_dal.Assignment.ReadAll().ToList();
 
         IEnumerable<BO.CallInList> callInList;
         lock (AdminManager.BlMutex) //stage 7
@@ -220,6 +220,11 @@ internal static class CallManager
             callInList = callInList.ToList();
         }
         return callInList;
+    }
+
+    internal static async Task UpdateCoordonates(BO.Call call)
+    {
+        (call.Latitude, call.Longitude) = await Tools.AddressToCoordinatesAsync(call.Address);
     }
 }
 

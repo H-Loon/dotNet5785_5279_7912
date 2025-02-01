@@ -30,7 +30,7 @@ internal static class Tools
             return true;
         try
         {
-            AddressToCoordinates(address); // if the address is not valid, an exception will be thrown otherwise it will return true
+            AddressToCoordinatesAsync(address); // if the address is not valid, an exception will be thrown otherwise it will return true
             return true;
         }
         catch
@@ -115,7 +115,7 @@ internal static class Tools
         return result;
     }
 
-    internal static (double Latitude, double Longitude) AddressToCoordinates(string address)
+    internal static async Task<(double Latitude, double Longitude)> AddressToCoordinatesAsync(string address)
     {
         // Replace with your Google Geocoding API key
         string apiKey = "AIzaSyDu1zy41KXVg2J2gkqRglW-oh5TzoPz0mE";
@@ -132,11 +132,11 @@ internal static class Tools
         try
         {
             // Send the HTTP GET request and get the response
-            HttpResponseMessage response = client.GetAsync(url).Result;
+            HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
             // Read the response content
-            string xmlResponse = response.Content.ReadAsStringAsync().Result;
+            string xmlResponse = await response.Content.ReadAsStringAsync();
 
             // Parse the XML response
             XDocument doc = XDocument.Parse(xmlResponse);

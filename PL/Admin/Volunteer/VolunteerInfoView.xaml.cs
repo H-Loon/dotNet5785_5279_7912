@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PL.Admin.Volunteer
 {
@@ -22,7 +23,7 @@ namespace PL.Admin.Volunteer
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public string ButtonText { get; set; }
-
+        private int _id;
         public BO.BoRoleType Role { get; set; }
         public BO.BoDistanceType DistanceType { get; set; }
 
@@ -39,10 +40,22 @@ namespace PL.Admin.Volunteer
 
         public VolunteerInfoView(int id)
         {
-            Volunteer = s_bl.Volunteer.GetVolunteer(id);
-            Role = Volunteer.Role;
-            DistanceType = Volunteer.DistanceType;
+            _id = id;
+            FetchVolunteerInfo();
+            s_bl.Volunteer.AddObserver(FetchVolunteerInfo);
             InitializeComponent();
+        }
+
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
+        public void FetchVolunteerInfo()
+        {
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    Volunteer = s_bl.Volunteer.GetVolunteer(_id);
+                                Role = Volunteer.Role;
+                                DistanceType = Volunteer.DistanceType;
+                });
         }
     }
 }

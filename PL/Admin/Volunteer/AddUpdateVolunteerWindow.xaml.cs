@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PL.Admin.Volunteer
 {
@@ -24,8 +25,30 @@ namespace PL.Admin.Volunteer
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public string ButtonText { get; set; }
 
-        public BO.BoRoleType Role { get; set; }
-        public BO.BoDistanceType DistanceType { get; set; }
+
+
+        public BO.BoRoleType Role
+        {
+            get { return (BO.BoRoleType)GetValue(RoleProperty); }
+            set { SetValue(RoleProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Role.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty RoleProperty =
+            DependencyProperty.Register("Role", typeof(BO.BoRoleType), typeof(AddUpdateVolunteerWindow));
+
+
+
+        public BO.BoDistanceType DistanceType
+        {
+            get { return (BO.BoDistanceType)GetValue(DistanceTypeProperty); }
+            set { SetValue(DistanceTypeProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for DistanceType.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DistanceTypeProperty =
+            DependencyProperty.Register("DistanceType", typeof(BO.BoDistanceType), typeof(AddUpdateVolunteerWindow));
+
 
         public BO.Volunteer Volunteer
         {
@@ -56,6 +79,9 @@ namespace PL.Admin.Volunteer
             else Volunteer = s_bl.Volunteer.GetVolunteer(id);
             Role = Volunteer.Role;
             DistanceType = Volunteer.DistanceType;
+
+            s_bl.Volunteer.AddObserver(FetchVolunteerInfo);
+
             InitializeComponent();
         }
 
@@ -75,7 +101,24 @@ namespace PL.Admin.Volunteer
             }
 
             if (flag)
+            {
+                s_bl.Volunteer.RemoveObserver(FetchVolunteerInfo);
                 Close();
+            }
+        }
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
+        public void FetchVolunteerInfo()
+        {
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    if (ButtonText == "Update")
+                                {
+                                    Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
+                                    Role = Volunteer.Role;
+                                    DistanceType = Volunteer.DistanceType;
+                                }
+                });
         }
 
     }

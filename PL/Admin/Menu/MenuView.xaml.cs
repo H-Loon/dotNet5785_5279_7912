@@ -14,6 +14,30 @@ namespace PL.Admin.Menu
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
+
+
+        public int Interval
+        {
+            get { return (int)GetValue(IntervalProperty); }
+            set { SetValue(IntervalProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Interval.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IntervalProperty =
+            DependencyProperty.Register("Interval", typeof(int), typeof(MenuView), new PropertyMetadata(1));
+
+
+        public string StartStopTxt
+        {
+            get { return (string)GetValue(StartStopTxtProperty); }
+            set { SetValue(StartStopTxtProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for StartStopTxt.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty StartStopTxtProperty =
+            DependencyProperty.Register("StartStopTxt", typeof(string), typeof(MenuView), new PropertyMetadata("Start"));
+
+
         public RiskRangeEditor RiskRangeEdt { get; set; } = new RiskRangeEditor();
 
         public DateTime ConfigTime
@@ -56,6 +80,20 @@ namespace PL.Admin.Menu
             RiskRangeEdt.RiskRange = "0.00:00:00";
         }
 
+        private void Start_Stop_Simulation(object sender, RoutedEventArgs e)
+        {
+            if (StartStopTxt == "Start")
+            {
+                s_bl.Admin.StartSimulator(Interval);
+                StartStopTxt = "Stop";
+            }
+            else
+            {
+                s_bl.Admin.StopSimulator();
+                StartStopTxt = "Start";
+            }
+        }
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             RiskRangeEdt.RiskRange = "0.00:00:00";
@@ -63,12 +101,18 @@ namespace PL.Admin.Menu
 
         private void ClockObserver()
         {
-            ConfigTime = s_bl.Admin.GetConfigClock();
+            Dispatcher.Invoke(() =>
+            {
+                ConfigTime = s_bl.Admin.GetConfigClock();
+            });
         }
 
         private void RiskRangeObserver()
         {
-            RiskRange = s_bl.Admin.GetRiskRange();
+            Dispatcher.Invoke(() =>
+            {
+                RiskRange = s_bl.Admin.GetRiskRange();  
+            });
         }
 
         //private void Window_Closed(object sender, EventArgs e)

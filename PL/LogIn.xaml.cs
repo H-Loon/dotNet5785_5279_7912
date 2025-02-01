@@ -94,10 +94,17 @@ namespace PL
         }
         public void HeaderUpdate()
         {
-            var selectedTab = mainWindow.tabDynamic.SelectedItem as TabItem;
-            if (selectedTab != null)
+            if (mainWindow.Dispatcher.CheckAccess())
             {
-                selectedTab.Header = s_bl.Volunteer.GetVolunteer(_id).Name;
+                var selectedTab = mainWindow.tabDynamic.SelectedItem as TabItem;
+                if (selectedTab != null)
+                {
+                    selectedTab.Header = s_bl.Volunteer.GetVolunteer(_id).Name;
+                }
+            }
+            else
+            {
+                mainWindow.Dispatcher.Invoke(() => HeaderUpdate());
             }
         }
     }

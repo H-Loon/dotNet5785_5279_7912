@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PL.Admin.Volunteer
 {
@@ -79,20 +80,26 @@ namespace PL.Admin.Volunteer
                     break;
             }
         }
+
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
         public void VolunteerListObserver()
         {
-            switch (VActiveField)
-            {
-                case ActiveField.All:
-                    VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
-                    break;
-                case ActiveField.Active:
-                    VolunteerInList = s_bl.Volunteer.GetVolunteerInList(true, VolunteerInListField);
-                    break;
-                case ActiveField.Inactive:
-                    VolunteerInList = s_bl.Volunteer.GetVolunteerInList(false, VolunteerInListField);
-                    break;
-            }
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    switch (VActiveField)
+                                {
+                                    case ActiveField.All:
+                                        VolunteerInList = s_bl.Volunteer.GetVolunteerInList(null, VolunteerInListField);
+                                        break;
+                                    case ActiveField.Active:
+                                        VolunteerInList = s_bl.Volunteer.GetVolunteerInList(true, VolunteerInListField);
+                                        break;
+                                    case ActiveField.Inactive:
+                                        VolunteerInList = s_bl.Volunteer.GetVolunteerInList(false, VolunteerInListField);
+                                        break;
+                                }
+                });
         }
 
         private void VolunteerVAdd(object sender, RoutedEventArgs e)

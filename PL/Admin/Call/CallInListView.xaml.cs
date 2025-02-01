@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Threading;
 
 namespace PL.Admin.Call
 {
@@ -270,14 +271,19 @@ namespace PL.Admin.Call
             flag1 = true;
             CallListObserver();
         }
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
         public void CallListObserver()
         {
-            if (FilterValue != null && FilterValue.GetType() != GetFilterType(CallInListFldFiltred))
-            {
-                FilterValue = null;
-            }
-            CallInList = s_bl.Call.GetCallsInList(CallInListFldFiltred, FilterValue, CallInListFieldSorted);
-            FilterVisibilitySwitch();
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    if (FilterValue != null && FilterValue.GetType() != GetFilterType(CallInListFldFiltred))
+                    {
+                        FilterValue = null;
+                    }
+                    CallInList = s_bl.Call.GetCallsInList(CallInListFldFiltred, FilterValue, CallInListFieldSorted);
+                    FilterVisibilitySwitch();
+                });
         }
 
         private Type GetFilterType(BO.CallInListField field)

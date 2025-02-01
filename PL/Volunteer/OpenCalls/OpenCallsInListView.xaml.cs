@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PL.Volunteer.OpenCalls
 {
@@ -84,11 +85,18 @@ namespace PL.Volunteer.OpenCalls
 
         public void Sort_Filtre_List(object sender, RoutedEventArgs e)
         {
-            OpenCallsInList = s_bl.Call.GetOpenCallForVolunteer(_Id, CallTypeFiltered == BO.BoCallType.None ? null : CallTypeFiltered, OpenCallInListFieldSorted);
+            OpenCallsInList = s_bl.Call.GetOpenCallsForVolunteer(_Id, CallTypeFiltered == BO.BoCallType.None ? null : CallTypeFiltered, OpenCallInListFieldSorted);
         }
+
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
+
         public void OpenCallListObserver()
-        {    
-            OpenCallsInList = s_bl.Call.GetOpenCallForVolunteer(_Id, CallTypeFiltered == BO.BoCallType.None ? null : CallTypeFiltered, OpenCallInListFieldSorted);
+        {
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    OpenCallsInList = s_bl.Call.GetOpenCallsForVolunteer(_Id, CallTypeFiltered == BO.BoCallType.None ? null : CallTypeFiltered, OpenCallInListFieldSorted);
+                });
         }
 
         private void AcceptCall(object sender, RoutedEventArgs e)

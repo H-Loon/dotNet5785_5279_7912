@@ -25,7 +25,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     /// <exception cref="ArgumentException">Thrown when the volunteer is not valid or already exists.</exception>  
     public void AddVolunteer(BO.Volunteer volunteer)
     {
-            AdminManager.ThrowOnSimulatorIsRunning();
+        AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             VolunteerManager.BOVolunteerCheck(volunteer, true, true);
@@ -33,8 +33,8 @@ internal class VolunteerImplementation : BlApi.IVolunteer
                 if (_dal.Volunteer.Read(volunteer.Id) is not null)
                 throw new BO.BlAlreadyExistsException("Volunteer already exists");
 
-            if (string.IsNullOrEmpty(volunteer.Password)) VolunteerManager.DOVolunteerFiller(volunteer, false, true);
-            else VolunteerManager.DOVolunteerFiller(volunteer, true, true);
+            if (string.IsNullOrEmpty(volunteer.Password)) _ = VolunteerManager.DOVolunteerFiller(volunteer, false, true);
+            else _ = VolunteerManager.DOVolunteerFiller(volunteer, true, true);
 
             lock (AdminManager.BlMutex)//stage 7
                 _dal.Volunteer.Create(VolunteerManager.ConvertToDO(volunteer));
@@ -53,7 +53,7 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     /// <exception cref="ArgumentException">Thrown when the volunteer is in treatment or has no completed calls.</exception>  
     public void DeleteVolunteer(int id)
     {
-            AdminManager.ThrowOnSimulatorIsRunning();
+        AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             var boVolunteer = VolunteerManager.ConvertToBO(id);
@@ -176,8 +176,8 @@ internal class VolunteerImplementation : BlApi.IVolunteer
                     throw new BO.BlNotAllowedException("You are not allowed to update this volunteer");
             }
 
-            if (string.IsNullOrEmpty(volunteer.Password)) { VolunteerManager.DOVolunteerFiller(volunteer, false, !flag); volunteer.Password = asker.Password; }
-            else VolunteerManager.DOVolunteerFiller(volunteer, true, !flag);
+            if (string.IsNullOrEmpty(volunteer.Password)) { _ = VolunteerManager.DOVolunteerFiller(volunteer, false, !flag); volunteer.Password = asker.Password; }
+            else _= VolunteerManager.DOVolunteerFiller(volunteer, true, !flag);
             lock (AdminManager.BlMutex)//stage 7
                 _dal.Volunteer.Update(VolunteerManager.ConvertToDO(volunteer));
 

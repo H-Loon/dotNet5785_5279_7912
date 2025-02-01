@@ -1,8 +1,10 @@
-﻿using PL.Admin.Call;
+﻿using BO;
+using PL.Admin.Call;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PL.Volunteer.Menu
 {
@@ -106,21 +109,26 @@ namespace PL.Volunteer.Menu
             }
             return result;
         }
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
         public void VolunteerObserver()
         {
-            Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
-            Volunteer.Password = "";
-            if (Volunteer.CurrentCall is not null)
-            {
-                Call = s_bl.Call.GetCall(Volunteer.CurrentCall.CallId);
-                CallIdLabel = "ID: " + Call.Id;
-                AssignList = ListToStr();
-                CallVisibility = Visibility.Visible;
-            }
-            else
-            {
-                CallVisibility = Visibility.Hidden;
-            }
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
+                    Volunteer.Password = "";
+                    if (Volunteer.CurrentCall is not null)
+                    {
+                        Call = s_bl.Call.GetCall(Volunteer.CurrentCall.CallId);
+                        CallIdLabel = "ID: " + Call.Id;
+                        AssignList = ListToStr();
+                        CallVisibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        CallVisibility = Visibility.Hidden;
+                    }
+                }); 
         }
         private void UpdateVolunteer(object sender, RoutedEventArgs e)
         {

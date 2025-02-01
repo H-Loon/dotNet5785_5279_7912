@@ -51,7 +51,7 @@ public interface ICall : IObservable //stage 5
     /// <param name="boCallType">The type of the call.</param>
     /// <param name="field">The field to filter the calls.</param>
     /// <returns>An enumerable list of open calls.</returns>
-    IEnumerable<BO.OpenCallInList> GetOpenCallForVolunteer(int id, BO.BoCallType? boCallType, BO.OpenCallInListField? field);
+    IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int id, BO.BoCallType? boCallType, BO.OpenCallInListField? field);
     /// <summary>
     /// Completes a call assignment.
     /// </summary>

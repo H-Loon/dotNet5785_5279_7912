@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PL.Admin.Call
 {
@@ -88,7 +90,18 @@ namespace PL.Admin.Call
         public static readonly DependencyProperty CallProperty =
             DependencyProperty.Register("Call", typeof(BO.Call), typeof(AddUpdateCallWindow), new PropertyMetadata(null));
 
-        public string AssignList { get; set; }
+
+
+        public string AssignList
+        {
+            get { return (string)GetValue(AssignListProperty); }
+            set { SetValue(AssignListProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for AssignList.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AssignListProperty =
+            DependencyProperty.Register("AssignList", typeof(string), typeof(AddUpdateCallWindow), new PropertyMetadata(string.Empty));
+
 
         public AddUpdateCallWindow(int id = 0)
         {
@@ -115,6 +128,7 @@ namespace PL.Admin.Call
             CallType = Call.CallType;
             SelectedDate = Call.MaxTime ?? s_bl.Admin.GetConfigClock();
             SelectedTime = Call.MaxTime ?? s_bl.Admin.GetConfigClock();
+            s_bl.Call.AddObserver(FetchCallInfo);
             InitializeComponent();
         }
 
@@ -148,7 +162,21 @@ namespace PL.Admin.Call
             }
 
             if (flag)
+            {
+                s_bl.Call.RemoveObserver(FetchCallInfo);
                 Close();
+            }
+        }
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
+        public void FetchCallInfo()
+        {
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    Call = s_bl.Call.GetCall(Call.Id);
+                    if (Call.AssignInList != null)
+                        AssignList = ListToStr();
+                });
         }
 
     }

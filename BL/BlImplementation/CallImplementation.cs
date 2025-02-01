@@ -37,7 +37,7 @@ internal class CallImplementation : ICall
             CallManager.ValidateCallFormat(call);
             CallManager.ValidateCallLogical(call);
 
-            (call.Latitude, call.Longitude) = Tools.AddressToCoordinates(call.Address);
+            _ = CallManager.UpdateCoordonates(call);
             DO.Call dataCall = CallManager.ConvertToDoCall(call);
 
             lock (AdminManager.BlMutex)//stage 7
@@ -224,7 +224,7 @@ internal class CallImplementation : ICall
     /// <param name="field">The field to sort the results by (optional).</param>
     /// <returns>A list of open calls associated with the volunteer.</returns>
     /// <exception cref="InvalidOperationException">Thrown when an error occurs while retrieving the open calls.</exception>
-    public IEnumerable<BO.OpenCallInList> GetOpenCallForVolunteer(int volunteerId, BO.BoCallType? boCallType, BO.OpenCallInListField? field = BO.OpenCallInListField.Id)
+    public IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.BoCallType? boCallType, BO.OpenCallInListField? field = BO.OpenCallInListField.Id)
     {
         try
         {
@@ -317,7 +317,7 @@ internal class CallImplementation : ICall
 
     public void CompleteCall(int volunteerId, int assignmentId)
     {
-        AdminManager.ThrowOnSimulatorIsRunning();
+        
         DO.Assignment assignment;
         lock (AdminManager.BlMutex) //stage 7
         {
@@ -349,7 +349,7 @@ internal class CallImplementation : ICall
 
     public void CancelCall(int cancelerId, int assignmentId)
     {
-        AdminManager.ThrowOnSimulatorIsRunning();
+        
         try
         {
             DO.Assignment assignment;
@@ -389,7 +389,6 @@ internal class CallImplementation : ICall
 
     public void AssignCall(int volunteerId, int callId)
     {
-            AdminManager.ThrowOnSimulatorIsRunning();
         try
         {
             DO.Volunteer volunteer;
@@ -441,7 +440,7 @@ internal class CallImplementation : ICall
             CallManager.ValidateCallFormat(call);
             CallManager.ValidateCallLogical(call);
             
-            (call.Latitude, call.Longitude) = Tools.AddressToCoordinates(call.Address);
+            _= CallManager.UpdateCoordonates(call);
             DO.Call dataCall = CallManager.ConvertToDoCall(call);
             
             lock (AdminManager.BlMutex)//stage 7

@@ -935,7 +935,7 @@ internal class Program
                     }
                 }
 
-                var openCalls = s_bl.Call.GetOpenCallForVolunteer(volunteerId, callTypeSelected is BO.BoCallType.None ? null : callTypeSelected, fieldSelected);
+                var openCalls = s_bl.Call.GetOpenCallsForVolunteer(volunteerId, callTypeSelected is BO.BoCallType.None ? null : callTypeSelected, fieldSelected);
                 foreach (var call in openCalls)
                 {
                     Console.WriteLine(call);

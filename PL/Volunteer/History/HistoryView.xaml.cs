@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PL.Volunteer.History
 {
@@ -82,13 +83,18 @@ namespace PL.Volunteer.History
                 TypeClosed 
             );
         }
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
         public void ClosedListObserver()
         {
-            CallClosedInList = s_bl.Call.GetClosedCallByVolunteer(
-                _Id,
-                TypeCall == BoCallType.None ? null : (BO.BoCallType?)TypeCall,
-                TypeClosed
-            );
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    CallClosedInList = s_bl.Call.GetClosedCallByVolunteer(
+                                    _Id,
+                                    TypeCall == BoCallType.None ? null : (BO.BoCallType?)TypeCall,
+                                    TypeClosed
+                    );
+                }); 
         }
 
     }

@@ -99,20 +99,6 @@
     <DistanceType>Area</DistanceType>
   </Volunteer>
   <Volunteer>
-    <Id>258610720</Id>
-    <Name>Yaakov Shapiro</Name>
-    <Phone>0506543210</Phone>
-    <Email>yaakov.shapiro@example.com</Email>
-    <Password>5b2902d8618bc89cadc4dd7610a16fcfde9a5edef9f6b6856a1c0cdd2769c5fd</Password>
-    <Address>46 Technion City, Haifa</Address>
-    <Latitude>32.823</Latitude>
-    <Longitude>34.993</Longitude>
-    <IsActive>true</IsActive>
-    <Role>Volunteer</Role>
-    <MaxDistance>38</MaxDistance>
-    <DistanceType>Area</DistanceType>
-  </Volunteer>
-  <Volunteer>
     <Id>387655512</Id>
     <Name>Rachel Mizrahi</Name>
     <Phone>0509012345</Phone>
@@ -236,6 +222,20 @@
     <IsActive>false</IsActive>
     <Role>Volunteer</Role>
     <MaxDistance>74</MaxDistance>
+    <DistanceType>Area</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>258610720</Id>
+    <Name>Yaakov Shapiro</Name>
+    <Phone>0506543210</Phone>
+    <Email>yaakov.shapiro@example.com</Email>
+    <Password>5b2902d8618bc89cadc4dd7610a16fcfde9a5edef9f6b6856a1c0cdd2769c5fd</Password>
+    <Address>46 Technion City, Haifa</Address>
+    <Latitude>32.823</Latitude>
+    <Longitude>34.993</Longitude>
+    <IsActive>true</IsActive>
+    <Role>Volunteer</Role>
+    <MaxDistance>38</MaxDistance>
     <DistanceType>Area</DistanceType>
   </Volunteer>
 </ArrayOfVolunteer>
