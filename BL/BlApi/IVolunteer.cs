@@ -11,11 +11,11 @@ public interface IVolunteer : IObservable //stage 5
     BO.BoRoleType Login(string name, string password);
 
     /// <summary>
-    /// Retrieves a list of volunteers based on their active status and a specified field.
+    /// Retrieves a list of s_volunteers based on their active status and a specified field.
     /// </summary>
-    /// <param name="active">The active status of the volunteers to retrieve.</param>
-    /// <param name="field">The field to sort the volunteers by.</param>
-    /// <returns>A list of volunteers matching the specified criteria.</returns>
+    /// <param name="active">The active status of the s_volunteers to retrieve.</param>
+    /// <param name="field">The field to sort the s_volunteers by.</param>
+    /// <returns>A list of s_volunteers matching the specified criteria.</returns>
     IEnumerable<BO.VolunteerInList> GetVolunteerInList(bool? active, BO.VolunteerInListField? field);
 
     /// <summary>

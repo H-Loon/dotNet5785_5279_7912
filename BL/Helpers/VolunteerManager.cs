@@ -1,6 +1,7 @@
 ﻿using BlImplementation;
 using BO;
 using DalApi;
+using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,16 +10,17 @@ namespace Helpers;
 internal static class VolunteerManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
-
+    private static List<OpenCallInList> s_list;
+    private static TimeSpan s_minTime = new(0, 1, 0, 0);
     private static readonly Random s_rand = new();
 
     internal static ObserverManager Observers = new(); //stage 5
 
     /// <summary>
-    /// Retrieves a list of volunteers based on their active status.
+    /// Retrieves a list of s_volunteers based on their active status.
     /// </summary>
-    /// <param name="active">The active status to filter volunteers by. If null, all volunteers are returned.</param>
-    /// <returns>A list of volunteers matching the specified active status.</returns>
+    /// <param name="active">The active status to filter s_volunteers by. If null, all s_volunteers are returned.</param>
+    /// <returns>A list of s_volunteers matching the specified active status.</returns>
     internal static IEnumerable<BO.VolunteerInList> GetVolunteerInLists(bool? active)
     {
         try
@@ -33,7 +35,7 @@ internal static class VolunteerManager
                              where active == null || v.IsActive == active
                        let complCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed)
                        let canceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer)
-                       let callInTreatmentId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId
+                       let callInTreatmentId = assignments.LastOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId
                        let callInTreatmentType = calls.FirstOrDefault(c => c.Id == callInTreatmentId)?.Type
                        select new BO.VolunteerInList
                        {
@@ -73,7 +75,7 @@ internal static class VolunteerManager
     }
 
     /// <summary>
-    /// Fills the passwords for all volunteers initialized in the database by hashing them.
+    /// Fills the passwords for all s_volunteers initialized in the database by hashing them.
     /// </summary>
     internal static void PasswordFillerForInit()
     {
@@ -82,7 +84,7 @@ internal static class VolunteerManager
         lock (AdminManager.BlMutex) //stage 7 
             volunteers = s_dal.Volunteer.ReadAll().ToList();
 
-        foreach (var v in volunteers) // Encrypt all passwords of initialized volunteers
+        foreach (var v in volunteers) // Encrypt all passwords of initialized s_volunteers
         {
             var password = CryptPW(v.Password);
 
@@ -114,21 +116,21 @@ internal static class VolunteerManager
     /// <returns>The converted BO.Volunteer object.</returns>
     internal static BO.Volunteer ConvertToBO(int id)
     {
-        IEnumerable<DO.Assignment> assignments;
-        lock (AdminManager.BlMutex) //stage 7
-            assignments = s_dal.Assignment.ReadAll().ToList();
-
         DO.Volunteer v;
         lock (AdminManager.BlMutex) //stage 7
             v = s_dal.Volunteer.Read(id) ?? throw new BO.BlNotExistException($"No volunteer with ID = {id} found");
+        
+        IEnumerable<DO.Assignment> assignments;
+        lock (AdminManager.BlMutex) //stage 7
+            assignments = s_dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndReason == null).ToList();
 
         BO.CallInProgress? callInProgress = null;
 
-        int openCallId = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null)?.CallId ?? 0;
+        int openCallId = assignments.FirstOrDefault()?.CallId ?? 0;
 
         if (openCallId is not 0) // If the volunteer has an open call in progress 
         {
-            var assignment = assignments.FirstOrDefault(a => a.VolunteerId == v.Id && a.EndReason == null);
+            var assignment = assignments.First();
 
             DO.Call? call;
             lock (AdminManager.BlMutex) //stage 7
@@ -163,9 +165,9 @@ internal static class VolunteerManager
             IsActive = v.IsActive,
             MaxDistance = v.MaxDistance,
             DistanceType = (BO.BoDistanceType)v.DistanceType,
-            CompletedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.Completed),
-            CanceledCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer),
-            OverDatedCalls = assignments.Count(a => a.VolunteerId == v.Id && a.EndReason == DO.AssignmentEndReason.OverDated),
+            CompletedCalls = assignments.Count(a => a.EndReason == DO.AssignmentEndReason.Completed),
+            CanceledCalls = assignments.Count(a => a.EndReason == DO.AssignmentEndReason.CanceledByVolunteer),
+            OverDatedCalls = assignments.Count(a => a.EndReason == DO.AssignmentEndReason.OverDated),
             CurrentCall = callInProgress
         };
     }
@@ -369,47 +371,48 @@ internal static class VolunteerManager
 
     internal static void SimulFunction()
     {
-        //IEnumerable<BO.Volunteer> volunteers;
-        //CallImplementation callImplementation = new();
-        //TimeSpan minTime = new(0, 5, 0, 0);
-        //lock (AdminManager.BlMutex) //stage 7
-        //{   volunteers = from v in s_dal.Volunteer.ReadAll().ToList()
-        //                 where v.IsActive
-        //                 select ConvertToBo(v);
-        //    volunteers = volunteers.ToList();
-        //}
+        IEnumerable<BO.VolunteerInList>? volunteers;
+        IEnumerable<DO.Assignment>? assignments;
+        
+        lock (AdminManager.BlMutex) //stage 7
+            assignments = s_dal.Assignment.ReadAll().ToList();
 
-        //foreach (var v in volunteers)
-        //{
-        //    if (v.CurrentCall is not null)
-        //    {
-
-        //        lock (AdminManager.BlMutex) //stage 7
-        //        {
-        //            if (AdminManager.Now - v.CurrentCall.AssignTime >= minTime)
-        //            {
-        //                callImplementation.CompleteCall(v.Id, v.CurrentCall.AssignmentId);
-        //            }
-        //            else if (s_rand.Next(0, 10) == 0)
-        //            {
-        //                callImplementation.CancelCall(v.Id, v.CurrentCall.AssignmentId);
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        lock (AdminManager.BlMutex) //stage 7
-        //        {
-        //            if (s_rand.Next(0, 5) == 0)
-        //            {
-        //                List<OpenCallInList> list = callImplementation.GetOpenCallsForVolunteer(v.Id, null, null).ToList();
-        //                callImplementation.AssignCall(v.Id, list[s_rand.Next(0, list.Count)].Id);
-        //            }
-        //        }
-        //    }
-        //}
+        lock (AdminManager.BlMutex) //stage 7
+            volunteers = GetVolunteerInLists(true).ToList();
+        try
+        {
+            foreach (var v in volunteers)
+            {
+                if (v.CallInTreatment is not null)
+                {
+                    var assignment = assignments.Last(a => a.CallId == v.CallInTreatment);
+                    if (s_rand.Next(0, 5) == 0)
+                    {
+                        lock (AdminManager.BlMutex) //stage 7
+                            CallManager.CompleteCall(v.Id, assignment.Id);
+                    }
+                    else if (s_rand.Next(0, 10) == 5)
+                    {
+                        lock (AdminManager.BlMutex) //stage 7
+                            CallManager.CancelCall(v.Id, assignment.Id);
+                    }
+                }
+                else
+                {
+                    //if (s_rand.Next(0, 5) == 0)
+                    //{
+                    //    lock (AdminManager.BlMutex)
+                    //        s_list = CallManager.GetOpenCallsForVolunteer(v.Id, null, null).ToList();
+                    //    lock (AdminManager.BlMutex)
+                    //        CallManager.AssignCall(v.Id, s_list[s_rand.Next(0, s_list.Count)].Id);
+                    //}
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
-
-  
 }
 

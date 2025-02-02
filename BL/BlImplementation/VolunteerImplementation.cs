@@ -93,11 +93,11 @@ internal class VolunteerImplementation : BlApi.IVolunteer
     }
 
     /// <summary>  
-    /// Retrieves a list of volunteers based on their active status and sorts them by the specified field.  
+    /// Retrieves a list of s_volunteers based on their active status and sorts them by the specified field.  
     /// </summary>  
-    /// <param name="active">The active status to filter volunteers by. If null, all volunteers are returned.</param>  
-    /// <param name="field">The field to sort the volunteers by.</param>  
-    /// <returns>A list of volunteers matching the specified active status and sorted by the specified field.</returns>  
+    /// <param name="active">The active status to filter s_volunteers by. If null, all s_volunteers are returned.</param>  
+    /// <param name="field">The field to sort the s_volunteers by.</param>  
+    /// <returns>A list of s_volunteers matching the specified active status and sorted by the specified field.</returns>  
     public IEnumerable<BO.VolunteerInList> GetVolunteerInList(bool? active, BO.VolunteerInListField? field)
     {
         try

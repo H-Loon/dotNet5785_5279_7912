@@ -1,4 +1,5 @@
-﻿using DalApi;
+﻿using BO;
+using DalApi;
 using DO;
 namespace Helpers;
 
@@ -236,6 +237,181 @@ internal static class CallManager
     internal static async Task UpdateCoordonates(BO.Call call)
     {
         (call.Latitude, call.Longitude) = await Tools.AddressToCoordinatesAsync(call.Address);
+    }
+
+    internal static IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.BoCallType? boCallType, BO.OpenCallInListField? field = BO.OpenCallInListField.Id)
+    {
+        try
+        {
+            IEnumerable<BO.OpenCallInList>? openCalls;
+            lock (AdminManager.BlMutex)//stage 7
+            {
+                // Retrieve all calls 
+                var allCalls = s_dal.Call.ReadAll();
+                var volunteer = s_dal.Volunteer.Read(volunteerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
+
+                // Filter calls with status "Open" or "OpenAndDanger"
+                openCalls = from openCall in allCalls
+                            let status = CallManager.GetCallStatus(openCall.Id)
+                            let callType = (BO.BoCallType)openCall.Type
+                            let distance = Tools.GetCallDistance(openCall.Id, volunteer)
+                            where (status == BO.BoCallStatus.Open || status == BO.BoCallStatus.OpenAndDanger) &&
+                                  (boCallType is null || callType == boCallType) && distance <= volunteer.MaxDistance
+                            select new BO.OpenCallInList
+                            {
+                                Id = openCall.Id,
+                                CallType = callType,
+                                Description = openCall.Description,
+                                Address = openCall.Address,
+                                StartTime = openCall.StartTime,
+                                MaxTime = openCall.MaxTime,
+                                CallDistance = distance
+                            };
+                openCalls = openCalls.ToList();
+            }
+
+            // Order by the specified field
+            if (field.HasValue)
+            {
+                openCalls = field.Value switch
+                {
+                    BO.OpenCallInListField.CallType => openCalls.OrderBy(c => c.CallType),
+                    BO.OpenCallInListField.Description => openCalls.OrderBy(c => c.Description),
+                    BO.OpenCallInListField.Address => openCalls.OrderBy(c => c.Address),
+                    BO.OpenCallInListField.StartTime => openCalls.OrderBy(c => c.StartTime),
+                    BO.OpenCallInListField.MaxTime => openCalls.OrderBy(c => c.MaxTime),
+                    BO.OpenCallInListField.CallDistance => openCalls.OrderBy(c => c.CallDistance),
+                    _ => openCalls.OrderBy(c => c.Id)
+                };
+            }
+            else
+            {
+                openCalls = openCalls.OrderBy(c => c.Id);
+            }
+
+            return openCalls;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("An error occurred while trying to retrieve open calls for the volunteer.", ex);
+        }
+    }
+    internal static void CompleteCall(int volunteerId, int assignmentId)
+    {
+        DO.Assignment assignment;
+        lock (AdminManager.BlMutex) //stage 7
+        {
+            if (s_dal.Volunteer.Read(volunteerId) is null) throw new BO.BlNotExistException("Volunteer/Admin not found.");
+            assignment = s_dal.Assignment.Read(assignmentId) ?? throw new BO.BlNotExistException("Assignment not found.");
+            if (assignment.VolunteerId != volunteerId)
+                throw new BO.BlNotAllowedException("You are not authorized to complete this call.");
+            if (assignment.EndTime is not null)
+                throw new BO.BlNotAllowedException("This call has already been ended.");
+        }
+        try
+        {
+            lock (AdminManager.BlMutex)
+            {
+                s_dal.Assignment.Update(assignment with
+                {
+                    EndTime = DateTime.Now,
+                    EndReason = DO.AssignmentEndReason.Completed
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new BO.BlCallCompletionException("An error occurred while trying to complete the call.", ex);
+        }
+        AssignmentManager.Observers.NotifyItemUpdated(assignmentId);  //stage 5
+        Observers.NotifyListUpdated();  //stage 5
+        VolunteerManager.Observers.NotifyItemUpdated(volunteerId);  //stage 5
+        VolunteerManager.Observers.NotifyListUpdated();
+    }
+
+    internal static void CancelCall(int cancelerId, int assignmentId)
+    {
+        try
+        {
+            DO.Assignment assignment;
+            DO.Volunteer canceler;
+            lock (AdminManager.BlMutex) //stage 7
+            {
+                assignment = s_dal.Assignment.Read(assignmentId) ?? throw new BO.BlNotExistException("Assignment not found.");
+                canceler = s_dal.Volunteer.Read(cancelerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
+            }
+
+            if (assignment.VolunteerId != cancelerId && canceler.Role is not DO.RoleType.Admin)
+                throw new BO.BlNotAllowedException("You are not authorized to cancel this call.");
+            if (assignment.EndTime is not null)
+                throw new BO.BlNotAllowedException("This call has already been ended.");
+
+            string receiver;
+
+            lock (AdminManager.BlMutex) //stage 7
+            {
+                var endReason = canceler.Role is DO.RoleType.Admin ? DO.AssignmentEndReason.CanceledByAdmin : DO.AssignmentEndReason.CanceledByVolunteer;
+                s_dal.Assignment.Update(assignment with
+                {
+                    EndTime = DateTime.Now,
+                    EndReason = endReason
+                });
+                receiver = s_dal.Volunteer.Read(assignment.VolunteerId)?.Email ?? throw new BO.BlNotExistException("Volunteer not found.");
+            }
+
+            string msg = $"The call has been canceled by {canceler.Name}.";
+            Tools.SendEmail("noreply@weirdaid.com", receiver, $"Call n.{assignment.CallId} has been canceled ", msg);
+
+            AssignmentManager.Observers.NotifyItemUpdated(assignmentId);  //stage 5
+            Observers.NotifyListUpdated();  //stage 5
+            VolunteerManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //stage 5
+            VolunteerManager.Observers.NotifyListUpdated();
+        }
+        catch (Exception ex)
+        {
+            throw new BO.BlCallCancelException("An error occurred while trying to cancel the call.", ex);
+        }
+    } 
+
+    internal static void AssignCall(int volunteerId, int callId)
+    {
+        try
+        {
+            DO.Volunteer volunteer;
+            lock (AdminManager.BlMutex)//stage 7
+            {
+                if (s_dal.Call.Read(callId) is null) throw new BO.BlNotExistException("Call not found.");
+                volunteer = s_dal.Volunteer.Read(volunteerId) ?? throw new BO.BlNotExistException("Volunteer not found.");
+            }
+
+            if (VolunteerManager.ConvertToBO(volunteerId).CurrentCall is not null) throw new BO.BlNotExistException("Volunteer has already a call assigned.");
+
+            if (CallManager.GetCallStatus(callId) is not (BO.BoCallStatus.Open or BO.BoCallStatus.OpenAndDanger)) // call is not open or open and danger
+                throw new BO.BlNotAllowedException("This call has already been assigned to a volunteer or is over dated.");
+
+            if (volunteer.IsActive is false)
+                throw new BO.BlNotAllowedException("The Volunteer is not active.");
+
+            if (CallManager.GetCallStatus(callId) != BO.BoCallStatus.Open && CallManager.GetCallStatus(callId) != BO.BoCallStatus.OpenAndDanger)
+                throw new BO.BlNotAllowedException("You are not authorized to assign this call.");
+
+            lock (AdminManager.BlMutex)//stage 7
+            {
+                s_dal.Assignment.Create(new DO.Assignment
+                {
+                    CallId = callId,
+                    VolunteerId = volunteerId,
+                    StartTime = DateTime.Now
+                });
+            }
+            Observers.NotifyListUpdated();  //stage 5
+            VolunteerManager.Observers.NotifyItemUpdated(volunteerId);
+            VolunteerManager.Observers.NotifyListUpdated();
+        }
+        catch (Exception ex)
+        {
+            throw new BO.BlCallAssignException("An error occurred while trying to assign the call. ", ex);
+        }
     }
 }
 
