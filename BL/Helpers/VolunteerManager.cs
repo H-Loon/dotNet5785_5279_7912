@@ -10,7 +10,6 @@ namespace Helpers;
 internal static class VolunteerManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
-    private static List<OpenCallInList> s_list;
     private static TimeSpan s_minTime = new(0, 1, 0, 0);
     private static readonly Random s_rand = new();
 
@@ -371,47 +370,33 @@ internal static class VolunteerManager
 
     internal static void SimulFunction()
     {
-        IEnumerable<BO.VolunteerInList>? volunteers;
-        IEnumerable<DO.Assignment>? assignments;
-        
-        lock (AdminManager.BlMutex) //stage 7
-            assignments = s_dal.Assignment.ReadAll().ToList();
+        // Fetch data outside the lock
+        var assignments = s_dal.Assignment.ReadAll().ToList();
+        var volunteers = GetVolunteerInLists(true).ToList();
 
-        lock (AdminManager.BlMutex) //stage 7
-            volunteers = GetVolunteerInLists(true).ToList();
-        try
+        foreach (var v in volunteers)
         {
-            foreach (var v in volunteers)
+            if (v.CallInTreatment is not null)
             {
-                if (v.CallInTreatment is not null)
+                var assignment = assignments.Last(a => a.CallId == v.CallInTreatment);
+                if (AdminManager.Now - assignment.StartTime >= s_minTime)
                 {
-                    var assignment = assignments.Last(a => a.CallId == v.CallInTreatment);
-                    if (s_rand.Next(0, 5) == 0)
-                    {
-                        lock (AdminManager.BlMutex) //stage 7
-                            CallManager.CompleteCall(v.Id, assignment.Id);
-                    }
-                    else if (s_rand.Next(0, 10) == 5)
-                    {
-                        lock (AdminManager.BlMutex) //stage 7
-                            CallManager.CancelCall(v.Id, assignment.Id);
-                    }
+                    // Release lock before calling methods that may interact with UI
+                    CallManager.CompleteCall(v.Id, assignment.Id);
                 }
-                else
+                else if (s_rand.Next(0, 10) == 5)
                 {
-                    //if (s_rand.Next(0, 5) == 0)
-                    //{
-                    //    lock (AdminManager.BlMutex)
-                    //        s_list = CallManager.GetOpenCallsForVolunteer(v.Id, null, null).ToList();
-                    //    lock (AdminManager.BlMutex)
-                    //        CallManager.AssignCall(v.Id, s_list[s_rand.Next(0, s_list.Count)].Id);
-                    //}
+                    CallManager.CancelCall(v.Id, assignment.Id);
                 }
             }
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
+            else
+            {
+                if (s_rand.Next(0, 5) == 0)
+                {
+                    var openCalls = CallManager.GetOpenCallsForVolunteer(v.Id, null, null).ToList();
+                    CallManager.AssignCall(v.Id, openCalls[s_rand.Next(0, openCalls.Count)].Id);
+                }
+            }
         }
     }
 }

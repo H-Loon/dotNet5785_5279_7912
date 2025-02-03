@@ -80,11 +80,18 @@ namespace PL.Admin.Volunteer
             Role = Volunteer.Role;
             DistanceType = Volunteer.DistanceType;
 
-            s_bl.Volunteer.AddObserver(FetchVolunteerInfo);
+            
 
             InitializeComponent();
         }
-
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            s_bl.Volunteer.AddObserver(FetchVolunteerInfo);
+        }
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            s_bl.Volunteer.RemoveObserver(FetchVolunteerInfo);
+        }
         void btnAddUpdate_Click(object sender, RoutedEventArgs e)
         {
             bool flag = false;
@@ -102,7 +109,6 @@ namespace PL.Admin.Volunteer
 
             if (flag)
             {
-                s_bl.Volunteer.RemoveObserver(FetchVolunteerInfo);
                 Close();
             }
         }

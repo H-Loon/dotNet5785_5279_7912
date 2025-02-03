@@ -151,7 +151,7 @@ internal static class CallManager
                             EndReason = DO.AssignmentEndReason.OverDated
                         });
                     }
-                    else if (callGroup.Key is false && (status != BO.BoCallStatus.Closed || status != BO.BoCallStatus.OverDated)) // call has an assignment
+                    else if (callGroup.Key is false && status != BO.BoCallStatus.Closed && status != BO.BoCallStatus.OverDated) // call has an assignment
                     {
                         DO.Assignment assignment = s_dal.Assignment.Read(a => a.CallId == call.Id)!;
                         s_dal.Assignment.Update(new DO.Assignment
@@ -310,6 +310,10 @@ internal static class CallManager
         }
         try
         {
+            if (assignment.EndTime is not null)
+            {
+                return;
+            }
             lock (AdminManager.BlMutex)
             {
                 s_dal.Assignment.Update(assignment with

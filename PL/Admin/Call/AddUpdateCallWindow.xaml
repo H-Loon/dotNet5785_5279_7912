@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:PL.Admin.Call"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Title="AddUpdateCallWindow" Height="840" Width="500"
         ResizeMode="NoResize"

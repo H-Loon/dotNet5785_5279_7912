@@ -1,5 +1,7 @@
 ﻿using DO;
 using PL.Admin.Call;
+using PL.Volunteer.History;
+using PL.Volunteer.OpenCalls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -127,9 +129,17 @@ namespace PL.Admin.Call
                 ToggleMTbool = true;
             CallType = Call.CallType;
             SelectedDate = Call.MaxTime ?? s_bl.Admin.GetConfigClock();
-            SelectedTime = Call.MaxTime ?? s_bl.Admin.GetConfigClock();
-            s_bl.Call.AddObserver(FetchCallInfo);
+            SelectedTime = Call.MaxTime ?? SelectedDate;
+            
             InitializeComponent();
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            s_bl.Call.AddObserver(FetchCallInfo);
+        }
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            s_bl.Call.RemoveObserver(FetchCallInfo);
         }
 
         private string ListToStr()
@@ -162,8 +172,7 @@ namespace PL.Admin.Call
             }
 
             if (flag)
-            {
-                s_bl.Call.RemoveObserver(FetchCallInfo);
+            {   
                 Close();
             }
         }
@@ -173,12 +182,16 @@ namespace PL.Admin.Call
             if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
                 _observerOperation = Dispatcher.BeginInvoke(() =>
                 {
+                    if (Call.Id == 0)
+                        return;
+
                     Call = s_bl.Call.GetCall(Call.Id);
                     if (Call.AssignInList != null)
                         AssignList = ListToStr();
                 });
         }
 
+        
     }
     internal class CallType : IEnumerable
     {

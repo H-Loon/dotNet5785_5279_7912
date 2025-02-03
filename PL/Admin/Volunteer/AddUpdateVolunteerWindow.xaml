@@ -6,6 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:PL.Admin.Volunteer"
         mc:Ignorable="d"
+        Loaded="Window_Loaded" Closed="Window_Closed"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Title="AddUpdateVolunteerWindow" Height="840" Width="500"
         ResizeMode="NoResize">
