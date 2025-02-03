@@ -48,6 +48,10 @@ The project follows a 3-tier architecture:
    ```
 5. Instal [Papercut SMTP](https://github.com/ChangemakerStudios/Papercut-SMTP)
 
+6. Run Papercut SMTP
+
+7. Enjoy!
+
 ## 📌 Usage
 
 - Launch the application.
