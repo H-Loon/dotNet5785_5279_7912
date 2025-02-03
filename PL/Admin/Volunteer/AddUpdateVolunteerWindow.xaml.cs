@@ -25,7 +25,7 @@ namespace PL.Admin.Volunteer
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public string ButtonText { get; set; }
 
-
+        private int _Id;
 
         public BO.BoRoleType Role
         {
@@ -58,11 +58,12 @@ namespace PL.Admin.Volunteer
 
         // Using a DependencyProperty as the backing store for Volunteer.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty VolunteerProperty =
-            DependencyProperty.Register("VolunteerW", typeof(BO.Volunteer), typeof(AddUpdateVolunteerWindow), new PropertyMetadata(null));
+            DependencyProperty.Register("Volunteer", typeof(BO.Volunteer), typeof(AddUpdateVolunteerWindow), new PropertyMetadata(null));
 
 
         public AddUpdateVolunteerWindow(int id = 0)
         {
+            _Id = id;
             ButtonText = id == 0 ? "Add" : "Update";
             if (id == 0) Volunteer = new BO.Volunteer()
             {
@@ -86,11 +87,11 @@ namespace PL.Admin.Volunteer
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            s_bl.Volunteer.AddObserver(FetchVolunteerInfo);
+            s_bl.Volunteer.AddObserver(_Id,FetchVolunteerInfo);
         }
         private void Window_Closed(object sender, EventArgs e)
         {
-            s_bl.Volunteer.RemoveObserver(FetchVolunteerInfo);
+            s_bl.Volunteer.RemoveObserver(_Id,FetchVolunteerInfo);
         }
         void btnAddUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -119,11 +120,11 @@ namespace PL.Admin.Volunteer
                 _observerOperation = Dispatcher.BeginInvoke(() =>
                 {
                     if (ButtonText == "Update")
-                                {
-                                    Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
-                                    Role = Volunteer.Role;
-                                    DistanceType = Volunteer.DistanceType;
-                                }
+                    {
+                        Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
+                        Role = Volunteer.Role;
+                        DistanceType = Volunteer.DistanceType;
+                    }
                 });
         }
 

@@ -67,6 +67,7 @@ namespace PL
                     {
                         selectedTab.Header = name;
                         selectedTab.Content = new Admin.AdminMainView(name);
+                        selectedTab.Name = "Tab_" + IdText.IdTextString;
                         s_bl.Volunteer.AddObserver(_id, HeaderUpdate);
                     }
                     mainWindow.isAdminConnected = true;
@@ -85,7 +86,7 @@ namespace PL
                     {
                         selectedTab.Header = name;
                         selectedTab.Content = new Volunteer.VolunteerMainView(int.Parse(IdText.IdTextString));
-                        selectedTab.Name = IdText.IdTextString;
+                        selectedTab.Name = "Tab_"+IdText.IdTextString;
                         s_bl.Volunteer.AddObserver(_id, HeaderUpdate);
                     }
                 }
@@ -106,7 +107,7 @@ namespace PL
                     {
                         foreach (TabItem tab in tabItems)
                         {
-                            if (tab.Name == _id.ToString())
+                            if (tab.Name == "Tab_"+_id.ToString())
                             {
                                 tab.Header = s_bl.Volunteer.GetVolunteer(_id).Name;
                                 break;

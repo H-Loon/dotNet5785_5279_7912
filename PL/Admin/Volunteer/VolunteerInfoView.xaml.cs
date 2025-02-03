@@ -35,7 +35,7 @@ namespace PL.Admin.Volunteer
 
         // Using a DependencyProperty as the backing store for Volunteer.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty VolunteerProperty =
-            DependencyProperty.Register("VolunteerV", typeof(BO.Volunteer), typeof(VolunteerInfoView), new PropertyMetadata(null));
+            DependencyProperty.Register("Volunteer", typeof(BO.Volunteer), typeof(VolunteerInfoView), new PropertyMetadata(null));
 
 
         public VolunteerInfoView(int id)

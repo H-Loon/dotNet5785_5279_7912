@@ -111,7 +111,7 @@ namespace PL.Admin.Volunteer
             // Check if the window is already open
             foreach (Window window in Application.Current.Windows)
             {
-                if (window is VolunteerInfoView)
+                if (window is AddUpdateVolunteerWindow)
                 {
                     if (Id != SelectedVolunteer!.Id)
                     {
