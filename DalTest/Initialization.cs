@@ -145,7 +145,26 @@ public static class Initialization
         copyLatitudes.RemoveAt(1);
         copyLongitudes.RemoveAt(1);
 
-        for (int i = 2; i < s_names.Length; i++)
+        s_dal!.Volunteer.Create(new Volunteer
+        {
+            Id = 316781901,
+            Name = s_names[2],
+            Phone = s_phoneNumbers[2],
+            Email = s_emails[2],
+            Password = s_passwords[2],
+            Address = s_addresses[2],
+            Latitude = s_latitudes[2],
+            Longitude = s_longitudes[2],
+            IsActive = true,
+            MaxDistance = s_rand.Next(50, 200),
+            Role = RoleType.Volunteer
+        });
+
+        copyAddresses.RemoveAt(2);
+        copyLatitudes.RemoveAt(2);
+        copyLongitudes.RemoveAt(2);
+
+        for (int i = 3; i < s_names.Length; i++)
         {
             int id;
             string phone, address;
