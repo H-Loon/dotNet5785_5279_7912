@@ -121,15 +121,15 @@ internal static class VolunteerManager
         
         IEnumerable<DO.Assignment> assignments;
         lock (AdminManager.BlMutex) //stage 7
-            assignments = s_dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndReason == null).ToList();
+            assignments = s_dal.Assignment.ReadAll(a => a.VolunteerId == v.Id).ToList();
 
         BO.CallInProgress? callInProgress = null;
 
-        int openCallId = assignments.FirstOrDefault()?.CallId ?? 0;
+        int openCallId = assignments.FirstOrDefault(a=> a.EndReason == null)?.CallId ?? 0;
 
         if (openCallId is not 0) // If the volunteer has an open call in progress 
         {
-            var assignment = assignments.First();
+            var assignment = assignments.First(a => a.EndReason == null);
 
             DO.Call? call;
             lock (AdminManager.BlMutex) //stage 7
@@ -370,23 +370,28 @@ internal static class VolunteerManager
 
     internal static void SimulFunction()
     {
+        IEnumerable<BO.VolunteerInList>? volunteers;
+        IEnumerable<DO.Assignment>? assignments;
+
         // Fetch data outside the lock
-        var assignments = s_dal.Assignment.ReadAll().ToList();
-        var volunteers = GetVolunteerInLists(true).ToList();
+        lock (AdminManager.BlMutex) //stage 7
+            assignments = s_dal.Assignment.ReadAll().ToList();
+        lock (AdminManager.BlMutex) //stage 7
+            volunteers = GetVolunteerInLists(true).ToList();
 
         foreach (var v in volunteers)
         {
             if (v.CallInTreatment is not null)
             {
                 var assignment = assignments.Last(a => a.CallId == v.CallInTreatment);
-                if (AdminManager.Now - assignment.StartTime >= s_minTime)
+                if (s_rand.Next(0, 10) == 0)
+                {
+                    CallManager.CancelCall(v.Id, assignment.Id);
+                }
+                else if(AdminManager.Now - assignment.StartTime >= s_minTime)
                 {
                     // Release lock before calling methods that may interact with UI
                     CallManager.CompleteCall(v.Id, assignment.Id);
-                }
-                else if (s_rand.Next(0, 10) == 5)
-                {
-                    CallManager.CancelCall(v.Id, assignment.Id);
                 }
             }
             else
@@ -394,7 +399,10 @@ internal static class VolunteerManager
                 if (s_rand.Next(0, 5) == 0)
                 {
                     var openCalls = CallManager.GetOpenCallsForVolunteer(v.Id, null, null).ToList();
-                    CallManager.AssignCall(v.Id, openCalls[s_rand.Next(0, openCalls.Count)].Id);
+                    if (openCalls.Any())
+                    {
+                        CallManager.AssignCall(v.Id, openCalls[s_rand.Next(0, openCalls.Count)].Id);
+                    }
                 }
             }
         }

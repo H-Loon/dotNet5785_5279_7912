@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -15,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PL
 {
@@ -83,6 +85,7 @@ namespace PL
                     {
                         selectedTab.Header = name;
                         selectedTab.Content = new Volunteer.VolunteerMainView(int.Parse(IdText.IdTextString));
+                        selectedTab.Name = IdText.IdTextString;
                         s_bl.Volunteer.AddObserver(_id, HeaderUpdate);
                     }
                 }
@@ -92,22 +95,28 @@ namespace PL
                 MessageBox.Show(ex.Message);
             }
         }
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
         public void HeaderUpdate()
         {
-            if (mainWindow.Dispatcher.CheckAccess())
-            {
-                var selectedTab = mainWindow.tabDynamic.SelectedItem as TabItem;
-                if (selectedTab != null)
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
                 {
-                    selectedTab.Header = s_bl.Volunteer.GetVolunteer(_id).Name;
-                }
-            }
-            else
-            {
-                mainWindow.Dispatcher.Invoke(() => HeaderUpdate());
-            }
+                    var tabItems = mainWindow.tabDynamic.Items;
+                    if (tabItems != null)
+                    {
+                        foreach (TabItem tab in tabItems)
+                        {
+                            if (tab.Name == _id.ToString())
+                            {
+                                tab.Header = s_bl.Volunteer.GetVolunteer(_id).Name;
+                                break;
+                            }
+                        }
+                    }
+                });
         }
     }
+}
     
     public class IdText : INotifyPropertyChanged
     {
@@ -150,4 +159,3 @@ namespace PL
 
         }
     }
-}

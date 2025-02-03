@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace PL.Admin.Menu
 {
@@ -103,21 +104,23 @@ namespace PL.Admin.Menu
         {
             RiskRangeEdt.RiskRange = "0.00:00:00";
         }
-
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
         private void ClockObserver()
         {
-            Dispatcher.Invoke(() =>
-            {
-                ConfigTime = s_bl.Admin.GetConfigClock();
-            });
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    ConfigTime = s_bl.Admin.GetConfigClock();
+                });
         }
 
         private void RiskRangeObserver()
         {
-            Dispatcher.Invoke(() =>
-            {
-                RiskRange = s_bl.Admin.GetRiskRange();  
-            });
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    RiskRange = s_bl.Admin.GetRiskRange();  
+                });
         }
 
         //private void Window_Closed(object sender, EventArgs e)
