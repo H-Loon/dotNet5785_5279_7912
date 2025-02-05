@@ -1,4 +1,4 @@
-# 📌 Project Name
+# 📌 WeirdAid (dotNet5785_5279_7912)
 
 A WPF-based C# application implementing a multi-layered architecture (DAL, BL, PL) for efficient data management and user interaction.
 
