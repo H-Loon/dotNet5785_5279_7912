@@ -44,6 +44,7 @@ The project follows a 3-tier architecture:
 
 ## 📌 Usage
 
+- Launch Papercut SMTP
 - Launch the application.
 - Navigate through the WPF UI.
 - Perform CRUD operations via the interface.
