@@ -132,7 +132,14 @@ namespace PL.Volunteer.Menu
         }
         private void UpdateVolunteer(object sender, RoutedEventArgs e)
         {
+            try
+            {
+
             s_bl.Volunteer.UpdateVolunteer(Volunteer.Id, Volunteer);
+            }
+            catch(Exception ex) {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             Volunteer = s_bl.Volunteer.GetVolunteer(Volunteer.Id);
             Volunteer.Password = "";
         }

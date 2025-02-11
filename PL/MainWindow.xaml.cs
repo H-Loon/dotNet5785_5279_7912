@@ -110,6 +110,8 @@ public partial class MainWindow : Window
             {
                 Close();
             }
+            else if (_tabItems.Count < 3)
+                return;
 
             // get selected tab
             TabItem selectedTab = tabDynamic.SelectedItem as TabItem;
