@@ -1,6 +1,6 @@
-# 📌 Project Name
+# 📌 WeirdAid (dotNet5785_5279_7912)
 
-A WPF-based C# application implementing a multi-layered architecture (DAL, BL, UI) for efficient data management and user interaction.
+A WPF-based C# application implementing a multi-layered architecture (DAL, BL, PL) for efficient data management and user interaction.
 
 ## 📖 Overview
 
@@ -12,7 +12,7 @@ The project follows a 3-tier architecture:
 
 1. **Data Access Layer (DAL)**: Handles database operations such as retrieving, inserting, updating, and deleting records.
 2. **Business Logic Layer (BL)**: Manages business rules, data validation, and application logic.
-3. **User Interface (UI)**: Implements a responsive WPF-based GUI for a seamless user experience.
+3. **User Interface (PL)**: Implements a responsive WPF-based GUI for a seamless user experience.
 
 ## 🚀 Features
 
@@ -25,11 +25,8 @@ The project follows a 3-tier architecture:
 ## 🛠️ Technologies Used
 
 - **Language:** C#
-- **Framework:** .NET 6/7 (as applicable)
+- **Framework:** .NET 8
 - **UI:** Windows Presentation Foundation (WPF)
-- **Database:** SQL Server / SQLite (as per project requirements)
-- **ORM:** Entity Framework Core
-- **Design Pattern:** MVVM (Model-View-ViewModel)
 
 ## ⚙️ Installation & Setup
 
@@ -38,22 +35,16 @@ The project follows a 3-tier architecture:
    git clone https://github.com/yourusername/projectname.git
    ```
 2. Open the project in **Visual Studio**.
-3. Restore dependencies:
-   ```bash
-   dotnet restore
-   ```
-4. Run the application:
-   ```bash
-   dotnet run
-   ```
-5. Instal [Papercut SMTP](https://github.com/ChangemakerStudios/Papercut-SMTP)
 
-6. Run Papercut SMTP
+3. Instal [Papercut SMTP](https://github.com/ChangemakerStudios/Papercut-SMTP)
 
-7. Enjoy!
+4. Run Papercut SMTP
+
+5. Enjoy!
 
 ## 📌 Usage
 
+- Launch Papercut SMTP
 - Launch the application.
 - Navigate through the WPF UI.
 - Perform CRUD operations via the interface.
@@ -61,12 +52,6 @@ The project follows a 3-tier architecture:
 ## 🛠️ Troubleshooting
 
 - Ensure you have the required **.NET SDK** installed.
-- Check the database connection string in `app.config`.
-- Run `dotnet build` to validate compilation.
-
-## 📜 License
-
-This project is licensed under the [MIT License](LICENSE).
 
 ## 🤝 Contributing
 
@@ -74,5 +59,5 @@ Pull requests are welcome! Feel free to fork and submit improvements.
 
 ## 📬 Contact
 
-For any queries, reach out at [your.email@example.com](mailto\:your.email@example.com).
+For any queries, reach out at [eliehadad770@gmail.com](mailto\:eliehadad770@gmail.com).
 
