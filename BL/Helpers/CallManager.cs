@@ -189,10 +189,10 @@ internal static class CallManager
     {
         var status = GetCallStatus(call.Id);
 
-        if(status == BO.BoCallStatus.Closed || status == BO.BoCallStatus.OverDated)
+        if (status == BO.BoCallStatus.Closed || status == BO.BoCallStatus.OverDated)
         {
-            var assignment = s_dal.Assignment.ReadAll(a=> a.CallId == call.Id).ToList().Last();
-            return assignment.EndTime - call.StartTime;
+            var assignment = s_dal.Assignment.ReadAll(a => a.CallId == call.Id).ToList().LastOrDefault();
+            return assignment?.EndTime - call.StartTime ?? TimeSpan.Zero;
         }
 
         return AdminManager.Now - call.StartTime;
