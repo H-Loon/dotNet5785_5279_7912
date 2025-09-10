@@ -6,6 +6,15 @@ A WPF-based C# application implementing a multi-layered architecture (DAL, BL, P
 
 This project follows a well-structured multi-layered architecture to ensure scalability, maintainability, and separation of concerns. The application is designed with a graphical user interface (GUI) using Windows Presentation Foundation (WPF), a business logic layer (BL) for processing, and a data access layer (DAL) for interacting with the database.
 
+<img width="1423" height="803" alt="image" src="https://github.com/user-attachments/assets/f3550a0f-bb48-4acc-a694-9f64df56bf3f" />
+<img width="1424" height="809" alt="image" src="https://github.com/user-attachments/assets/441f6a4f-b76c-4d63-a1d7-fd9299fbe264" />
+<img width="1737" height="973" alt="image" src="https://github.com/user-attachments/assets/5ddafb63-ac25-4489-8914-87a5981dca1b" />
+<img width="1738" height="977" alt="image" src="https://github.com/user-attachments/assets/eea0ebaf-293a-4d48-90a2-d45039b81e52" />
+
+
+
+
+
 ## 🏗️ Project Architecture
 
 The project follows a 3-tier architecture:
