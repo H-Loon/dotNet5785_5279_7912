@@ -41,7 +41,7 @@ The project follows a 3-tier architecture:
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/projectname.git
+   git clone https://github.com/H-Loon/dotNet5785_5279_7912.git
    ```
 2. Open the project in **Visual Studio**.
 
